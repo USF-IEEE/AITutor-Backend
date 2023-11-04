@@ -60,7 +60,7 @@ class ConceptDatabase:
         if max_depth == 0: 
             return 0# Some API call to LLM
         llm_output = self.concept_llm_api.request_concept_data_from_llm(self.main_concept, self.get_concept_list_str(), concept_name)
-        regex_match = self.__CONCEPT_REGEX.findall(llm_output)
+        regex_match = ConceptDatabase.__CONCEPT_REGEX.findall(llm_output)
         assert regex_match, f"Error parsing LLM Output for Concept: {concept_name}"
         # Extract the Yaml Data from the LLM Ouput
         m_start, m_end = regex_match[0].start(), regex_match[0].end()
