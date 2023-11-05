@@ -23,6 +23,16 @@ class ConceptDatabase:
             return prompt
         
         def request_concept_data_from_llm(self, env_main_concept, env_concept_list, concept_name):
+            """Requests the Concept information from an LLM.
+
+            Args:
+                env_main_concept (str): _description_ 
+                env_concept_list (str): _description_
+                concept_name (str): _description_
+
+            Returns:
+                _type_: _description_
+            """
             response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[

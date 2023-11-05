@@ -1,0 +1,8 @@
+[User Assigned]: (Feature)
+[]: (Add Chat Interaction Data Structure)
+[]: (Implement "Iterative Prompting" State Machine)
+[]: (Add TutorEnv; Needs Chat Interaction Feature. state machine for mode (planning) / (teaching / guiding / testing) -> used for functionality and rendering)
+[frattitamayo@usf.edu]: (Add Knowledge Graph Generation)
+[frattitamayo@usf.edu]: (Add Slide Generation)
+[]: (Add Question Generation: Questions take form of type Math, Text, Literature, and must be JSON serializable. Includes QuestionResponse: needs way to perform validation on Questions for each type.)
+[]: (AI Tutor: Needs a mouth ie. text to speech, Needs ears ie. speech to text, Needs a context which is purposed to be whatever stage of the education process they are involved with; Teaching guiding testing. A context can be interacted with by a user and calls for the tutor to perform some response.)
