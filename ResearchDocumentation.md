@@ -1,8 +1,8 @@
 # LMaAiT-BE: Large Language Models as Actors in Text-Based Environments
 
 **Authors:** 
-- Jonathan Koch <jkoch21@usf.edu>
-- Fiorella Ratti Tamayo <frattitamayo@usf.edu>
+- Jonathan Koch <jkoch21@usf.edu>,  University of South Florida
+- Fiorella Ratti Tamayo <frattitamayo@usf.edu>,  University of South Florida
 - Juan Gomez <juangomez@usf.edu>, University of South Florida
 
 ## Abstract
