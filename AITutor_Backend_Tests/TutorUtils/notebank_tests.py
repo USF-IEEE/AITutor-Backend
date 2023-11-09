@@ -1,4 +1,4 @@
-from src.TutorUtils.notebank import *
+from AITutor_Backend.src.TutorUtils.notebank import *
 
 def test_notebank_creation_and_modification():
     notebank = NoteBank()
