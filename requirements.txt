@@ -1,0 +1,5 @@
+pyaml
+pptx
+openai
+requirements.txt
+nltk

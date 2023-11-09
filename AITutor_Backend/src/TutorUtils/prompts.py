@@ -37,6 +37,6 @@ class PromptAction(JSONSerializable,):
         p_type, prompt = p_type.strip().lower(), prompt.strip()
         # Get prompt type
         p_type = {"file": PromptAction.Type.FILE, "rating": PromptAction.Type.RATING, "text": PromptAction.Type.TEXT}.get(p_type, None)
-        assert p_type, "Error: Could not parse LLM for Prompt Action."
-        assert prompt, "Error: Could not parse LLM for Prompt Action."
+        assert isinstance(p_type, PromptAction.Type), "Error: Could not parse LLM for Prompt Action Type."
+        assert prompt, "Error: Could not parse LLM for Prompt Action data."
         return PromptAction(prompt, p_type)
