@@ -1,8 +1,8 @@
 from typing import List, Tuple, Union
 import re
 from enum import IntEnum
-from src.BackendUtils.json_serialize import *
-from src.TutorUtils.concepts import *
+from AITutor_Backend.src.BackendUtils.json_serialize import *
+from AITutor_Backend.src.TutorUtils.concepts import *
 import yaml
 
 class SlidePlanner(JSONSerializable):

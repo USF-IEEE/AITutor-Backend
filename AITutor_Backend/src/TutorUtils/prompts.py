@@ -1,6 +1,6 @@
 import re
 from enum import IntEnum
-from src.BackendUtils.json_serialize import *
+from AITutor_Backend.src.BackendUtils.json_serialize import *
 
 class PromptAction(JSONSerializable,):
     class Type(IntEnum):

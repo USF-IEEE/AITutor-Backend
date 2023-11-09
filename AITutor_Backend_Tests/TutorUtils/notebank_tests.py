@@ -57,4 +57,8 @@ def test_notebank_creation_and_modification():
     assert notebank.size() == prev_size, f"Additional elements added during bad parsing. Expected Size: 2, Actual Size: {notebank.size()}"
     
     op_suc, err_msg = notebank.process_tutor_action(action_4)
-    assert not op_suc, "Failed to reject bad input (10) Index Out of Bounds."               
+    assert not op_suc, "Failed to reject bad input (10) Index Out of Bounds."     
+    
+
+def run_notebank_tests(): # Add Unit Tests Here:
+    test_notebank_creation_and_modification()          

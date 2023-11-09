@@ -8,3 +8,4 @@ def read_pptx_file(pptx_file):
         for shape in slide.shapes:
             if hasattr(shape, "text"):
                 content+=shape.text+'\n'
+    return content

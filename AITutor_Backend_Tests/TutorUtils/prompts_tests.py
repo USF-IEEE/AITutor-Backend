@@ -1,6 +1,7 @@
-from AITutor_Backend.src.TutorUtils.notebank import *
+import unittest
+from AITutor_Backend.src.TutorUtils.prompts import *
 
-def test_notebank_creation_and_modification():
+def test_prompt_parsing_from_llm_output():
     llm_output1 = """
     adksdfbjhafds adskj akjdnkasdj gibberihs
     ```TextPrompt
@@ -48,3 +49,6 @@ def test_notebank_creation_and_modification():
     assert p4.format_json()["type"] == 2, "Error in parsing Rating prompt."
 
     # p3 = PromptAction.parse_llm_action("this is bad action.") # Assert.fail
+    
+def run_prompt_tests(): # Add Unit Tests Here:
+    test_prompt_parsing_from_llm_output()   
