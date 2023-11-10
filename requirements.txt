@@ -3,3 +3,4 @@ pptx
 openai
 requirements.txt
 nltk
+django
