@@ -3,3 +3,4 @@ python-pptx
 openai
 nltk
 numpy
+django
