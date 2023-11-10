@@ -1,6 +1,6 @@
 pyaml
-pptx
+python-pptx
 openai
-requirements.txt
 nltk
+numpy
 django
