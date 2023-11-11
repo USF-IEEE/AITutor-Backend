@@ -17,9 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 import AITutor_Backend.views as views 
-from django.utils.decorators import csrf_exempt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('session/', csrf_exempt(views.session_view), name='session_view'),
+    path('session/', views.session_view, name='session_view'),
 ]
