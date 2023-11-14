@@ -75,3 +75,12 @@ class NoteBank:
     def size(self,) -> int:
         """Returns size of the Notebank"""
         return len(self.__notes)
+    
+    def to_sql(self,):
+        return ["\n".join(self.__notes)]
+    
+    @staticmethod
+    def from_sql(sql_data):
+        nb = NoteBank()
+        nb.__notes = sql_data.split("\n")
+        return nb
