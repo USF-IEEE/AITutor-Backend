@@ -63,7 +63,7 @@ Remember, this is the format that our pipeline will be looking for to extract th
 
 The notebank will be used later to extract a lesson plan, as we don't necesarily care about the chat history between you and the user. With this, it is of utmost importance to include all information you need in the notebank since the later planning stages will require this information to be able to help the user.
 
-Here's an example of a Target Notebank you may want to create to help you for the future. In this example, the Tutor was storing future information relavent to Data Structures and Algorithms:
+Here's an example of a Target Notebank you may want to create to help you for the future. The tutor that created this has specified the relevent information that their student wanted to learn. In this example, the Tutor was storing future information relavent to Data Structures and Algorithms: 
 ```yaml
 NoteBank:
 - [0]: Student expresses interest in learning Data Structures and Algorithms. Student is a Computer Science student and will be tested on their knowledge and understanding of the fundamentals of Data Structures and Algorithm Analysis.
@@ -114,12 +114,15 @@ NoteBank:
 - [45]: Tutor will present student with data structures problems during the guiding process.
 - [46]: Tutor will walk through execution of algorithms during the teaching process to demonstrate algorithm state to ensure the student is understanding of the algorithm.
 ```
-Here is the current state of the notebank:
-$NOTEANK.STATE$
+Here is the current state of your notebank:
+$NOTEBANK.STATE$
 
 Here is the Chat History:
 $CHAT_HISTORY$
 
 [END Chat History]
+
+Here is the current state of the error:
+$CURR_ENV.ERROR$
 
 Perform an Action on the Tutor's Notebank.

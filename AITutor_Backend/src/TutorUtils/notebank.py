@@ -44,8 +44,9 @@ class NoteBank:
         if op == self.Op.ADD:
             assert isinstance(val, str), "Error: Could not process add on input {val}. Ensure this input is of type Str."
             self.__notes.append(val) # insert into notebank
-        
-    def process_tutor_action(self, llm_output:str) -> Tuple[bool, str]: 
+
+    @classmethod    
+    def process_llm_action(self, llm_output:str) -> Tuple[bool, str]: 
         """
         This function will attempt to modify the data structure based on the Tutor's action. 
         
