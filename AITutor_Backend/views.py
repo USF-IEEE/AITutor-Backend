@@ -1,40 +1,48 @@
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from asgiref.sync import sync_to_async
-from .models import SessionModel, TutorEnvModel
+import json
 import uuid
+from django.http import JsonResponse, HttpResponseBadRequest
+from asgiref.sync import sync_to_async
+from django.views.decorators.csrf import csrf_exempt
+from .models import SessionModel, TutorEnvModel
 
-# TODO: Fix CSRF error
-async def session_view(request):
-    if request.method == "GET":            
-        return JsonResponse({'msg': "42."})
+@sync_to_async
+def create_tutor_environment():
+    env_id = str(uuid.uuid4())
+    tutor_environment = TutorEnvModel.objects.create(env_id=env_id)
+    tutor_environment.save()
+    return tutor_environment
+
+@sync_to_async
+def create_session(env_id):
+    session_id = str(uuid.uuid4())
+    session = SessionModel.objects.create(session_id=session_id, env_id=env_id)
+    session.save()
+    return session
+
+@csrf_exempt
+def session_view(request):
+    if request.method == "GET":
+        # Handle GET request
+        return JsonResponse({'message': "this is a test message"})
+    
     if request.method == "POST":
-        # Handle the case where a session key is provided
-        if 'session_key' in request.POST:
-            data = {
-                "is_audio": request.POST.get("is_audio", None),
-                "user_prompt": request.POST.get("user_prompt", None)
-            
-            }
-            if not data["user_prompt"]: return JsonResponse({"msg": ""})
-            session_key = request.POST.get('session_key', None)
-            if not session_key:
-                return JsonResponse({"error": "Session key missing from request."})
-            # Extract User Input 
-           
-            session = await sync_to_async(SessionModel.objects.get)(session_id=session_key)
-            # Further processing...
-            if session: sync_to_async(session.save)()
-            return JsonResponse({'session_key': session_key, 'response': 'Session exists. User input received.', "state": 0})
-        else:
-            # Handle the case where no session key is provided
-            new_session_key = str(uuid.uuid4())
-            new_env_key = str(uuid.uuid4())
-            # Use sync_to_async for database operations
-            tutor_environment = await sync_to_async(TutorEnvModel.objects.create)(env_id=new_env_key)
-            await sync_to_async(tutor_environment.save)()
-            session = await sync_to_async(SessionModel.objects.create)(session_id=new_session_key, env_id=tutor_environment)
-            await sync_to_async(session.save)()
-            return JsonResponse({'session_key': new_session_key, 'response': 'New session created.'})
+        try:
+            # Get the raw JSON data from the request body
+            raw_data = request.body.decode('utf-8')
+            json_data = json.loads(raw_data)
+
+            # Extract specific fields from the JSON data
+            session_key = json_data.get('session_key', '')
+            user_prompt = json_data.get('user_prompt', '')
+
+            # Your processing logic here...
+
+            return JsonResponse({'session_key': session_key, 'user_prompt': user_prompt, 'status': 'success', 'response': 'data to send back'})
+        
+        except json.JSONDecodeError as e:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'An error occurred: {str(e)}'}, status=500)
+
     else:
-        return JsonResponse({'error': 'Invalid method'}, status=405)
+        return HttpResponseBadRequest('Invalid method')
