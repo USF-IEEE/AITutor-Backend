@@ -1,15 +1,19 @@
 import re
+import os
 import openai
 from enum import IntEnum
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
 
+openai_api_key = "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"
+os.environ["OPENAI_API_KEY"] = openai_api_key
+
 class Prompter:
     class PrompterLLMAPI:
         CURR_ENV_NOTEBANK_DELIMITER = "$NOTEBANK.STATE$" #Environment for the notebankd
         CURR_ENV_CHAT_HISTORY_DELIMITER = "$CHAT_HISTORY$" #Environment for the chat history 
-        
+        QUESTION_COUNTER_DELIMITER = "$NUM_QUESTIONS$"
         CURR_ERROR_DELIMITER = "$CURR_ENV.ERROR$"
 
         def __init__(self, ):
@@ -47,11 +51,11 @@ class Prompter:
 
             return response.choices[0].message.content
 
-        def __load_prompt(self, prompt_template, state_dict):
+        def _load_prompt(self, prompt_template, state_dict):
             prompt_string = prompt_template
             # Replace Values in Prompt:
             for k, v in state_dict.items():
-                prompt_string = self.prompt_string.replace(k, v)
+                prompt_string = prompt_string.replace(k, v)
 
             # Return Prompt:
             return prompt_string
@@ -61,6 +65,7 @@ class Prompter:
         self.llm_api = self.PrompterLLMAPI() 
         self.notebank = notebank
         self.chat_history = chat_history
+        self.__questions_asked = 0
         with open(question_prompt_file, "r", encoding="utf-8") as f:
             self.__question_prompt_template = "\n".join(f.readlines())
 
@@ -73,11 +78,11 @@ class Prompter:
         """
         error = "There is no current error."
         while True:
-            prompt = self.__load_prompt(self.__notebank_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error},) 
-            llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-1106")
-            success, error = self.notebank.process_llm_output(llm_output)
-            if success: break
-        return True
+            prompt = self.llm_api._load_prompt(self.__notebank_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error},) 
+            llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-4")
+            success, error, terminate = self.notebank.process_llm_action(llm_output)
+            if success or terminate: break
+        return terminate
 
     def get_prompting(self, ):
         """
@@ -86,24 +91,31 @@ class Prompter:
         error = "There is no current error."      
         while True:
             try:
-                prompt = self.__load_prompt(self.__question_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error})
-                llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-1106")
+                prompt = self.llm_api._load_prompt(self.__question_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(),  Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error})
+                llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-4")
                 action = PromptAction.parse_llm_action(llm_output)
                 assert isinstance(action._type, PromptAction.Type), "Error while Creating the Prompt."
                 assert action._data, "Error while parsing the data for the Prompt."
+                break
             except Exception as e:
                 error = "There was an error while trying to parse the Prompt: " + str(e)
         # Return the PromptAction parsed from the LLM:
+        self.__questions_asked += 1
         return action
     
     
     def perform_tutor(self, student_input:str):
         self.chat_history.hear(student_input) # DEBUGONLY: Remove this to include in TutorEnv
         # Construct the notebank:
-        llm_notebank = self.get_notebank()
+        terminate = self.perform_notebank()
         # Construct the prompting:
-        llm_prompt = self.get_prompting()
-        return llm_prompt
+        llm_prompt = None
+        if not terminate: 
+            llm_prompt = self.get_prompting()
+            self.chat_history.respond(llm_prompt._data) # DEBUGONLY: Remove this to include in TutorEnv
+            terminate = llm_prompt._type == PromptAction.Type.TERMINATE
+            print('\n', llm_prompt._type)
+        return llm_prompt, terminate
 
 
 class PromptAction(JSONSerializable,):

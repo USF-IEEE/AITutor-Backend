@@ -6,6 +6,7 @@ import time
 import openai
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 # openai.api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = "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"
 os.environ["OPENAI_API_KEY"] = openai_api_key
 
 class ConceptDatabase:

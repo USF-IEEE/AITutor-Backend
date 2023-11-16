@@ -16,8 +16,9 @@ class NoteBank:
         """
         Extracts an operation from an LLM Output containing 
         """
+
         regex_match = NoteBank.__NOTEBANK_REGEX.findall(llm_output)
-        assert regex_match, f"Error parsing LLM Output for NoteBank Operation: {llm_output}"
+        assert regex_match, f"Error parsing LLM Output for NoteBank Operation, ensure your outputs were in the correct format specified above: {llm_output}"
         # Format the regex match to a parsable string
         regex_match = regex_match[0].replace("```notebank", "").replace("```", "").strip() 
         # Extract the Operation data from the LLM Ouput
@@ -29,10 +30,14 @@ class NoteBank:
             raise Exception(f"Error: Could not parse Tokens, {str(e)}")
         # Assert our tokens have been parsed correctly
         for t in tokens:
-            assert len(t) == 2, "Error Parsing Tokens"
-        for (op, val) in tokens: 
-            # Determine and return operation
-            yield (NoteBank.Op.DEL, int(re.sub("[^\d]","", val))) if op.lower() == "del" else (NoteBank.Op.ADD, val)
+            assert len(t) == 2  or "nop" in t or "NOP" in t, "Error Parsing Tokens"
+        for token in tokens:
+            if "NOP" in token or "nop" in token:
+                yield (NoteBank.Op.NOP, "No Operation")
+            else:
+                # Determine and return operation
+                op, val = token
+                yield (NoteBank.Op.DEL, int(re.sub("[^\d]","", val))) if op.lower() == "del" else (NoteBank.Op.ADD, val)
     
     def __exec_op(self, op: 'NoteBank.Op', val: Union[int, str]) -> None:
         """
@@ -45,7 +50,6 @@ class NoteBank:
             assert isinstance(val, str), "Error: Could not process add on input {val}. Ensure this input is of type Str."
             self.__notes.append(val) # insert into notebank
 
-    @classmethod    
     def process_llm_action(self, llm_output:str) -> Tuple[bool, str]: 
         """
         This function will attempt to modify the data structure based on the Tutor's action. 
@@ -54,18 +58,20 @@ class NoteBank:
             - llm_output: (str) The Tutor's action represented in terms of a token-string
 
         Returns:
-            - True, \"\" iff the actions were successfully parsed
-            - False, error_str iff there was an error in the Parsing or Execution
+            - True, \"\", False iff the actions were successfully parsed
+            - False, error_str, False iff there was an error in the Parsing or Execution
+            - True, \"\", True to terminate on the Notebank.
         """
+        if "TERM" in llm_output: return True, "", True
         try:
             # Process inputs:
             operations = NoteBank.__extract_operation(llm_output=llm_output)
             # Iterate through operations:
             for operation in operations:
-                self.__exec_op(operation[0], operation[1]) # Executes operation for the tutor
-            return True, ""
+                self.__exec_op(op=operation[0], val=operation[1]) # Executes operation for the tutor
+            return True, "", False
         except Exception as e:
-            return False, str(e) # Output will be provided to the model in the case that there was an error; See (INSERT REFERENCE TO VOYAGER HERE)
+            return False, str(e), False # Output will be provided to the model in the case that there was an error; See (INSERT REFERENCE TO VOYAGER HERE)
 
     def env_string(self,):
         """
