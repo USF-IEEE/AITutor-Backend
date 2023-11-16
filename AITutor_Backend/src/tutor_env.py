@@ -1,63 +1,17 @@
 from enum import IntEnum
 from collections import deque
 from AITutor_Backend.src.TutorUtils.notebank import *
+from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 
 class TutorEnv(SQLSerializable,):
-    class ChatHistory(SQLSerializable,):
-        def __init__(self,):
-            super(TutorEnv.ChatHistory, self).__init__()
-            self.chat = deque(["AI Tutor:\nHey I am your AI Tutor. How can I help you today?",])
-        def hear(self, user_prompt,):
-            """Adds a User Chat to the history
-            
-            Args:
-                user_prompt (str)
-            """
-            if len(self.chat) > 10: self.chat.popleft()
-            self.chat.append(f"\nUser:\n{user_prompt}")
-            
-        def respond(self, tutor_response):
-            """Adds a Tutor Chat to the history
-            
-            Args:
-                tutor_response (str)
-            """
-            if len(self.chat) > 10: self.chat.popleft()
-            self.chat.append(f"\nAI Tutor:{tutor_response}")
-            
-        def env_string(self,):
-            """returns environment formatted string.
-
-            Returns:
-                str: environment formatted string of chat history
-            """
-            return "\n".join(self.chat)
-        @staticmethod
-        def from_sql(chat_history, ):
-            """Recreates a Chat History from an SQL value
-
-            Args:
-                chat_history (str): \'[SEP]\'  Serialized version of Chat History.
-            """
-            chat_ref = TutorEnv.ChatHistory()
-            chat_ref.chat = deque((chat_history.split("[SEP]")))
-            return chat_ref
-            
-        def to_sql(self,) -> str:
-            """Serializes a Chat History for SQL
-
-            Returns:
-                str: Chat History
-            """
-            return "[SEP]".join(list(self.chat))
-                    
-    class Executor(SQLSerializable,):
-        class States(IntEnum):
+    class States(IntEnum):
             PROMPTING=0
             TEACHING=1
             GUIDING=2
             TESTING=3
+    class Executor(SQLSerializable,):
+        
         
         def __init__(self, env:'TutorEnv', ):
             super(TutorEnv.Executor, self).__init__()
@@ -118,18 +72,18 @@ class TutorEnv(SQLSerializable,):
         super(TutorEnv, self).__init__()
         self.current_state = 0 # Prompt Start
         self.notebank = NoteBank()
-        self.chat_history = TutorEnv.ChatHistory()
+        self.chat_history = ChatHistory()
         self.concept_database = None
         self._has_concept_database = False
         self.States = [
-                self.__prompt_start, # Prompting States TODO: Change to be a Ptr to Prompter 
+                None,# Prompting States TODO: Change to be a Ptr to Prompter 
                 None, # Teaching States
                 None, # Guiding States
                 None  # Testing States
             ]
     
     def step(self, input_data):
-        pass
+        return {"error": "TODO: implement Logic"}, -1
         
     
     ## Data Functions:
@@ -143,7 +97,7 @@ class TutorEnv(SQLSerializable,):
         tutor_ref = TutorEnv()
         tutor_ref.current_state = current_state
         tutor_ref.notebank = NoteBank.from_sql(notebank_state)
-        tutor_ref.chat_history = TutorEnv.ChatHistory.from_sql(chat_history)
+        tutor_ref.chat_history = ChatHistory.from_sql(chat_history)
         return tutor_ref
             
     def to_sql(self,) -> str:

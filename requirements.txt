@@ -4,3 +4,4 @@ openai
 nltk
 numpy
 django
+django-cors-headers

@@ -164,8 +164,8 @@ class ConceptDatabase(SQLSerializable):
 class Concept:
     def __init__(self, name:str, latex:str):
          self.name = name
-         self.definition = None
-         self.refs = None
+         self.definition = ""
+         self.refs = []
          self.latex = latex if latex else ""
 
     def __repr__(self) -> str:

@@ -45,3 +45,9 @@ With the development of the Transformer architecture, Large Language Models (LLM
    a. Collect Expert exams relevant to a particular knowledge graph, such as a Calculus exam 1 in differentiation. Assert that the topics covered on the exam are relevant to the concept graph.
 2. Convert “Ground Truth” as a Vector Embedding \( y^* \), convert System output as Vector Embedding \( y' \).
 3. Measure Cosine-Similarity between the embeddings.
+
+### Observations during Research
+
+- Prompting: Enabling the MDP was not the challenging part, however getting the model to terminate was challenging. We found that the model likes the idea of continuing the process for as long as possible. 
+
+- Agent Ability: GPT-3.5-turbo performed poorly on many agent taks, while GPT-4 was able to fulfil it's role almost in every situation without struggling to output correctly.

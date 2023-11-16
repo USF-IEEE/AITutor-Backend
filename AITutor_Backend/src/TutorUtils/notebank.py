@@ -77,7 +77,7 @@ class NoteBank:
         return len(self.__notes)
     
     def to_sql(self,):
-        return ["\n".join(self.__notes)]
+        return "\n".join(self.__notes)
     
     @staticmethod
     def from_sql(sql_data):
