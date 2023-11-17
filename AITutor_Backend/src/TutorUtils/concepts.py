@@ -6,7 +6,6 @@ import openai
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 # openai.api_key = os.getenv("OPENAI_API_KEY")
-openai_api_key = "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"
 os.environ["OPENAI_API_KEY"] = openai_api_key
 
 class ConceptDatabase(SQLSerializable):

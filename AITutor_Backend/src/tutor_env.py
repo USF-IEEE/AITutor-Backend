@@ -20,23 +20,7 @@ class TutorEnv(SQLSerializable,):
             self.__mouth = None # TODO: Add 
             self.__brain = None # TODO: Add LLM API Reference
             
-        def _load_prompt(self, prompt_file, *kwargs):
-            # Open File:
-            with open(prompt_file, 'r') as f:
-                prompt_string = f.read()
-
-            # Replace Values in Prompt:
-            for k, v in kwargs.items():
-                prompt_string = self.prompt_string.replace(k, v)
-
-            # Return Prompt:
-            return prompt_string
         
-        def __prompt_reflect(self, prompt):
-            chat_history = self.chat_history.env_string()
-            notebank_state = self.notebank.env_string()
-            
-            
         def process_action(self, user_input):
             """Processes user input and returns new state and Tutor Actions
 
@@ -50,7 +34,7 @@ class TutorEnv(SQLSerializable,):
             if user_input.get("is_audio", False): # User Data is Audio
                 pass
                 # TODO: user_input["user_prompt"] = self.__ears.hear(user_input["user_prompt"]) 
-                
+            
             user_prompt = user_input["user_prompt"]
             # TODO: Do processing
             self.env.chat_history.hear(user_prompt)
@@ -65,8 +49,8 @@ class TutorEnv(SQLSerializable,):
             - chat history
             - executor
             - concept database
-            - Slide Planner
-            - Question Suite
+            - Slide Planner TODO: implement
+            - Question Suite TODO: implement
             
         """
         super(TutorEnv, self).__init__()

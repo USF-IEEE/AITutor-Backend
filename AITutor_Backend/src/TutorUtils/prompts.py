@@ -1,6 +1,122 @@
 import re
+import os
+import openai
 from enum import IntEnum
+from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
+from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
+
+openai_api_key = "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"
+os.environ["OPENAI_API_KEY"] = openai_api_key
+
+class Prompter:
+    class PrompterLLMAPI:
+        CURR_ENV_NOTEBANK_DELIMITER = "$NOTEBANK.STATE$" #Environment for the notebankd
+        CURR_ENV_CHAT_HISTORY_DELIMITER = "$CHAT_HISTORY$" #Environment for the chat history 
+        QUESTION_COUNTER_DELIMITER = "$NUM_QUESTIONS$"
+        CURR_ERROR_DELIMITER = "$CURR_ENV.ERROR$"
+
+        def __init__(self, ):
+            self.client = openai.OpenAI()
+        
+        def request_output_from_llm(self, prompt, model: str):
+            """Requests the Concept information from an LLM.
+
+            Args:
+                prompt: (str) - string to get passed to the model
+                model: (str) - 
+
+            Returns:
+                _type_: _description_
+            """
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": prompt,
+                    },
+                    {
+                    "role": "user",
+                    "content": "Please carry out whatever task the system is asking you to do, as the AI Tutor our student's education relies it."
+                    }
+                ],
+                temperature=1,
+                max_tokens=3000,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                
+            )
+
+            return response.choices[0].message.content
+
+        def _load_prompt(self, prompt_template, state_dict):
+            prompt_string = prompt_template
+            # Replace Values in Prompt:
+            for k, v in state_dict.items():
+                prompt_string = prompt_string.replace(k, v)
+
+            # Return Prompt:
+            return prompt_string
+
+
+    def __init__(self, question_prompt_file, notebank_prompt_file, notebank:NoteBank, chat_history:ChatHistory, debug=False):
+        self.llm_api = self.PrompterLLMAPI() 
+        self.notebank = notebank
+        self.chat_history = chat_history
+        self.__questions_asked = 0
+        with open(question_prompt_file, "r", encoding="utf-8") as f:
+            self.__question_prompt_template = "\n".join(f.readlines())
+
+        with open(notebank_prompt_file, "r", encoding="utf-8") as f:
+            self.__notebank_prompt_template = "\n".join(f.readlines())
+        
+    def perform_notebank(self, ):
+        """
+        Get Notebank Action from a LLM
+        """
+        error = "There is no current error."
+        while True:
+            prompt = self.llm_api._load_prompt(self.__notebank_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error},) 
+            llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-4")
+            success, error, terminate = self.notebank.process_llm_action(llm_output)
+            if success or terminate: break
+        return terminate
+
+    def get_prompting(self, ):
+        """
+        Get Prompt Question from a LLM
+        """  
+        error = "There is no current error."      
+        while True:
+            try:
+                prompt = self.llm_api._load_prompt(self.__question_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(),  Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error})
+                llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-4")
+                action = PromptAction.parse_llm_action(llm_output)
+                assert isinstance(action._type, PromptAction.Type), "Error while Creating the Prompt."
+                assert action._data, "Error while parsing the data for the Prompt."
+                break
+            except Exception as e:
+                error = "There was an error while trying to parse the Prompt: " + str(e)
+        # Return the PromptAction parsed from the LLM:
+        self.__questions_asked += 1
+        return action
+    
+    
+    def perform_tutor(self, student_input:str):
+        self.chat_history.hear(student_input) # DEBUGONLY: Remove this to include in TutorEnv
+        # Construct the notebank:
+        terminate = self.perform_notebank()
+        # Construct the prompting:
+        llm_prompt = None
+        if not terminate: 
+            llm_prompt = self.get_prompting()
+            self.chat_history.respond(llm_prompt._data) # DEBUGONLY: Remove this to include in TutorEnv
+            terminate = llm_prompt._type == PromptAction.Type.TERMINATE
+            print('\n', llm_prompt._type)
+        return llm_prompt, terminate
+
 
 class PromptAction(JSONSerializable,):
     class Type(IntEnum):
@@ -21,7 +137,6 @@ class PromptAction(JSONSerializable,):
         - question: STR
         """
         return {"type":int(self._type), "question":self._data}
-    
 
     @staticmethod
     def parse_llm_action(llm_output:str,) -> 'PromptAction':
@@ -31,7 +146,7 @@ class PromptAction(JSONSerializable,):
         # Extract the Prompt Type & Data from the LLM Ouput:
         prompt_data = regex_match[0]
         # Detect if Termination Case:
-        if len(prompt_data) == 3 and "[TERM]" in prompt_data[2]: return PromptAction("", PromptAction.Type.TERMINATE)
+        if len(prompt_data) == 3 and "[TERM]" in prompt_data[2]: return PromptAction("[TERM]", PromptAction.Type.TERMINATE)
         # Handle Prompt Action:
         p_type, prompt, _ = regex_match[0]
         p_type, prompt = p_type.strip().lower(), prompt.strip()
@@ -40,3 +155,4 @@ class PromptAction(JSONSerializable,):
         assert isinstance(p_type, PromptAction.Type), "Error: Could not parse LLM for Prompt Action Type."
         assert prompt, "Error: Could not parse LLM for Prompt Action data."
         return PromptAction(prompt, p_type)
+
