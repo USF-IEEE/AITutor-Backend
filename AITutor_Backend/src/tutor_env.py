@@ -3,7 +3,8 @@ from collections import deque
 from AITutor_Backend.src.TutorUtils.notebank import *
 from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
-
+from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
+from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
             PROMPTING=0
@@ -37,9 +38,29 @@ class TutorEnv(SQLSerializable,):
             
             user_prompt = user_input["user_prompt"]
             # TODO: Do processing
-            self.env.chat_history.hear(user_prompt)
-            self.States[self.env.current_state](user_input)
             
+            if self.env.current_state == int(TutorEnv.States.PROMPTING):
+                prompt_obj, terminate = self.env.prompter.perform_tutor(user_prompt)
+                if terminate:
+                    for note in self.env.notebank.get_notes():
+                        if "main concept:" in note.lower():
+                            note = note[note.lower().index("main concept:"):].strip()
+                            main_concept = note
+                            break
+                    # Check if main concept found
+                    if not main_concept:
+                        pass # TODO: ask GPT to return the main concept
+                    # Generate Concept Database
+                    self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    # Generate Slide Planner
+                    # TODO: Generate Slide Planner
+                    
+                    # Generate Question Suite:
+                    # TODO: Generate question suite
+                    
+                    # Transition
+                    self.env.current_state = int(TutorEnv.States.TEACHING)
+                return prompt_obj.format_json() # TODO: fix for 
             
     def __init__(self,):
         """ Creates base TutorEnv
@@ -54,11 +75,13 @@ class TutorEnv(SQLSerializable,):
             
         """
         super(TutorEnv, self).__init__()
-        self.current_state = 0 # Prompt Start
+        self.current_state = int(TutorEnv.States.PROMPTING) # Prompt Start
         self.notebank = NoteBank()
         self.chat_history = ChatHistory()
+        self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/notebank_prompt", self.notebank, self.chat_history)
         self.concept_database = None
         self._has_concept_database = False
+        self.executor = TutorEnv.Executor(self,)
         self.States = [
                 None,# Prompting States TODO: Change to be a Ptr to Prompter 
                 None, # Teaching States
@@ -67,7 +90,7 @@ class TutorEnv(SQLSerializable,):
             ]
     
     def step(self, input_data):
-        return {"error": "TODO: implement Logic"}, -1
+        return self.executor.process_action(input_data), self.current_state
         
     
     ## Data Functions:

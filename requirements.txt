@@ -5,3 +5,8 @@ nltk
 numpy
 django
 django-cors-headers
+certifi
+replicate
+langchain
+tiktoken
+torch

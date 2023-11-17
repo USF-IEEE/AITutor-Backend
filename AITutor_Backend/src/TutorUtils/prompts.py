@@ -6,8 +6,7 @@ from AITutor_Backend.src.TutorUtils.notebank import NoteBank
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
 
-openai_api_key = "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"
-os.environ["OPENAI_API_KEY"] = openai_api_key
+# os.environ["OPENAI_API_KEY"] = openai_api_key
 
 class Prompter:
     class PrompterLLMAPI:

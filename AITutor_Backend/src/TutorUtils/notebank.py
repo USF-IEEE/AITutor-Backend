@@ -83,6 +83,9 @@ class NoteBank:
         """Returns size of the Notebank"""
         return len(self.__notes)
     
+    def get_notes(self,) ->List[str]:
+        return self.__notes.copy()
+    
     def to_sql(self,):
         return "\n".join(self.__notes)
     

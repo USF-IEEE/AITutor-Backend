@@ -3,10 +3,13 @@ import re
 import yaml
 import os
 import openai
+
+from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
-# openai.api_key = os.getenv("OPENAI_API_KEY")
-os.environ["OPENAI_API_KEY"] = openai_api_key
+
+USE_OPENAI = True
+
 
 class ConceptDatabase(SQLSerializable):
     class ConceptLLMAPI:
@@ -21,7 +24,7 @@ class ConceptDatabase(SQLSerializable):
             with open(prompt_file, "r", encoding="utf-8") as f:
                 self.__prompt_template = "\n".join(f.readlines())
             
-            self.client = openai.OpenAI()
+            self.client = openai.OpenAI() if USE_OPENAI else ReplicateAPI()
             
         def __get_prompt(self, tutor_plan, main_concept, concept_list, concept_name, error_msg):
             prompt = self.__prompt_template
@@ -39,30 +42,31 @@ class ConceptDatabase(SQLSerializable):
             Returns:
                 str: LLM Output containing Concept Data
             """
-            
-            # model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
-            model = "gpt-4"
             prompt = self.__get_prompt(self.__tutor_plan, env_main_concept, env_concept_list, concept_name, error_msg)
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": prompt,
-                    },
-                    {
-                    "role": "user",
-                    "content": "Please carry out whatever task the system is asking you to do, as the AI Tutor our student's education relies it."
-                    }
-                ],
-                temperature=1,
-                max_tokens=3000,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-            )
+                
+            # model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
+            if USE_OPENAI:
+                # model = "gpt-4"
+                model = "gpt-3.5-turbo-16k"
+                response = self.client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": prompt,
+                        },
+                    ],
+                    temperature=0.75,
+                    max_tokens=3000,
+                    top_p=0.9,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                )
 
-            return response.choices[0].message.content
+                return response.choices[0].message.content
+            else:
+                return self.client.get_output(prompt, " ")
+        
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
     def __init__(self, main_concept:str, tutor_plan:str = "", generation=True):

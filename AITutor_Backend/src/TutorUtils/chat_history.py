@@ -12,8 +12,8 @@ class ChatHistory(SQLSerializable, JSONSerializable):
             Args:
                 user_prompt (str)
             """
-            if len(self.chat) > 10: self.chat.popleft()
-            self.chat.append(f"\nUser:\n{user_prompt}")
+            # if len(self.chat) > 10: self.chat.popleft()
+            self.chat.append(f"\Student:\n{user_prompt}")
             
         def respond(self, tutor_response):
             """Adds a Tutor Chat to the history
