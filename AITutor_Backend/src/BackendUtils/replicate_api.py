@@ -10,7 +10,7 @@ class ReplicateAPI:
     def __init__(self,):
         pass
     def get_output(self, system_prompt, instruction):
-        output = replicate.run("meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+        output = replicate.run("meta/codellama-34b:efbd2ef6feefb242f359030fa6fe08ce32bfced18f3868b2915db41d41251b46",
         input={
             "debug": False,
             "top_k": 25,
@@ -22,5 +22,5 @@ class ReplicateAPI:
             "min_new_tokens": -1
         }
         )
-        return output
+        return "".join(output)
 

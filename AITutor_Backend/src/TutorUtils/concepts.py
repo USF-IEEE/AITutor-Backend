@@ -46,8 +46,8 @@ class ConceptDatabase(SQLSerializable):
                 
             # model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
             if USE_OPENAI:
-                # model = "gpt-4"
-                model = "gpt-3.5-turbo-16k"
+                model = "gpt-4"
+                # model = "gpt-3.5-turbo-16k"
                 response = self.client.chat.completions.create(
                     model=model,
                     messages=[
@@ -56,7 +56,7 @@ class ConceptDatabase(SQLSerializable):
                             "content": prompt,
                         },
                     ],
-                    temperature=0.75,
+                    temperature=0.9,
                     max_tokens=3000,
                     top_p=0.9,
                     frequency_penalty=0,

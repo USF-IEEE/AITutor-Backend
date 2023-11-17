@@ -56,43 +56,34 @@ class NotebankTests(unittest.TestCase):
 # This concept graph provides a structured learning path for the user to understand and learn about the desired topics in data structures and algorithms.
 # """
 #         cd = ConceptDatabase("Data Structures and Algorithms", ds_alg_notes)
-#         assert len(cd.Concepts) > 5, "Did not map correctly."
-          calc_notes = """Main Concept: Calculus 2
-
-Subconcept: Review of Calculus 1 Concepts
-
-Subconcept: Limits and Continuity
-Subconcept: Derivatives
-Subconcept: Integration
-Subconcept: Techniques of Integration
-
-Subconcept: Integration by Parts
-Subconcept: Trigonometric Integrals
-Subconcept: Trigonometric Substitution
-Subconcept: Partial Fractions
-Subconcept: Numerical Integration Methods
-Subconcept: Applications of Integration
-
-Subconcept: Area between Curves
-Subconcept: Volumes of Solids of Revolution
-Subconcept: Arc Length and Surface Area
-Subconcept: Applications in Physics and Engineering
-Subconcept: Sequences and Series
-
-Subconcept: Convergence and Divergence Tests
-Subconcept: Power Series
-Subconcept: Taylor and Maclaurin Series
-Subconcept: Applications of Series
-Subconcept: Parametric Equations and Polar Coordinates
-
-Subconcept: Parametric Curves
-Subconcept: Calculus with Parametric Equations
-Subconcept: Polar Coordinates
-Subconcept: Calculus in Polar Coordinates
-Subconcept: Differential Equations
-
-Subconcept: First-Order Differential Equations
-Subconcept: Applications of Differential Equations
-This structured learning path is designed to guide you through the core concepts of Calculus 2. Starting with a review of Calculus 1 will reinforce foundational knowledge. Techniques of Integration are crucial for solving complex integrals, which are frequently encountered in Calculus 2. The Applications of Integration section connects abstract calculus concepts to real-world problems. Sequences and Series introduce the concept of convergence and provide tools for function approximation. Parametric Equations and Polar Coordinates expand the dimension of calculus beyond the standard Cartesian coordinates. Lastly, a basic understanding of Differential Equations ties together many concepts learned in Calculus 2 and sets the stage for more advanced studies in mathematics, physics, and engineering."""
-          cd = ConceptDatabase("Calculus 2", calc_notes)
-          assert len(cd.Concepts) > 5, "Did not map correctly."          
+#         assert len(cd.Concepts) > 5, "Did not map correctly."       
+            sql_notes = """[0]: Main Concept: SQL
+[1]: Student wants to learn about how SQL works.
+[2]: Subconcept: Understanding Databases
+[3]: Subconcept: SQL Syntax
+[4]: Subconcept: DDL (Data Definition Language) Commands
+[5]: Subconcept: DML (Data Manipulation Language) Commands
+[6]: Subconcept: DCL (Data Control Language) Commands
+[7]: Subconcept: SQL Joins
+[8]: Subconcept: SQL Functions
+[9]: Subconcept: SQL Views
+[10]: Subconcept: SQL Constraints
+[11]: Subconcept: SQL Indexes
+[12]: Subconcept: SQL Sequences
+[13]: "What aspects of SQL does the student specifically want to learn more about?"
+[14]: "Does the student have any prior knowledge about SQL or databases?"
+[15]: Student's current understanding level of SQL is 3/5.
+[16]: "Student is interested in learning about Entity Relationship databases in SQL."
+[17]: Subconcept: Entity Relationship Databases in SQL
+[18]: "Does the student have any prior experience with Entity Relationship Databases?"
+[19]: User is planning to create a web application with a state system.
+[20]: "What experience does the student have in developing web applications?"
+[21]: Subconcept: Web Applications and SQL
+[22]: "Student is planning to work with SQLAlchemy and Django"      
+[23]: "Student aims to build a complex database application"        
+[24]: Subconcept: Using SQLAlchemy with Django
+[25]: "Prior experience with Django or SQLAlchemy?"
+[26]: "Preferable: a session focusing on integrating SQLAlchemy with Django"
+[27]: "Does the student prefer a more hands-on, project-based approach to the learning process?"""
+            cd = ConceptDatabase("SQL", sql_notes)    
+            assert len(cd.Concepts) > 5, "Did not map correctly."

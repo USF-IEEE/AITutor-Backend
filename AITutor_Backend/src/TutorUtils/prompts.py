@@ -1,12 +1,13 @@
 import re
 import os
 import openai
+from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from enum import IntEnum
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
 
-# os.environ["OPENAI_API_KEY"] = openai_api_key
+USE_OPENAI = True
 
 class Prompter:
     class PrompterLLMAPI:
@@ -16,7 +17,7 @@ class Prompter:
         CURR_ERROR_DELIMITER = "$CURR_ENV.ERROR$"
 
         def __init__(self, ):
-            self.client = openai.OpenAI()
+            self.client = openai.OpenAI() if USE_OPENAI else ReplicateAPI()
         
         def request_output_from_llm(self, prompt, model: str):
             """Requests the Concept information from an LLM.
@@ -28,28 +29,26 @@ class Prompter:
             Returns:
                 _type_: _description_
             """
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": prompt,
-                    },
-                    {
-                    "role": "user",
-                    "content": "Please carry out whatever task the system is asking you to do, as the AI Tutor our student's education relies it."
-                    }
-                ],
-                temperature=1,
-                max_tokens=3000,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-                
-            )
+            if USE_OPENAI:
+                response = self.client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": prompt,
+                        },
+                    ],
+                    temperature=1,
+                    max_tokens=3000,
+                    top_p=1,
+                    frequency_penalty=0,
+                    presence_penalty=0,
 
-            return response.choices[0].message.content
+                )
 
+                return response.choices[0].message.content
+            else:
+                return self.client.get_output(prompt, " ")
         def _load_prompt(self, prompt_template, state_dict):
             prompt_string = prompt_template
             # Replace Values in Prompt:
@@ -113,7 +112,6 @@ class Prompter:
             llm_prompt = self.get_prompting()
             self.chat_history.respond(llm_prompt._data) # DEBUGONLY: Remove this to include in TutorEnv
             terminate = llm_prompt._type == PromptAction.Type.TERMINATE
-            print('\n', llm_prompt._type)
         return llm_prompt, terminate
 
 
