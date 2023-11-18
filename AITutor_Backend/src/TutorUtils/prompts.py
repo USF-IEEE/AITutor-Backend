@@ -6,7 +6,7 @@ from enum import IntEnum
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
-
+import json
 USE_OPENAI = True
 
 class Prompter:
@@ -121,11 +121,11 @@ class PromptAction(JSONSerializable,):
         TEXT=1
         RATING=2
         TERMINATE=-1
-    __QUESTION_REGEX = re.compile(r'\`\`\`([Tt]ext|[Ff]ile|[Rr]ating)[Pp]rompt([^\`]*)\`\`\`|(\[TERM\])') # Matches any Prompt String
-    def __init__(self, question:str, type):
-        super(PromptAction, self).__init__()
+    __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
+    
+    def __init__(self, prompt: str, type: 'PromptAction.Type'):
         self._type = type
-        self._data = question
+        self._data = prompt
 
     def format_json(self):
         """
@@ -134,22 +134,35 @@ class PromptAction(JSONSerializable,):
         - question: STR
         """
         return {"type":int(self._type), "question":self._data}
-
+    
     @staticmethod
-    def parse_llm_action(llm_output:str,) -> 'PromptAction':
-        """Given LLM Output; parse for formattable Prompt Type and Question"""
+    def parse_llm_action(llm_output: str) -> 'PromptAction':
+        """
+        Given LLM Output; parse for formattable Prompt Type and Question
+        """
         regex_match = PromptAction.__QUESTION_REGEX.findall(llm_output)
-        assert regex_match, f"Error parsing LLM Output for Prompt:\n {llm_output}"
-        # Extract the Prompt Type & Data from the LLM Ouput:
-        prompt_data = regex_match[0]
-        # Detect if Termination Case:
-        if len(prompt_data) == 3 and "[TERM]" in prompt_data[2]: return PromptAction("[TERM]", PromptAction.Type.TERMINATE)
-        # Handle Prompt Action:
-        p_type, prompt, _ = regex_match[0]
-        p_type, prompt = p_type.strip().lower(), prompt.strip()
-        # Get prompt type
-        p_type = {"file": PromptAction.Type.FILE, "rating": PromptAction.Type.RATING, "text": PromptAction.Type.TEXT}.get(p_type, None)
-        assert isinstance(p_type, PromptAction.Type), "Error: Could not parse LLM for Prompt Action Type."
-        assert prompt, "Error: Could not parse LLM for Prompt Action data."
-        return PromptAction(prompt, p_type)
+        # Try to get json format or attempt to use output as json
+        if regex_match:
+            regex_match = regex_match[0].replace("```json", "").replace("```", "").strip()
+        prompt_data = regex_match if regex_match else llm_output
+        try:
+            action_data = json.loads(prompt_data)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Error parsing JSON on output: {llm_output},  error: {str(e)}")
 
+        action_type = action_data.get("type").lower()
+        prompt = action_data.get("prompt")
+
+        # Map the action type to the corresponding Type enum
+        type_map = {
+            "file": PromptAction.Type.FILE,
+            "text": PromptAction.Type.TEXT,
+            "rating": PromptAction.Type.RATING,
+            "terminate": PromptAction.Type.TERMINATE
+        }
+
+        p_type = type_map.get(action_type, None)
+        assert p_type is not None, "Error: Unknown action type."
+        assert prompt, "Error: Prompt text is missing."
+
+        return PromptAction(prompt, p_type)

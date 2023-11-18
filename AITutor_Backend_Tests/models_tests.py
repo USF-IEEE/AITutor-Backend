@@ -13,7 +13,7 @@ class DatabaseManagerTestCase(TestCase):
         # Assertions to verify the state of db_monitor after loading
         self.assertIsNotNone(self.db_manager.tutor_env, "Error creating the tutorenv model")
         assert self.db_manager.tutor_env.notebank is not None, "Error creating the notebank model"
-        self.db_manager.tutor_env.notebank.process_tutor_action("""```notebank\nADD Updated test notes\n```""")
+        self.db_manager.tutor_env.notebank.process_llm_action("""```json\n[{"action": "add", "note": "Updated test notes"}]```""")
         assert self.db_manager.tutor_env.chat_history is not None, "Error creating the chathistory model"
         self.db_manager.tutor_env.chat_history.hear("test user input")
         self.db_manager.tutor_env.chat_history.respond("test user output")
@@ -33,7 +33,7 @@ class DatabaseManagerTestCase(TestCase):
         self.assertIsNotNone(self.db_manager.tutor_env, "Error reloading the tutorenv model")
         # Test the load_tutor_env method
         assert self.db_manager.tutor_env.notebank is not None, "Error reloading the notebank model"
-        self.db_manager.tutor_env.notebank.process_tutor_action("""```notebank\nADD Updated test notes again\n```""")
+        self.db_manager.tutor_env.notebank.process_llm_action("""```json\n[{"action": "add", "note": "Updated test notes again"}]```""")
         assert self.db_manager.tutor_env.chat_history is not None, "Error reloading the chathistory model"
         self.db_manager.tutor_env.chat_history.hear("test user input more")
         self.db_manager.tutor_env.chat_history.respond("test user output more")

@@ -1,13 +1,15 @@
 from typing import Tuple, Union, List
 from enum import IntEnum
+import json
 import re
 
 class NoteBank:
-    __NOTEBANK_REGEX = re.compile(r'\`\`\`notebank([^\`]*)\`\`\`')
+    __NOTEBANK_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
     class Op(IntEnum):
         ADD=0
         DEL=1
         NOP=2
+        TERMINATE=3
     def __init__(self,):
         self.__notes = []
 
@@ -17,27 +19,28 @@ class NoteBank:
         Extracts an operation from an LLM Output containing 
         """
 
-        regex_match = NoteBank.__NOTEBANK_REGEX.findall(llm_output)
-        assert regex_match, f"Error parsing LLM Output for NoteBank Operation, ensure your outputs were in the correct format specified above: {llm_output}"
+        regex_match = NoteBank.__NOTEBANK_REGEX.findall(llm_output)        
         # Format the regex match to a parsable string
-        regex_match = regex_match[0].replace("```notebank", "").replace("```", "").strip() 
-        # Extract the Operation data from the LLM Ouput
-        #   1. Extract tokens and Validate Input, 
-        #   2. decide operation and data
+        if regex_match:
+            regex_match = regex_match[0].replace("```json", "").replace("```", "").strip()
+        prompt_data = regex_match if regex_match else llm_output
         try:
-            tokens = [t_set.replace(" ", "$$", 1).split("$$") for t_set in regex_match.split("\n")] # Replace first \sp with a token for splitting on.
-        except Exception as e:
-            raise Exception(f"Error: Could not parse Tokens, {str(e)}")
-        # Assert our tokens have been parsed correctly
-        for t in tokens:
-            assert len(t) == 2  or "nop" in t or "NOP" in t, "Error Parsing Tokens"
-        for token in tokens:
-            if "NOP" in token or "nop" in token:
+            actions = json.loads(prompt_data)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Error parsing JSON: {str(e)}")
+
+        for action in actions:
+            action_type = action.get("action").lower()
+            if action_type == "add":
+                yield (NoteBank.Op.ADD, action["note"])
+            elif action_type == "del":
+                yield (NoteBank.Op.DEL, action["index"])
+            elif action_type == "nop":
                 yield (NoteBank.Op.NOP, "No Operation")
+            elif action_type == "terminate":
+                yield (NoteBank.Op.TERMINATE, "Terminate")
             else:
-                # Determine and return operation
-                op, val = token
-                yield (NoteBank.Op.DEL, int(re.sub("[^\d]","", val))) if op.lower() == "del" else (NoteBank.Op.ADD, val)
+                raise ValueError(f"Unknown action type: {action_type}")
     
     def __exec_op(self, op: 'NoteBank.Op', val: Union[int, str]) -> None:
         """
@@ -50,7 +53,7 @@ class NoteBank:
             assert isinstance(val, str), "Error: Could not process add on input {val}. Ensure this input is of type Str."
             self.__notes.append(val) # insert into notebank
 
-    def process_llm_action(self, llm_output:str) -> Tuple[bool, str]: 
+    def process_llm_action(self, llm_output:str) -> Tuple[bool, str, bool]: 
         """
         This function will attempt to modify the data structure based on the Tutor's action. 
         
@@ -62,14 +65,15 @@ class NoteBank:
             - False, error_str, False iff there was an error in the Parsing or Execution
             - True, \"\", True to terminate on the Notebank.
         """
-        if "TERM" in llm_output: return True, "", True
+        terminate = False
         try:
             # Process inputs:
             operations = NoteBank.__extract_operation(llm_output=llm_output)
             # Iterate through operations:
             for operation in operations:
+                if operation[0] == NoteBank.Op.TERMINATE: terminate = True
                 self.__exec_op(op=operation[0], val=operation[1]) # Executes operation for the tutor
-            return True, "", False
+            return True, "", terminate
         except Exception as e:
             return False, str(e), False # Output will be provided to the model in the case that there was an error; See (INSERT REFERENCE TO VOYAGER HERE)
 
@@ -77,7 +81,7 @@ class NoteBank:
         """
         Returns Environment Observation String which the model will use for prediction.
         """
-        return "\n".join([f"[{i}]: {val}" for i, val in enumerate(self.__notes)]) if self.__notes else "Notebank is Empty."
+        return "{\"Notebank\": [" + "\n".join(["{" + f"\"index\": {i}, \"note\": \"{val}\""+ "}" for i, val in enumerate(self.__notes)]) + "]}" if self.__notes else "// the Notebank is Empty."
     
     def size(self,) -> int:
         """Returns size of the Notebank"""

@@ -80,8 +80,9 @@ class ConceptDatabase(SQLSerializable):
         return "\n".join([f"\t- \"{concept.name}\"" for concept in self.Concepts],) if self.Concepts else "The Concept List is Empty."
     
     def get_concept(self, concept_name:str): # We use edit distance of 4 as a max
-        concept = [concept for concept in self.Concepts if edit_distance(concept_name.lower(), concept.name.lower()) < 4]
-        return concept[0] if concept else None
+        concept = [(edit_distance(concept_name.lower(), concept.name.lower()), concept) for concept in self.Concepts if edit_distance(concept_name.lower(), concept.name.lower()) < 4]
+        if concept: concept.sort(key=lambda x: x[0])# Get the best match
+        return concept[0][1] if concept else None
     
     def generate_concept(self, concept_name, max_depth=4):
         """
