@@ -81,7 +81,7 @@ class NoteBank:
         """
         Returns Environment Observation String which the model will use for prediction.
         """
-        return "{\"Notebank\": [" + "\n".join(["{" + f"\"index\": {i}, \"note\": \"{val}\""+ "}" for i, val in enumerate(self.__notes)]) + "]}" if self.__notes else "// the Notebank is Empty."
+        return "{\"Notebank\": [" + "\n".join(["{" + f"\"index\": {i}, \"note\": \"{val}\""+ "}," for i, val in enumerate(self.__notes)]) + "]}" if self.__notes else "// the Notebank is Empty."
     
     def size(self,) -> int:
         """Returns size of the Notebank"""
