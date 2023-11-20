@@ -77,15 +77,15 @@ class Question:
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
     
     def Subject(IntEnum):
-        MATH=0
-        CODE=1
-        LITERATURE=2
-        CONCEPTUAL=3
+        MATH=0 # Requires latex_code
+        CODE=1 # Requires test_cases
+        LITERATURE=2 # Requires passage
+        CONCEPTUAL=3 # 
         
     def Type(IntEnum):
         TEXT_ENTRY=0 # Requires Rubric
         MULTIPLE_CHOICE=1 # Requires Correct Answer
-        MATH_ENTRY=2 # Requires Calculator 
+        CALCULATION_ENTRY=2 # Requires calculation_script 
         CODE_ENTRY=3 # Requires Code Executor
     
     def __init__(self, q_subject: 'Question.Subject', q_type: 'Question.Type', question_data:dict, concepts):
@@ -93,31 +93,32 @@ class Question:
             Defined Data Fields
             
             - Math:
-              - question_data "str"
+              - data "str" (about a math question)
               - latex_code "render code for question (str)"
-              - entry_1 (Multiple Choice)
+              - entry_1 (Multiple Choice) # if multiple choice
               - entry_2 (Multiple Choice)
               ...
               
             - Code:
-              - question_data "str"
+              - data "str" (about a coding question)
               - test_cases "str" # Assert Final print is True
               
             - Literature:
-              - question_data (about a passage of text)
+              - data (about a passage of text)
               - reading_passage "str"
-              - rubric "(str) Grading rubric"
+              - rubric "(str) Grading rubric" # if TEXT_ENTRY
               - entry_1 # if multiple choice
               - entry_2
               ...
+              - correct_entry # if multiple choice
             
             - Conceptual:
               - Question
-              - rubric "(str) Grading rubric"
+              - rubric "(str) Grading rubric" # if TEXT_ENTRY
               - entry_1 # if multiple choice
               - entry_2
               ...
-              
+              - correct_entry # if multiple choice
             
          """
          self.subject = q_subject
@@ -145,8 +146,14 @@ class Question:
         except json.JSONDecodeError as e:
             raise ValueError(f"Error parsing JSON on output: {llm_output},  error: {str(e)}")
 
-        q_subject = question_data['subject']
-        q_type = question_data['type']
+        q_subject = question_data.get('subject', None)
+        q_type = question_data.get('type', None)
+        q_concepts = question_data.get("concepts", None)
+        q_data = question_data.get("data", None)
+        assert q_subject, f"Error while determining Question's subject field, ensure your output for parameter \"subject\" was of type int and also included in your output. Ouput: {llm_output}"
+        assert q_type, f"Error while determining Question's type field, ensure your output for parameter \"type\" was of type int and also included in your output. Ouput: {llm_output}"
+        assert q_concepts, f"Error while determining Question's concepts field, ensure your output for parameter \"concepts\" was of type list[str] and also included in your output. Ouput: {llm_output}"
+        assert q_data, f"Error while determining Question's data field, ensure your output for parameter \"data\" was of type str and also included in your output. Ouput: {llm_output}"
         try:
             q_subject = Question.Subject(q_subject)
         except ValueError:
@@ -155,16 +162,47 @@ class Question:
             q_type = Question.Type(q_type)
         except ValueError:
             raise Exception(f"Error while determining Question's Type, ensure your input was of type int and is a proper enum value. Ouput: {llm_output}")
+        try:
+            q_concepts = [concept for concept in map(concepts, ConceptDatabase.get_concept) if concept is not None]
+        except:
+            raise Exception(f"Error while determining Question's Concept Mappings, ensure your output for parameter \"concepts\" was of type List[str] and the concepts exist in the database. Ouput: {llm_output}")
         
         q_data = {k:v for k, v in question_data.items() if k not in ('subject', 'type')}
+        
+        # Type Based Assertions
         if q_type == Question.Type.MULTIPLE_CHOICE:
             assert len([k for k in q_data.keys() if "entry" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
-        
-        
-        concepts = concepts
-        student_response = None
-        
+            assert q_data.get("correct_entry", None), "Error in creating Multiple Choice Question: did not provide correct_entry field (the correct answer choice)"
+            
+        elif q_type == Question.Type.TEXT_ENTRY:
+            assert "rubric" in q_data, "Error in creating Text Entry Question: Rubric is required."
 
+        elif q_type == Question.Type.CALCULATION_ENTRY:
+            assert "calculation_script" in q_data, f"Error in creating Math Entry Question: calculation_script for computing the value of the question is missing. Output: {llm_output}"
+
+        elif q_type == Question.Type.CODE_ENTRY:
+            assert "test_cases_script" in q_data, f"Error in creating Code Entry Question: Test cases script was not provided. Output: {llm_output}"
+            # Note: Code Executor is a parameter attached to the program regardless. 
+        
+        
+        ### Subject Based Assertions
+        if q_subject == Question.Subject.LITERATURE:
+           assert "reading_passage" in q_data, f"Error in creating Literature Question: \"reading_passage\" parameter was not provided. Output: {llm_output}"
+        
+        elif q_type == Question.Suject.MATH:
+            assert "latex_code" in q_data, f"Error in creating Math Question: \"calculation_script\" parameter for computing the value of the question is missing. Output: {llm_output}"
+            
+        # Code Questions taken care of by code entry
+        # Conceptual Questions do not require any additional checks, as they are topic related questions that are either open-ended or multiple choice. The TEXT ENTRY checks and the MULTIPLE_CHOICE checks already assure this to be the case.
+        
+    
+    def evaluate_user_input(self, user_input):
+        """Based on the user_input, evaluate the question and return a value between [0-5].
+
+        Args:
+            user_input (str): 
+        """
+        pass 
         
     
     def to_sql(self,) -> Tuple[str, str, str]:
@@ -173,5 +211,3 @@ class Question:
         Returns:
             Tuple[str, str, str]: (concept_name, concept_def, concept_latex) 
         """
-        
-    

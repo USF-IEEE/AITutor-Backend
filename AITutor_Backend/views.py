@@ -9,14 +9,13 @@ import uuid
 
 def make_error_response(error_msg, sid, status=405):
     return JsonResponse(
-        {"session_key":f"{sid}", 
+        json.dumps({"session_key":f"{sid}", 
          "success": False, 
          "resonse": {
         "error": error_msg
-    }}, status=status)
+    }})W, status=status)
 
 def make_environment_response(environment_data, current_state, sid, status=200):
-    environment_data = json.dumps(environment_data)
     def __get_response_obj(current_state, environment_data):
         if current_state == 0: return (True, {"prompt": environment_data})
         if current_state == 1: return (True, {"teaching": environment_data})
@@ -25,11 +24,11 @@ def make_environment_response(environment_data, current_state, sid, status=200):
         return (False, "Invalid state has occured. Try restarting the session.",)
     success, response_obj = __get_response_obj(current_state, environment_data)
     return JsonResponse(
-        {"session_key":f"{sid}", 
+        json.dumps({"session_key":f"{sid}", 
          "success": success, 
+         "current_state": int(current_state),
          "resonse": {response_obj}
-        }, 200) if success else make_error_response(response_obj, sid, )
-   
+        }), 200) if success else make_error_response(response_obj, sid, )
 
 def process_session_data(data):
     # Extract User Input:
@@ -56,6 +55,28 @@ def create_and_process_session_data(data):
 # TODO: Fix CSRF error
 @csrf_exempt
 def session_view(request):
+    if request.method == "GET":            
+        return JsonResponse({'msg': "42."})
+    if request.method == "POST":
+        raw_data = request.body.decode('utf-8')
+        json_data = json.loads(raw_data)
+        data = {
+                "is_audio": json_data.get("is_audio", ""),
+                "user_prompt": json_data.get("user_prompt", ""),
+                "session_key": json_data.get("session_key", ""),
+                # TODO: add more modalities e.g. files, audio, ...
+            }
+        # Handle the case where a session key is provided:
+        if 'session_key' in data and data["session_key"]:
+            return process_session_data(data)
+        else:
+            return create_and_process_session_data(data)
+    else:
+        return HttpResponseBadRequest('Invalid method')
+
+# TODO: Fix CSRF error
+@csrf_exempt
+def load_chat_view(request): # TODO: FIX
     if request.method == "GET":            
         return JsonResponse({'msg': "42."})
     if request.method == "POST":

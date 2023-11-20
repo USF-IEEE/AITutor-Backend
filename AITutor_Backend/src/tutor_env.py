@@ -42,6 +42,7 @@ class TutorEnv(SQLSerializable,):
             if self.env.current_state == int(TutorEnv.States.PROMPTING):
                 prompt_obj, terminate = self.env.prompter.perform_tutor(user_prompt)
                 if terminate:
+                    main_concept = None
                     for note in self.env.notebank.get_notes():
                         if "main concept:" in note.lower():
                             note = note[note.lower().index("main concept:"):].strip()

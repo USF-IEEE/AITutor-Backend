@@ -147,7 +147,7 @@ class PromptAction(JSONSerializable,):
         - type: ENUM (0-FILE, 1-TEXT, 2-RATING, (NEGATIVE)1-TERMINATE)
         - question: STR
         """
-        return {"type":int(self._type), "question":self._data}
+        return {"type": int(self._type), "question": self._data}
     
     @staticmethod
     def parse_llm_action(llm_output: str) -> 'PromptAction':
