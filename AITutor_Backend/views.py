@@ -13,7 +13,7 @@ def make_error_response(error_msg, sid, status=405):
          "success": False, 
          "resonse": {
         "error": error_msg
-    }})W, status=status)
+    }}), status=status)
 
 def make_environment_response(environment_data, current_state, sid, status=200):
     def __get_response_obj(current_state, environment_data):
