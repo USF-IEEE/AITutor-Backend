@@ -5,15 +5,28 @@ from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
+
+class Generator:
+    pass
+    # Generate Concept Database
+                    # self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    # # Generate Slide Planner
+                    # # TODO: Generate Slide Planner
+                    
+                    # # Generate Question Suite:
+                    # # TODO: Generate question suite
+                    
+                    # # Transition
+                    
+                    
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
             PROMPTING=0
             TEACHING=1
             GUIDING=2
             TESTING=3
+            GENERATION =4
     class Executor(SQLSerializable,):
-        
-        
         def __init__(self, env:'TutorEnv', ):
             super(TutorEnv.Executor, self).__init__()
             self.env = env
@@ -51,16 +64,12 @@ class TutorEnv(SQLSerializable,):
                     # Check if main concept found
                     if not main_concept:
                         pass # TODO: ask GPT to return the main concept
-                    # Generate Concept Database
-                    self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
-                    # Generate Slide Planner
-                    # TODO: Generate Slide Planner
+                    concept_list = [""]# TODO: Get concept List
                     
-                    # Generate Question Suite:
-                    # TODO: Generate question suite
-                    
-                    # Transition
-                    self.env.current_state = int(TutorEnv.States.TEACHING)
+                    self.env.current_state = int(TutorEnv.States.GENERATION)
+                    # TODO: Implement generation 
+                    prompt_obj = PromptAction("[SEP]".join(concept_list),
+                                              PromptAction.Type.TERMINATE) # fix to return teaching objects
                 return prompt_obj.format_json() # TODO: fix for 
             
     def __init__(self,):

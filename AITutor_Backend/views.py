@@ -21,6 +21,7 @@ def make_environment_response(environment_data, current_state, sid, status=200):
         if current_state == 1: return (True, {"teaching": environment_data})
         if current_state == 2: return (True, {"guiding": environment_data})
         if current_state == 3: return (True, {"testing": environment_data})
+        if current_state == 4: return (True, "knowledge_generation":, environment_data)
         return (False, "Invalid state has occurred. Try restarting the session.")
 
     success, response_obj = __get_response_obj(current_state, environment_data)

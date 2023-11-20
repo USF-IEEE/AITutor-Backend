@@ -62,7 +62,6 @@ class ConceptDatabase(SQLSerializable):
                     frequency_penalty=0,
                     presence_penalty=0,
                 )
-
                 return response.choices[0].message.content
             else:
                 return self.client.get_output(prompt, " ")
