@@ -21,14 +21,18 @@ def make_environment_response(environment_data, current_state, sid, status=200):
         if current_state == 1: return (True, {"teaching": environment_data})
         if current_state == 2: return (True, {"guiding": environment_data})
         if current_state == 3: return (True, {"testing": environment_data})
-        return (False, "Invalid state has occured. Try restarting the session.",)
+        return (False, "Invalid state has occurred. Try restarting the session.")
+
     success, response_obj = __get_response_obj(current_state, environment_data)
-    return JsonResponse(
-        json.dumps({"session_key":f"{sid}", 
-         "success": success, 
-         "current_state": int(current_state),
-         "resonse": {response_obj}
-        }), 200) if success else make_error_response(response_obj, sid, )
+    if success:
+        return JsonResponse({
+            "session_key": sid,
+            "success": success,
+            "current_state": current_state,
+            "response": response_obj
+        }, status=status)
+    else:
+        return make_error_response(response_obj, sid, status=405)
 
 def process_session_data(data):
     # Extract User Input:
