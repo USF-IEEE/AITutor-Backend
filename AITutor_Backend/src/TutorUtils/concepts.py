@@ -70,7 +70,7 @@ class ConceptDatabase(SQLSerializable):
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
     def __init__(self, main_concept:str, tutor_plan:str = "", generation=True):
-        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
+        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
         self.main_concept = main_concept
         self.Concepts = []
         if generation:

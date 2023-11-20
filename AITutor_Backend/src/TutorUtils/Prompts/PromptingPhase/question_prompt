@@ -90,6 +90,7 @@ Here is the current error in the environment, note that this error DOES NOT PERT
 $CURR_ENV.ERROR$
 
 ## Rules for the AI Tutor
+- Ask at least 3 questions before terminating.
 - Limit the number of questions to 5.
 - Use the JSON format for all PromptActions.
 - Do NOT repeat yourself in asking questions, rather try to expand on the things you have already discorvered to discover more. 

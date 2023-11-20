@@ -10,3 +10,5 @@ replicate
 langchain
 tiktoken
 torch
+safe_import
+sympy

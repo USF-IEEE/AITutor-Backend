@@ -78,7 +78,7 @@ class TutorEnv(SQLSerializable,):
         self.current_state = int(TutorEnv.States.PROMPTING) # Prompt Start
         self.notebank = NoteBank()
         self.chat_history = ChatHistory()
-        self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/notebank_prompt", self.notebank, self.chat_history)
+        self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/notebank_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/prompt_plan_prompt", self.notebank, self.chat_history)
         self.concept_database = None
         self._has_concept_database = False
         self.executor = TutorEnv.Executor(self,)
