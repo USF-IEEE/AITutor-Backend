@@ -83,6 +83,9 @@ class NoteBank:
         """
         return "{\"Notebank\": [" + "\n".join(["{" + f"\"index\": {i}, \"note\": \"{val}\""+ "}," for i, val in enumerate(self.__notes)]) + "]}" if self.__notes else "// the Notebank is Empty."
     
+    def add_note(self, note:str):
+        self.__notes.append(note)
+    
     def size(self,) -> int:
         """Returns size of the Notebank"""
         return len(self.__notes)

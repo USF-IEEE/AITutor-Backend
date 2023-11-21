@@ -137,9 +137,10 @@ class PromptAction(JSONSerializable,):
         TERMINATE=-1
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
     
-    def __init__(self, prompt: str, type: 'PromptAction.Type'):
+    def __init__(self, prompt: str, type: 'PromptAction.Type', suggested_responses: List[str]):
         self._type = type
         self._data = prompt
+        
 
     def format_json(self):
         """
@@ -166,6 +167,7 @@ class PromptAction(JSONSerializable,):
 
         action_type = action_data.get("type").lower()
         prompt = action_data.get("prompt")
+        s_responses = action_data.get("suggested_responses", [])
 
         # Map the action type to the corresponding Type enum
         type_map = {
@@ -179,4 +181,4 @@ class PromptAction(JSONSerializable,):
         assert p_type is not None, "Error: Unknown action type."
         assert prompt, "Error: Prompt text is missing."
 
-        return PromptAction(prompt, p_type)
+        return PromptAction(prompt, p_type, suggested_responses)

@@ -5,19 +5,7 @@ from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
-
-class Generator:
-    pass
-    # Generate Concept Database
-                    # self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
-                    # # Generate Slide Planner
-                    # # TODO: Generate Slide Planner
-                    
-                    # # Generate Question Suite:
-                    # # TODO: Generate question suite
-                    
-                    # # Transition
-                    
+from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
                     
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
@@ -27,14 +15,75 @@ class TutorEnv(SQLSerializable,):
             TESTING=3
             GENERATION =4
     class Executor(SQLSerializable,):
-        def __init__(self, env:'TutorEnv', ):
+        def __init__(self, env:'TutorEnv', main_concept_file):
             super(TutorEnv.Executor, self).__init__()
             self.env = env
             self.__ears = None # TODO: Add whisper-3 api
             self.__mouth = None # TODO: Add 
             self.__brain = None # TODO: Add LLM API Reference
+            with open(main_concept_file, "r") as f:
+                self.__main_concept_prompt = f.read()
             
-        
+        def __get_main_concept(self, ):
+            import openai
+            client = openai.Client()
+            while True:
+                f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:"
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": self.__main_concept_prompt,
+                        },
+                        {
+                            "role": "system",
+                            "content": f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:",
+                        }
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.8,
+                    max_tokens=256,
+                    top_p=0.95,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                )
+                try:
+                    json_data = json.loads(response.choices[0].message.content)
+                    if "main_concept" in json_data: return json_data["main_concept"]
+                except:
+                    pass
+                
+        def __get_concept_list(self,):
+            import openai
+            client = openai.Client()
+            while True:
+                f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:"
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": self.__main_concept_prompt,
+                        },
+                        {
+                            "role": "system",
+                            "content": f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:",
+                        }
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=1.0,
+                    max_tokens=256,
+                    top_p=0.95,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                )
+                try:
+                    json_data = json.loads(response.choices[0].message.content)
+                    if "main_concept" in json_data: return json_data["main_concept"]
+                except:
+                    pass
+                
         def process_action(self, user_input):
             """Processes user input and returns new state and Tutor Actions
 
@@ -52,26 +101,35 @@ class TutorEnv(SQLSerializable,):
             user_prompt = user_input["user_prompt"]
             # TODO: Do processing
             
+            ### PROMPTING PHASE
             if self.env.current_state == int(TutorEnv.States.PROMPTING):
                 prompt_obj, terminate = self.env.prompter.perform_tutor(user_prompt)
                 if terminate:
-                    main_concept = None
-                    for note in self.env.notebank.get_notes():
-                        if "main concept:" in note.lower():
-                            note = note[note.lower().index("main concept:"):].strip()
-                            main_concept = note
-                            break
-                    # Check if main concept found
-                    if not main_concept:
-                        pass # TODO: ask GPT to return the main concept
-                    concept_list = [""]# TODO: Get concept List
-                    
+                    concept_list = self.__get_concept_list()
                     self.env.current_state = int(TutorEnv.States.GENERATION)
                     # TODO: Implement generation 
                     prompt_obj = PromptAction("[SEP]".join(concept_list),
                                               PromptAction.Type.TERMINATE) # fix to return teaching objects
                 return prompt_obj.format_json() # TODO: fix for 
+            ### END PROMPTING PHASE
             
+            if self.env.current_state == TutorEnv.States.GENERATION:
+                 # Generate Concept Database
+                    # Add new concepts:
+                    for concept in user_input["list_concepts"]:
+                        self.env.notebank.add_note(f"Subconcept: {concept}")
+                    main_concept = self.__get_main_concept()
+                    self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    # # Generate Slide Planner
+                    # # TODO: Generate Slide Planner
+                    
+                    # # Generate Question Suite:
+                    # # TODO: Generate question suite
+                    num_questions = int(user_input["num_questions"])
+                    
+                    # Transition
+                    
+                    self.env.current_state = TutorEnv.States.TEACHING
     def __init__(self,):
         """ Creates base TutorEnv
         
@@ -91,7 +149,7 @@ class TutorEnv(SQLSerializable,):
         self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/notebank_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/prompt_plan_prompt", self.notebank, self.chat_history)
         self.concept_database = None
         self._has_concept_database = False
-        self.executor = TutorEnv.Executor(self,)
+        self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt")
         self.States = [
                 None,# Prompting States TODO: Change to be a Ptr to Prompter 
                 None, # Teaching States

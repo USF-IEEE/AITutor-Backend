@@ -21,7 +21,7 @@ def make_environment_response(environment_data, current_state, sid, status=200):
         if current_state == 1: return (True, {"teaching": environment_data})
         if current_state == 2: return (True, {"guiding": environment_data})
         if current_state == 3: return (True, {"testing": environment_data})
-        if current_state == 4: return (True, "knowledge_generation":, environment_data)
+        if current_state == 4: return (True, {"prompt": environment_data})
         return (False, "Invalid state has occurred. Try restarting the session.")
 
     success, response_obj = __get_response_obj(current_state, environment_data)
@@ -65,12 +65,12 @@ def session_view(request):
     if request.method == "POST":
         raw_data = request.body.decode('utf-8')
         json_data = json.loads(raw_data)
-        data = {
-                "is_audio": json_data.get("is_audio", ""),
-                "user_prompt": json_data.get("user_prompt", ""),
-                "session_key": json_data.get("session_key", ""),
-                # TODO: add more modalities e.g. files, audio, ...
-            }
+        data = dict(json_data)
+        
+        data["session_key"] = json_data.get("session_key", "")
+        data["is_audio"] = json_data.get("is_audio", False)
+        data["user_prompt"] = json_data.get("user_prompt", "")
+        # TODO: add more modalities e.g. files, audio, ...    
         # Handle the case where a session key is provided:
         if 'session_key' in data and data["session_key"]:
             return process_session_data(data)

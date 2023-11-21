@@ -1,0 +1,52 @@
+Identify the Concept List in the user's Planner. Ensure your output is in JSON format and is as such: {"concept_list":"..."}
+Think of a Concept List as the bold words in a textbook discussing some main concept such as Natural Language Processing. View the following examples, notice how some concepts are broken down further into other concepts which help contextualize them better.
+
+Here are some examples:
+// Input: {"Notebank": [{"index": 0, "note": "User expresses interest in learning about agent AI."}
+{"index": 1, "note": "Main Concept: Agent AI"}
+{"index": 2, "note": "Student wants to learn about agent AI."}
+{"index": 3, "note": "Subconcept: Introduction to Artificial Intelligence"}{"index": 4, "note": "Subconcept: Definition and Characteristics of Agents"}
+{"index": 5, "note": "Subconcept: Agent Architectures"}
+{"index": 6, "note": "Subconcept: Agent Environments"}
+{"index": 7, "note": "Subconcept: Agent Communication and Coordination"}   
+{"index": 8, "note": "Subconcept: Learning Agents and Adaptive Behavior"}  
+{"index": 9, "note": "Subconcept: Multi-Agent Systems"}
+{"index": 10, "note": "Subconcept: Intelligent Agents in Games, Robotics, and Simulation"}
+{"index": 11, "note": "Subconcept: Ethical Considerations and Future Trends in Agent AI"}
+{"index": 12, "note": "Tutor needs to gauge student's background knowledge 
+in artificial intelligence and computer science."}
+{"index": 13, "note": "Tutor should ask student about their specific interests in agent AI and any particular agent types or applications they want to learn about."}
+{"index": 14, "note": "Tutor should inquire about the student's goals in learning about agent AI."}
+{"index": 15, "note": "Tutor should ask student about their preference for 
+a theoretical or practical approach to learning agent AI."}
+{"index": 16, "note": "Tutor should ask student about their familiarity with programming languages or tools used in AI development."}
+{"index": 17, "note": "Tutor to ask student about their familiarity with programming languages and tools used in AI development."}
+{"index": 18, "note": "Tutor to ask student about their specific interests 
+in agent AI and any particular agent types or applications they want to learn about."}
+{"index": 19, "note": "Tutor to ask student about their goals in learning about agent AI."}
+{"index": 20, "note": "Tutor to ask student about their preference for a theoretical or practical approach to learning agent AI."}
+{"index": 21, "note": "Tutor should gauge student's current understanding of agent AI concepts to create a targeted learning plan."}
+{"index": 22, "note": "Tutor should document their responses and preferences in the Notebank for future reference."}]}
+
+// Output: {"concept_list": ["Agent Artificial Intelligence", "Artificial Intelligence", "Agent", "Characteristics of Agents", "Agent Architectures", "Agent Environment", "Properties of Agent Environments", "Intelligent Agent", "Rational Agent", "Omniscient Agent", "Agent Behavior", "Actuator", "Sensor", "Observability", "Determenistic", " Stochastic", "Episodic", "Sequential", "Static", "Dynamic", "Discrete", "Continuous", "Known", "Unkown", "Agent Structure", "Simple Reflex Agents", "condition-action rule", "Model-based Agents", "Goal-based Agents", "Utility-based Agents", "Learning agents", "learning element", "performance element", "critic", "problem generator", "Environment State", "State Value", "Hidden Markov Models", "Markov Decision Process",  "Atomic Representation", "Factored Representation", "Structured Representation", "Natural Language Processing", "Agent Applications", "Multi-Agent Systems", "Ethical Impact of Agent AI"]}
+
+// Input: 
+{
+"Notebank": [
+{"index": 0, "note": "Student shows an avid interest in exploring the environmental impacts of technology."},
+{"index": 1, "note": "Student questions how different technological advancements can affect global ecosystems."},
+{"index": 2, "note": "Student is curious about the carbon footprint of various tech industries."},
+{"index": 3, "note": "There's a focus on understanding the relationship between technology and sustainable development."},
+{"index": 4, "note": "Student wants to investigate the role of renewable energy sources in tech sectors."},
+{"index": 5, "note": "Student is eager to explore technological solutions for environmental issues."},
+{"index": 6, "note": "Tutor to provide case studies on green technology initiatives."},
+{"index": 7, "note": "Subconcept: Impact of computing on environment"},
+{"index": 8, "note": "Subconcept: Energy consumption in data centers"},
+{"index": 9, "note": "Subconcept: E-waste management and recycling"},
+{"index": 10, "note": "Subconcept: Role of AI in environmental protection"},
+{"index": 11, "note": "Subconcept: Sustainable software engineering practices"},
+{"index": 12, "note": "Discussion on balancing technological growth with environmental conservation."}
+]
+}
+
+// Output: {"concept_list": ["Environmental Impact of Technology", "carbon footprint", "Role of AI in environmental protection", "environmental conservation", "renewable energy", "sustainable energy", "impact of computing on the environment", "e-waste management and recycling", "e-waste", "Energy Consumption in Data Centers", "energy consumption", "Data Centers", "sustainable software engineering", "classical software engineering", "technology", "ecosystem"]}
