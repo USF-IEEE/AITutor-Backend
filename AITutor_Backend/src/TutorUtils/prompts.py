@@ -1,5 +1,6 @@
 import re
 import os
+from typing import List
 import openai
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from enum import IntEnum
@@ -79,7 +80,7 @@ class Prompter:
         Get Plan from a LLM
         """
         prompt = self.llm_api._load_prompt(self.__plan_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), },) 
-        llm_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview") #"gpt-3.5-turbo-16k"
+        llm_plan = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k") #"gpt-4"
         return llm_plan
     
     def perform_notebank(self, plan):
@@ -181,4 +182,4 @@ class PromptAction(JSONSerializable,):
         assert p_type is not None, "Error: Unknown action type."
         assert prompt, "Error: Prompt text is missing."
 
-        return PromptAction(prompt, p_type, suggested_responses)
+        return PromptAction(prompt, p_type, s_responses)
