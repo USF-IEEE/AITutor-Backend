@@ -135,17 +135,18 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
     def from_sql(current_obj_idx, num_questions, questions:List[Tuple[str, str, str]], Notebank, ConceptDatabase):
         q_suite = QuestionSuite(num_questions, Notebank, ConceptDatabase)
         q_suite.current_obj_idx = current_obj_idx
-        q_suite.Questions = [Question.from_sql(q[0], q[1], q[3], [ConceptDatabase.get_concept(cpt) for cpt in q[4]]) for q in questions]
+        q_suite.Questions = [Question.from_sql(q[0], q[1], q[2], [ConceptDatabase.get_concept(cpt) for cpt in q[3]]) for q in questions]
+        return q_suite
         
 class Question(JSONSerializable, SQLSerializable):
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
-    def Subject(IntEnum):
+    class Subject(IntEnum):
         MATH=0 # Requires latex_code
         CODE=1 # Requires test_cases
         LITERATURE=2 # Requires passage
         CONCEPTUAL=3 # 
         
-    def Type(IntEnum):
+    class Type(IntEnum):
         TEXT_ENTRY=0 # Requires Rubric
         MULTIPLE_CHOICE=1 # Requires Correct Answer
         CALCULATION_ENTRY=2 # Requires calculation_script 
@@ -192,7 +193,7 @@ class Question(JSONSerializable, SQLSerializable):
          self.student_response = None # Initialize to None
          
     def __repr__(self) -> str:
-        return f"Concept(name: {self.name}) <{self.__hash__()}>"
+        return f"Question(data: {self.data}) <{self.__hash__()}>"
 
     @staticmethod
     def create_question_from_JSON(llm_output, ConceptDatabase) -> 'Question':
@@ -209,14 +210,15 @@ class Question(JSONSerializable, SQLSerializable):
         except json.JSONDecodeError as e:
             raise ValueError(f"Error parsing JSON on output: {llm_output},  error: {str(e)}")
 
-        q_subject = question_data.get('subject', None)
-        q_type = question_data.get('type', None)
+        q_subject = question_data.get('subject', -1)
+        q_type = question_data.get('type', -1)
         q_concepts = question_data.get("concepts", None)
         q_data = question_data.get("data", None)
-        assert q_subject, f"Error while determining Question's subject field, ensure your output for parameter \"subject\" was of type int and also included in your output. Ouput: {llm_output}"
-        assert q_type, f"Error while determining Question's type field, ensure your output for parameter \"type\" was of type int and also included in your output. Ouput: {llm_output}"
+        assert q_subject != -1, f"Error while determining Question's subject field, ensure your output for parameter \"subject\" was of type int and also included in your output. Ouput: {llm_output}"
+        assert q_type != -1, f"Error while determining Question's type field, ensure your output for parameter \"type\" was of type int and also included in your output. Ouput: {llm_output}"
         assert q_concepts, f"Error while determining Question's concepts field, ensure your output for parameter \"concepts\" was of type list[str] and also included in your output. Ouput: {llm_output}"
         assert q_data, f"Error while determining Question's data field, ensure your output for parameter \"data\" was of type str and also included in your output. Ouput: {llm_output}"
+        assert q_data, "Did not include question data in JSON object."
         try:
             q_subject = Question.Subject(q_subject)
         except ValueError:
@@ -226,7 +228,7 @@ class Question(JSONSerializable, SQLSerializable):
         except ValueError:
             raise Exception(f"Error while determining Question's Type, ensure your input was of type int and is a proper enum value. Ouput: {llm_output}")
         try:
-            q_concepts = [concept for concept in map(q_concepts, ConceptDatabase.get_concept) if concept is not None]
+            q_concepts = [concept for concept in map(ConceptDatabase.get_concept, q_concepts) if concept is not None]
         except:
             raise Exception(f"Error while determining Question's Concept Mappings, ensure your output for parameter \"concepts\" was of type List[str] and the concepts exist in the database. Ouput: {llm_output}")
         
@@ -235,7 +237,7 @@ class Question(JSONSerializable, SQLSerializable):
         # Type Based Assertions
         if q_type == Question.Type.MULTIPLE_CHOICE:
             assert len([k for k in q_data.keys() if "entry" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
-            assert q_data.get("correct_entry", None), "Error in creating Multiple Choice Question: did not provide correct_entry field (the correct answer choice)"
+            assert q_data.get("correct_entry", None) and q_data["correct_entry"] in q_data and "entry" in q_data["correct_entry"], "Error in creating Multiple Choice Question: did not provide correct_entry field (the correct answer choice)"
             
         elif q_type == Question.Type.TEXT_ENTRY:
             assert "rubric" in q_data, "Error in creating Text Entry Question: Rubric is required."
@@ -251,7 +253,7 @@ class Question(JSONSerializable, SQLSerializable):
         if q_subject == Question.Subject.LITERATURE:
            assert "reading_passage" in q_data, f"Error in creating Literature Question: \"reading_passage\" parameter was not provided. Output: {llm_output}"
         
-        elif q_type == Question.Suject.MATH:
+        elif q_type == Question.Subject.MATH:
             assert "latex_code" in q_data, f"Error in creating Math Question: \"calculation_script\" parameter for computing the value of the question is missing. Output: {llm_output}"
             
         # Code Questions taken care of by code entry

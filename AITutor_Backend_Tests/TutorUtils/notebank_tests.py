@@ -63,8 +63,5 @@ class NotebankTests(unittest.TestCase):
         op_suc, err_msg, terminate = notebank.process_llm_action(action_4)
         self.assertFalse(op_suc, "Failed to reject bad input (index 10) Index Out of Bounds.")  
         
-        s = notebank.env_string()
-        print(s)   
-        
         op_suc, err_msg, terminate = notebank.process_llm_action(action_5)
         self.assertTrue(terminate, "Failed to terminate.")  
