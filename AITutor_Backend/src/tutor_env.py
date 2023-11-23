@@ -5,15 +5,16 @@ from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
+from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
-                    
+
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
             PROMPTING=0
             TEACHING=1
             GUIDING=2
             TESTING=3
-            GENERATION =4
+            GENERATION=4
     class Executor(SQLSerializable,):
         def __init__(self, env:'TutorEnv', main_concept_file):
             super(TutorEnv.Executor, self).__init__()
@@ -80,7 +81,7 @@ class TutorEnv(SQLSerializable,):
                 )
                 try:
                     json_data = json.loads(response.choices[0].message.content)
-                    if "main_concept" in json_data: return json_data["main_concept"]
+                    if "concept_list" in json_data: return json_data["concept_list"]
                 except:
                     pass
                 
@@ -119,6 +120,7 @@ class TutorEnv(SQLSerializable,):
                     for concept in user_input["list_concepts"]:
                         self.env.notebank.add_note(f"Concept: {concept}")
                     main_concept = self.__get_main_concept()
+                    self.env.notebank.add_note(f"Main Concept: {main_concept}")
                     self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner
                     # # TODO: Generate Slide Planner
@@ -126,10 +128,11 @@ class TutorEnv(SQLSerializable,):
                     # # Generate Question Suite:
                     # # TODO: Generate question suite
                     num_questions = int(user_input["num_questions"])
-                    
+                    self.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
                     # Transition
                     
                     self.env.current_state = TutorEnv.States.TEACHING
+                    return {"test": "done generating"}
     def __init__(self,):
         """ Creates base TutorEnv
         
@@ -148,7 +151,8 @@ class TutorEnv(SQLSerializable,):
         self.chat_history = ChatHistory()
         self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/notebank_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/prompt_plan_prompt", self.notebank, self.chat_history)
         self.concept_database = None
-        self._has_concept_database = False
+        self.question_suite = None
+        self._content_generated = False
         self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt")
     
     def step(self, input_data):
