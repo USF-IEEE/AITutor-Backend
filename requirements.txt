@@ -11,3 +11,4 @@ langchain
 tiktoken
 torch
 sympy
+python-pptx

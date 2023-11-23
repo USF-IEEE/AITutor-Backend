@@ -110,14 +110,14 @@ class TutorEnv(SQLSerializable,):
                     # TODO: Implement generation 
                     prompt_obj = PromptAction("[SEP]".join(concept_list),
                                               PromptAction.Type.TERMINATE) # fix to return teaching objects
-                return prompt_obj.format_json() # TODO: fix for 
+                return prompt_obj.format_json()
             ### END PROMPTING PHASE
             
             if self.env.current_state == TutorEnv.States.GENERATION:
                  # Generate Concept Database
                     # Add new concepts:
                     for concept in user_input["list_concepts"]:
-                        self.env.notebank.add_note(f"Subconcept: {concept}")
+                        self.env.notebank.add_note(f"Concept: {concept}")
                     main_concept = self.__get_main_concept()
                     self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner
@@ -150,17 +150,10 @@ class TutorEnv(SQLSerializable,):
         self.concept_database = None
         self._has_concept_database = False
         self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt")
-        self.States = [
-                None,# Prompting States TODO: Change to be a Ptr to Prompter 
-                None, # Teaching States
-                None, # Guiding States
-                None  # Testing States
-            ]
     
     def step(self, input_data):
         return self.executor.process_action(input_data), self.current_state
         
-    
     ## Data Functions:
     @staticmethod
     def from_sql(current_state, notebank_state, chat_history):
