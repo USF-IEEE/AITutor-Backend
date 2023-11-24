@@ -5,3 +5,6 @@ env/
 
 # User Files
 notebook_python_scripts.ipynb
+AITutor_Backend/.DS_Store
+.DS_Store
+.vscode/launch.json

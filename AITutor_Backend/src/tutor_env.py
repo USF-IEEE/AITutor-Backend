@@ -42,7 +42,7 @@ class TutorEnv(SQLSerializable,):
                             "content": f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:",
                         }
                     ],
-                    response_format={"type": "json_object"},
+                    # response_format={"type": "json_object"},
                     temperature=0.8,
                     max_tokens=256,
                     top_p=0.95,
@@ -72,7 +72,7 @@ class TutorEnv(SQLSerializable,):
                             "content": f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:",
                         }
                     ],
-                    response_format={"type": "json_object"},
+                    # response_format={"type": "json_object"},
                     temperature=1.0,
                     max_tokens=256,
                     top_p=0.95,

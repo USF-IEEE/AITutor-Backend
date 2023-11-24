@@ -120,6 +120,14 @@ In this case you should output the termination action to move onto the next phas
   {"action": "terminate", "note": "Terminating the Prompting and Planning Phase"}
 ]
 ```
+
+In the TutorPlan, look for the output: "Tutor should begin teaching, terminating prompting.". If the TutorPlan contains this string, you should output the termination action:
+```json
+[
+  {"action": "terminate", "note": "Tutor should begin teaching, terminating prompting."}
+]
+```
+
 ## Assessing the Environment
 - Review the current Notebank State to ensure continuity and relevance of new entries.
 - Analyze the Chat History to extract key ideas, concepts, and student preferences.

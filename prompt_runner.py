@@ -21,7 +21,8 @@ while True:
         output, state = tutor.step(data)
         if state == TutorEnv.States.GENERATION:
             concept_list = output["question"].split("[SEP]")
-            data["concept_list"]
+            data["concept_list"] = concept_list
+            print(concept_list)
         else: question = output["question"]
     if state == tutor.States.GENERATION:
         output, state = tutor.step(data)
