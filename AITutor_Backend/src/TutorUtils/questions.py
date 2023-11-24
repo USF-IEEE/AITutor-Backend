@@ -253,8 +253,8 @@ class Question(JSONSerializable, SQLSerializable):
         if q_subject == Question.Subject.LITERATURE:
            assert "reading_passage" in q_data, f"Error in creating Literature Question: \"reading_passage\" parameter was not provided. Output: {llm_output}"
         
-        elif q_type == Question.Subject.MATH:
-            assert "latex_code" in q_data, f"Error in creating Math Question: \"calculation_script\" parameter for computing the value of the question is missing. Output: {llm_output}"
+        elif q_subject == Question.Subject.MATH:
+            assert "latex_code" in q_data, f"Error in creating Math Question: \"latex_code\" parameter for displaying the equation is missing. Output: {llm_output}"
             
         # Code Questions taken care of by code entry
         # Conceptual Questions do not require any additional checks, as they are topic related questions that are either open-ended or multiple choice. The TEXT ENTRY checks and the MULTIPLE_CHOICE checks already assure this to be the case.

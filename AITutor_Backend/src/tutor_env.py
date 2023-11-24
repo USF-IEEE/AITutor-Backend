@@ -16,7 +16,7 @@ class TutorEnv(SQLSerializable,):
             TESTING=3
             GENERATION=4
     class Executor(SQLSerializable,):
-        def __init__(self, env:'TutorEnv', main_concept_file):
+        def __init__(self, env:'TutorEnv', main_concept_file, concept_list_file, notebank_filter_file):
             super(TutorEnv.Executor, self).__init__()
             self.env = env
             self.__ears = None # TODO: Add whisper-3 api
@@ -24,6 +24,10 @@ class TutorEnv(SQLSerializable,):
             self.__brain = None # TODO: Add LLM API Reference
             with open(main_concept_file, "r") as f:
                 self.__main_concept_prompt = f.read()
+            with open(concept_list_file, "r") as f:
+                self.__concept_list_prompt = f.read()
+            with open(notebank_filter_file, "r") as f:
+                self.__notebank_filter_prompt = f.read()
             
         def __get_main_concept(self, ):
             import openai
@@ -65,7 +69,7 @@ class TutorEnv(SQLSerializable,):
                     messages=[
                         {
                             "role": "system",
-                            "content": self.__main_concept_prompt,
+                            "content": self.__concept_list_prompt,
                         },
                         {
                             "role": "system",
@@ -74,7 +78,7 @@ class TutorEnv(SQLSerializable,):
                     ],
                     # response_format={"type": "json_object"},
                     temperature=1.0,
-                    max_tokens=256,
+                    max_tokens=1256,
                     top_p=0.95,
                     frequency_penalty=0,
                     presence_penalty=0,
@@ -82,6 +86,36 @@ class TutorEnv(SQLSerializable,):
                 try:
                     json_data = json.loads(response.choices[0].message.content)
                     if "concept_list" in json_data: return json_data["concept_list"]
+                except:
+                    pass
+
+        def __get_filtered_notebank(self,):
+            import openai
+            client = openai.Client()
+            while True:
+                f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:"
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo-16k",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": self.__notebank_filter_prompt,
+                        },
+                        {
+                            "role": "system",
+                            "content": f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:",
+                        }
+                    ],
+                    # response_format={"type": "json_object"},
+                    temperature=1.0,
+                    max_tokens=8000,
+                    top_p=0.95,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                )
+                try:
+                    notes = (response.choices[0].message.content).split("\\n")
+                    if len(notes > 3): return notes
                 except:
                     pass
                 
@@ -110,7 +144,7 @@ class TutorEnv(SQLSerializable,):
                     self.env.current_state = int(TutorEnv.States.GENERATION)
                     # TODO: Implement generation 
                     prompt_obj = PromptAction("[SEP]".join(concept_list),
-                                              PromptAction.Type.TERMINATE) # fix to return teaching objects
+                                              PromptAction.Type.TERMINATE, []) # fix to return teaching objects
                 return prompt_obj.format_json()
             ### END PROMPTING PHASE
             
@@ -119,8 +153,15 @@ class TutorEnv(SQLSerializable,):
                     # Add new concepts:
                     for concept in user_input["list_concepts"]:
                         self.env.notebank.add_note(f"Concept: {concept}")
+                    self.env.notebank.add_note(f"Student's Interest Statement: {user_input['student_interests']}")
                     main_concept = self.__get_main_concept()
                     self.env.notebank.add_note(f"Main Concept: {main_concept}")
+
+                    # Filter Notebank:
+                    notes = self.__get_filtered_notebank()
+                    self.env.notebank.clear()
+                    [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
+                    # Generate Concept Database:
                     self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner
                     # # TODO: Generate Slide Planner
@@ -153,7 +194,7 @@ class TutorEnv(SQLSerializable,):
         self.concept_database = None
         self.question_suite = None
         self._content_generated = False
-        self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt")
+        self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_list_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/notebank_filter_prompt")
     
     def step(self, input_data):
         return self.executor.process_action(input_data), self.current_state

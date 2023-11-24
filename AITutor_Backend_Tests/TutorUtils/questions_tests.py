@@ -1,8 +1,34 @@
 import unittest
+import os
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite, Question
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase, Concept
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank
-
+agent_ai_notes = """User expresses interest in learning about agent AI.
+Main Concept: Agent AI
+Student wants to learn about agent AI.
+Subconcept: Introduction to Artificial Intelligence"}{"index": 4, "note": "Subconcept: Definition and Characteristics of Agents
+Subconcept: Agent Architectures
+Subconcept: Agent Environments
+Subconcept: Agent Communication and Coordination
+Subconcept: Learning Agents and Adaptive Behavior
+Subconcept: Multi-Agent Systems"}
+Subconcept: Intelligent Agents in Games, Robotics, and Simulation
+Subconcept: Ethical Considerations and Future Trends in Agent AI
+Tutor needs to gauge student's background knowledge 
+in artificial intelligence and computer science.
+Tutor should ask student about their specific interests in agent AI and any particular agent types or applications they want to learn 
+Tutor should inquire about the student's goals in learning about agent AI.
+Tutor should ask student about their preference for 
+a theoretical or practical approach to learning agent AI.
+Tutor should ask student about their familiarity with programming languages or tools used in AI development.
+Tutor to ask student about their familiarity with programming languages and tools used in AI development.
+Tutor to ask student about their specific interests 
+in agent AI and any particular agent types or applications they want to learn about
+Tutor to ask student about their goals in learning about agent AI.
+Tutor to ask student about their preference for a theoretical or practical approach to learning agent AI.
+Tutor should gauge student's current understanding of agent AI concepts to create a targeted learning plan.
+Tutor should document their responses and preferences in the Notebank for future reference.
+"""
 class QuestionSuiteTests(unittest.TestCase):
     def setUp(self):
         self.notebank = NoteBank()
@@ -17,9 +43,14 @@ class QuestionSuiteTests(unittest.TestCase):
         self.assertEqual(len(self.question_suite.Questions), 0, "Initial question list should be empty")
 
     def test_generate_question_data(self):
-        return # TODO: Integrate Generation Testing on GH Actions
-        self.question_suite.generate_question_data()
-        self.assertEqual(len(self.question_suite.Questions), 5, "QuestionSuite should generate specified number of questions")
+        # return # TODO: Integrate Generation Testing on GH Actions
+        if not os.environ["OPENAI_API_KEY"]: return
+        notebank = NoteBank()
+        [notebank.add_note(note) for note in agent_ai_notes.split("\n")]
+        cd = ConceptDatabase("Agent Artificial Intelligence", notebank.env_string())
+        q_suite = QuestionSuite(10, notebank, cd)
+        q_suite.generate_question_data()
+        self.assertEqual(len(self.question_suite.Questions), 10, "QuestionSuite should generate specified number of questions")
 
     def test_env_string_format(self):
         return # TODO: Integrate Generation Testing on GH Actions

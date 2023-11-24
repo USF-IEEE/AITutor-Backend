@@ -128,12 +128,33 @@ In the TutorPlan, look for the output: "Tutor should begin teaching, terminating
 ]
 ```
 
+Here's an example of what the TutorPlan may say when you should terminate:
+
+"9. Q-Learning Implementation (Concept: Q-Learning Implementation)
+- Provide an overview of the implementation process for Q-Learning in AI agents for video games.
+- Discuss how to represent the game environment, the different states and actions, and the Q-table or Q-function.
+- Utilize multimedia resources to provide interactive and engaging lessons on Q-Learning.
+- Include videos, interactive simulations, and coding examples to visualize the concepts and demonstrate the implementation process.
+
+By covering these topics, the student will have a strong foundation in Q-Learning and be able to implement it in creating AI agents or bots for video games.
+
+[Tutor should begin teaching, terminating prompting.]
+"
+
+Notice how its specifying to terminate prompting. This means it is time to output the termination action.
+```json
+[
+  {"action": "terminate", "note": "Tutor should begin teaching, terminating prompting."}
+]
+```
+
 ## Assessing the Environment
 - Review the current Notebank State to ensure continuity and relevance of new entries.
 - Analyze the Chat History to extract key ideas, concepts, and student preferences.
 - Consider the Number of Questions Asked to maintain a concise and focused interaction.
 - Utilize the Tutor Plan to guide your actions and ensure alignment with the student's learning goals.
 - Address the Current Error in the Environment if applicable to your actions.
+- If the TutorPlan specifies to terminate the session, then output the termination action.
 
 ### Following the Plan
 You will have access to a plan which you will use to make your action. This plan will detail relevant concepts which you should add, a structure for the lesson, and other detailed information relevant to your Notebank. Always follow the plan.

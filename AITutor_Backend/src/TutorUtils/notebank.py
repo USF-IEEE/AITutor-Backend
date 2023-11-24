@@ -51,7 +51,7 @@ class NoteBank:
             del self.__notes[val]
         if op == self.Op.ADD:
             assert isinstance(val, str), "Error: Could not process add on input {val}. Ensure this input is of type Str."
-            self.__notes.append(val) # insert into notebank
+            self.add_note(val) # insert into notebank
 
     def process_llm_action(self, llm_output:str) -> Tuple[bool, str, bool]: 
         """
@@ -83,7 +83,12 @@ class NoteBank:
         """
         return "{\"Notebank\": [" + "\n".join(["{" + f"\"index\": {i}, \"note\": \"{val}\""+ "}," for i, val in enumerate(self.__notes)]) + "]}" if self.__notes else "// the Notebank is Empty."
     
+    def clear(self,):
+        """Clears the Notebank's content."""
+        self.__notes = []
+
     def add_note(self, note:str):
+        """Adds a note to the Notebank"""
         self.__notes.append(note)
     
     def size(self,) -> int:

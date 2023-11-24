@@ -1,0 +1,58 @@
+You will recieve a noisy and messy Notebank as input and your task is to output a clean version of the Notebank removing duplicate comments and redundant statements. Essentially, many notes in the Notebank will be repeating ideas or be redundant comments or questions; it is your job to clean up the number of entries.
+
+The input will be in JSON format of Notes that may contain repetitive information. Your output should be a list of new notes seperated by a new-line character('\n'). Ensure your outputs only contain the new list of notes and are formatted in this way.
+
+An example input/output of the Notebank will look something like this:
+// Input: {"Notebank": [
+{"index": 0, "note": "Main Concept: Q Learning and Deep Q Learning"},
+{"index": 1, "note": "Student expresses interest in learning about Q Learning and how to implement it in a video game agent."},
+{"index": 2, "note": "Student has limited understanding of Q Learning."},
+{"index": 3, "note": "Student wants to learn how to implement Deep Q Learning."},
+{"index": 4, "note": "Tutor shall educate on the following concepts:"},
+{"index": 5, "note": "Subconcept: Markov Decision Process (MDP)"},
+{"index": 6, "note": "Subconcept: Q Function"},
+{"index": 7, "note": "Subconcept: Bellman Equation"},
+{"index": 8, "note": "Subconcept: Exploration and Exploitation"},
+{"index": 9, "note": "Subconcept: Q Learning Algorithm"},
+{"index": 10, "note": "Subconcept: Convergence and Optimality"},
+{"index": 11, "note": "Subconcept: Applications and Extensions"},
+{"index": 12, "note": "Subconcept: Deep Q Learning"},
+{"index": 13, "note": "Subconcept: Neural Networks"},
+{"index": 14, "note": "Subconcept: Experience Replay"},
+{"index": 15, "note": "Subconcept: Target Network"},
+{"index": 16, "note": "Subconcept: Double Q Learning"},
+{"index": 17, "note": "Subconcept: Prioritized Experience Replay"},
+{"index": 18, "note": "Subconcept: Distributed Q Learning"},
+{"index": 19, "note": "Subconcept: Rainbow DQN"},
+{"index": 20, "note": "Tutor should include examples and visualizations to illustrate the learning process"},
+{"index": 21, "note": "Tutor should include practical exercises and coding assignments to practice implementing and applying Q Learning algorithms"},
+{"index": 22, "note": "Tutor should cover deep Q learning and its various components, including neural networks, experience replay, target network, double Q learning, prioritized experience replay, distributed Q learning, and Rainbow DQN."},
+{"index": 23, "note": "Tutor should conclude with an overview of other reinforcement learning algorithms such as Proximal Policy Optimization (PPO), Advantage Actor-Critic (A2C), Deep Deterministic Policy Gradients (DDPG), Asynchronous Advantage Actor-Critic (A3C), Generalized Advantage Estimation (GAE), Trust Region Policy Optimization (TRPO), and Soft Actor-Critic (SAC)."},
+{"index": 24, "note": "Tutor will include pseudocode and code examples during the teaching process."},
+{"index": 25, "note": "Tutor will present the student with coding assignments to implement and apply Q Learning algorithms."},
+{"index": 26, "note": "Tutor should begin teaching, terminating prompting."}
+{"index": 27, "note": "Main Concept: Q Learning and Deep Q Learning"},
+{"index": 28, "note": "Tutor shall educate on the following concepts:"},
+{"index": 29, "note": "Concept: Markov Decision Process (MDP)"},
+{"index": 30, "note": "Concept: Q Function"},
+{"index": 31, "note": "Concept: Bellman Equation"},
+{"index": 32, "note": "Concept: Exploration and Exploitation"},
+{"index": 33, "note": "Concept: Q Learning Algorithm"},
+{"index": 34, "note": "Concept: Convergence and Optimality"},
+{"index": 35, "note": "Concept: Applications and Extensions"},
+{"index": 36, "note": "Concept: Deep Q Learning"},
+{"index": 37, "note": "Concept: Neural Networks and Deep Learning"},
+{"index": 38, "note": "Concept: Experience Replay Algorithms"},
+{"index": 39, "note": "Concept: Target Networks"},
+{"index": 40, "note": "Concept: Double Q Learning (DoQN)"},
+{"index": 41, "note": "Concept: Prioritized Experience Replay Buffers"},
+{"index": 42, "note": "Concept: Distributed Q Learning"},
+{"index": 43, "note": "Concept: Rainbow DQNs"},
+{"index": 44, "note": "Main Concept: Q Learning and Deep Q Learning"},
+{"index": 44, "note": "Student's Interest Statement: I like playing video games, mostly specifically Minecraft and CS-Go. I also play tennis and work at Dunkin Donuts."},
+]}
+
+// Output:
+Main Concept: Q Learning and Deep Q Learning\nStudent expresses interest in learning about Q Learning and how to implement it in a video game agent.\nStudent has limited understanding of Q Learning.\nStudent wants to learn how to implement Deep Q Learning.\nTutor shall educate on the following concepts:\nConcept: Markov Decision Process (MDP)\nConcept: Q Function\nConcept: Bellman EquationConcept: Exploration and Exploitation\nConcept: Q Learning Algorithm\nConcept: Convergence and Optimality\nConcept: Applications and Extensions\nConcept: Deep Q Learning\nConcept: Neural Networks\nConcept: Experience Replay\nConcept: Target Network\nConcept: Double Q Learning\nConcept: Prioritized Experience Replay\nConcept: Distributed Q Learning\nConcept: Rainbow DQN\nTutor should include examples and visualizations to illustrate the learning process\nTutor should include practical exercises and coding assignments to practice implementing and applying Q Learning algorithms.\nTutor should cover deep Q learning and its various components, including neural networks, experience replay, target network, double Q learning, prioritized experience replay, distributed Q learning, and Rainbow DQN.\nTutor should conclude with an overview of other reinforcement learning algorithms such as Proximal Policy Optimization (PPO), Advantage Actor-Critic (A2C), Deep Deterministic Policy Gradients (DDPG), Asynchronous Advantage Actor-Critic (A3C), Generalized Advantage Estimation (GAE), Trust Region Policy Optimization (TRPO), and Soft Actor-Critic (SAC).\nTutor will include pseudocode and code examples during the teaching process.\nTutor will present the student with coding assignments to implement and apply Q Learning algorithms.\nStudent's Interest Statement: I like playing video games, mostly specifically Minecraft and CS-Go. I also play tennis and work at Dunkin Donuts.
+
+Now it is your turn.
