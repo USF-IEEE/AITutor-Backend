@@ -112,8 +112,8 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k", max_length=5000)
                     question = Question.create_question_from_JSON(llm_output, self.__ConceptDatabase)
                     assert question, f"Error while creating Question, check the input: {llm_output}"
-                    assert question.type, f"Error, could not find type on question, check the input: {llm_output}"
-                    assert question.subject, f"Error, could not find subject on question, check the input: {llm_output}"
+                    assert isinstance(question.type, Question.Type), f"Error, could not find type on question, check the input: {llm_output}"
+                    assert isinstance(question.subject, Question.Subject), f"Error, could not find subject on question, check the input: {llm_output}"
                     assert question.concepts, f"Error, could not find Concept Database Mappings on Question JSON object. Check the output to ensure that these were included: {llm_output}"
                     break
                 except Exception as e:
