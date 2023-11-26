@@ -47,11 +47,12 @@ Terminate the Prompting and Planning Phase:
 Note these are meant to be short examples to help you get the gist.
 
 Example 1: Plan for a Comprehensive Overview of World History
-Tutor Plan:
-
+<TutorPlan>
 Cover key eras and events in world history.
 Include topics like Ancient Civilizations, Middle Ages, Modern History.
 Plan to use multimedia resources for an engaging learning experience.
+</TutorPlan>
+
 Notebank Actions:
 
 ```json
@@ -63,11 +64,12 @@ Notebank Actions:
 ```
 
 Example 2: Plan for Exploring the Fundamentals of Physics
-Tutor Plan:
-
+<TutorPlan>
 Introduce basic concepts of physics such as Newton's Laws, Thermodynamics, and Electromagnetism.
 Incorporate practical experiments and demonstrations.
 Prepare for a gradual progression to more complex theories.
+</TutorPlan>
+
 Notebank Actions:
 
 ```json
@@ -79,11 +81,12 @@ Notebank Actions:
 ```
 
 Example 3: Plan for an Introduction to Programming Languages
-Tutor Plan:
-
+<TutorPlan>
 Start with basic programming concepts using languages like Python or JavaScript.
 Focus on coding fundamentals, data structures, and algorithms.
 Set up interactive coding sessions and projects.
+</TutorPlan>
+
 Notebank Actions:
 
 ```json
@@ -91,15 +94,17 @@ Notebank Actions:
   {"action": "add", "note": "Introduce basic programming with Python and JavaScript."},
   {"action": "add", "note": "Focus on coding fundamentals, data structures, and algorithms."},
   {"action": "add", "note": "Plan interactive coding sessions and practical projects."}
+  {"action": "add", "note": "Main Concept: Introduction to Programming Languages"}
 ]
 ```
 
 Example 4: Plan for a Course on Environmental Science
-Tutor Plan:
-
+<TutorPlan>
 Discuss key topics in environmental science such as ecology, climate change, and sustainable development.
 Include case studies and current global environmental issues.
 Encourage active participation in local environmental initiatives.
+</TutorPlan>
+
 Notebank Actions:
 
 ```json
@@ -110,9 +115,58 @@ Notebank Actions:
 ]
 ```
 
-### Knowing when to Terminate
-If the TutorPlan indicates it is time to terminate, you should output the termination action. It may look something like this:
-"Termination of Prompting Phase; ready to commence the Knowledge Generation and Teaching Phases.", or "Tutor should begin teaching, terminating prompting."
+Example 5: Plan for a Course on Game Theory (this one was designed to be more representitive of Planning and Notebank Action conversions so pay more attention to this as an example):
+<TutorPlan>
+To summarize, the lesson will cover the following topics:
+
+- History of Game Theory
+- Types of games: symmetric/asymmetric, zero-sum/non-zero-sum, cooperative/non-cooperative
+- Fundamental concepts: Nash equilibrium, dominant strategies, mixed strategies
+- Solution concepts: concept of a solution, subgame perfection, backward induction
+- Applications of Game Theory in various fields
+- Examples and case studies to illustrate practical applications
+- Practice problems and exercises to reinforce understanding
+- Analysis of games for playing optimally
+
+We will also cover the student's specific interest in understanding how rules affect the objective of an agent playing in a multi-agent environment, game optimal strategies, and analyzing a game for playing optimally. Throughout the lesson, we will address these specific areas of interest.
+
+For the teaching approach, we will start with an overview of the history of Game Theory and then proceed to cover the different types of games in Game Theory. Next, we will explain the concepts of Nash equilibrium, dominant strategies, mixed strategies, and the different solution concepts. We will then explore the applications of Game Theory in various fields and provide examples and case studies to illustrate practical applications.
+
+To reinforce understanding, we will include practice problems and exercises throughout the lesson. We will also provide guidance on analyzing games for playing optimally and developing optimal strategies.
+
+The lesson will be presented through a combination of theoretical explanations, examples, case studies, and practice exercises. We will ensure that the lesson is comprehensive and covers the desired topics in detail.
+
+With this plan in place, the tutoring session can now begin. Tutor should begin teaching, terminating prompting.
+</TutorPlan>
+Notebank Actions:
+
+```json
+[
+  {"action": "add", "note": "Cover essential topics in Game Theory:"},
+  {"action": "add", "note": "Subconcept: History of Game Theory"},
+  {"action": "add", "note": "Subconcept: Types of games"},
+  {"action": "add", "note": "Subconcept: symmetric/asymmetric"},
+  {"action": "add", "note": "Subconcept: zero-sum/non-zero-sum"},
+  {"action": "add", "note": "Subconcept: cooperative/non-cooperative"},
+  {"action": "add", "note": "Subconcept: Nash Equalibrium"},
+  {"action": "add", "note": "Subconcept: Dominant Strategies"},
+  {"action": "add", "note": "Subconcept: Mixed Strategies"},
+  {"action": "add", "note": "Subconcept: Game Solution"},
+  {"action": "add", "note": "Subconcept: Subgame Perfection"},
+  {"action": "add", "note": "Subconcept: Backward Induction"},
+  {"action": "add", "note": "Subconcept: Applications of Game Theory in various fields"},
+  {"action": "add", "note": "Subconcept: Analysis of games for Playing Optimally"},
+  {"action": "add", "note": "Tutor will provide examples and case studies to illustrate practical applications"}
+  {"action": "add", "note": "Tutor will formulate practice problems to illistrate practical applications"}
+  {"action": "terminate", "note": "Tutor should terminate the begin teaching, terminated prompting."}
+
+
+]
+```
+
+### Termination Action
+If the TutorPlan indicates it is time to terminate, you should output the termination action. The TutorPlan may indicate it like this:
+"Termination of Prompting Phase", or "Tutor should begin teaching, terminating prompting."
 
 In this case you should output the termination action to move onto the next phases of learning:
 ```json
@@ -120,28 +174,26 @@ In this case you should output the termination action to move onto the next phas
   {"action": "terminate", "note": "Terminating the Prompting and Planning Phase"}
 ]
 ```
+It is of utmost importance to understand the rule of termination; you cannot start teaching until you have terminated the prompting phase. The terminate action above demonstrates how to do this.
 
-In the TutorPlan, look for the output: "Tutor should begin teaching, terminating prompting.". If the TutorPlan contains this string, you should output the termination action:
-```json
-[
-  {"action": "terminate", "note": "Tutor should begin teaching, terminating prompting."}
-]
-```
-
-Here's an example of what the TutorPlan may say when you should terminate:
-
-"9. Q-Learning Implementation (Concept: Q-Learning Implementation)
+Below are more examples of a TutorPlan indicating to terminate.
+ 1. "Tutor should begin teaching, terminating prompting." is indicating to you that you should output the termination action.
+ 2. This example demonstrates how the TutorPlan can vary, however the general indication to terminate remains the same: "<TutorPlan>...// Information redacted 9. Q-Learning Implementation (Concept: Q-Learning Implementation)
 - Provide an overview of the implementation process for Q-Learning in AI agents for video games.
-- Discuss how to represent the game environment, the different states and actions, and the Q-table or Q-function.
+- Discuss how to represent  the game environment, the different states and actions, and the Q-table or Q-function.
 - Utilize multimedia resources to provide interactive and engaging lessons on Q-Learning.
 - Include videos, interactive simulations, and coding examples to visualize the concepts and demonstrate the implementation process.
 
 By covering these topics, the student will have a strong foundation in Q-Learning and be able to implement it in creating AI agents or bots for video games.
 
-[Tutor should begin teaching, terminating prompting.]
-"
+Tutor should begin teaching, terminating prompting.</TutorPlan>"
+ 3. This example provides some more language which you can expect the TutorPlan to contain, but notice how the last sentence indicated terminating prompting;<TutorPlan>...// Information Redacted 
+ The lesson will be presented through a combination of theoretical explanations, examples, case studies, and practice exercises. We will ensure that the lesson is comprehensive and covers the desired topics in detail.
 
-Notice how its specifying to terminate prompting. This means it is time to output the termination action.
+With this plan in place, the tutoring session can now begin. Tutor should begin teaching, terminating prompting.
+</TutorPlan>"""
+
+All of these examples indicate that you should output the termination action:
 ```json
 [
   {"action": "terminate", "note": "Tutor should begin teaching, terminating prompting."}

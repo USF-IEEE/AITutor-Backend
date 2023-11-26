@@ -7,6 +7,7 @@ import openai
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
+from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 
 USE_OPENAI = True
 
@@ -164,7 +165,7 @@ class ConceptDatabase(SQLSerializable):
         
         
      
-class Concept:
+class Concept(JSONSerializable):
     def __init__(self, name:str, latex:str):
          self.name = name
          self.definition = ""
@@ -174,6 +175,9 @@ class Concept:
     def __repr__(self) -> str:
         return f"Concept(name: {self.name}) <{self.__hash__()}>"
     
+    def format_json(self,):
+        map_concept = lambda c: c.name if isinstance(c, Concept) else c
+        return "{" + f"\"name\": \"{self.name}\",\n\"definition\": \"{''' '''.join([map_concept(c) for c in self.definition])}\",\n\"latex\": \"{self.name}\",\n" + "}"
     def set_definition(self, definition):
         self.definition = definition
         self.refs = [tkn for tkn in self.definition if isinstance(tkn, Concept)]
