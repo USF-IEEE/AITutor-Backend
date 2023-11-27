@@ -51,3 +51,12 @@ With the development of the Transformer architecture, Large Language Models (LLM
 - Prompting: Enabling the MDP was not the challenging part, however getting the model to terminate was challenging. We found that the model likes the idea of continuing the process for as long as possible. 
 
 - Agent Ability: GPT-3.5-turbo performed poorly on many agent taks, while GPT-4 was able to fulfil it's role almost in every situation without struggling to output correctly.
+
+- Cognitive Processes: 
+   - Planning, provided with information related to the environment, create a plan for filling out a Data Structure with relevant information based on the current state of the environment 
+   - Translation, translate a Natural Language plan into a JSON Object / Data Structure usable in the environment/program.
+   - Discrimination, based on the environment state (ie. current generation state, current generation action, ...) discriminate:
+      - Is the current action good? (i.e. does this generation pass criteria)
+      - Is the current state optimal? (i.e. is this state a termination state)
+      - What information is relevant for future states? (i.e. Memory/selective information passing)
+

@@ -20,6 +20,8 @@ Here is the Data Structure you will be constructing in the future creation phase
 
 Questions are very complex things, which is why before creating the question you have now the opportunity to plan what the question you are creating will be about. Your output will be in plain text.
 
+Note: TEXT_ENTRY questions are synonymous with Free Response Questions.
+
 ### Examples of Creating Questions
 To illustrate the process of creating questions, here are a few examples in JSON format. These examples reflect the diversity in subjects and types, and how they align with the specified requirements of the `Question` class:
 
@@ -83,7 +85,7 @@ These examples demonstrate the flexibility and specificity required in question 
 
 - **Questions Created Summary**: Reflect on the summary of questions already created to avoid redundancy and ensure a comprehensive coverage of topics.
 
-- **Notebank State**: Review the current state of the Notebank to see if there are any specific question-related requests from the student. Feel free to ignore otherwise.
+- **Notebank State**: Review the current state of the Notebank to see if there are any specific question-related requests from the student. The student's Question Preference Statement is important to pay attention to.
 
 - **Current Error (if any)**: Address any errors or misunderstandings identified in the previous interactions or content.
 

@@ -154,6 +154,8 @@ class TutorEnv(SQLSerializable,):
                     for concept in user_input["list_concepts"]:
                         self.env.notebank.add_note(f"Concept: {concept}")
                     self.env.notebank.add_note(f"Student's Interest Statement: {user_input['student_interests']}")
+                    self.env.notebank.add_note(f"Student's Slides Preference Statement: {user_input['student_slides']}")
+                    self.env.notebank.add_note(f"Student's Questions Preference Statement: {user_input['student_questions']}")
                     main_concept = self.__get_main_concept()
                     self.env.notebank.add_note(f"Main Concept: {main_concept}")
 

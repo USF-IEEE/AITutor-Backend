@@ -237,7 +237,7 @@ class Question(JSONSerializable, SQLSerializable):
         
         # Type Based Assertions
         if q_type == Question.Type.MULTIPLE_CHOICE:
-            assert len([k for k in q_data.keys() if "entry" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
+            assert len([k for k in q_data.keys() if "entry" in k and not "correct" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
             assert q_data.get("correct_entry", None) and q_data["correct_entry"] in q_data and "entry" in q_data["correct_entry"], "Error in creating Multiple Choice Question: did not provide correct_entry field (the correct answer choice)"
             
         elif q_type == Question.Type.TEXT_ENTRY:
