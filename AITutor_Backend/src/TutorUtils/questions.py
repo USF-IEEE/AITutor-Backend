@@ -101,7 +101,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             while True:
                 try: # Build Question Plan:
                     prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, current_questions, notebank_str, error )
-                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4", max_length = 3000)
+                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview", max_length = 3000)
                     break
                 except Exception as e:
                     error = f"Error while creating a Question Plan: {e}"
@@ -120,6 +120,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"
 
             self.Questions.append(question)
+        self.current_obj_idx = 0
             
     def env_string(self,):
         map_question = lambda x: f'{x.subject}, {x.type}, Concepts: {", ".join([concept.name for concept in x.concepts])}'
@@ -132,7 +133,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         """
         return (self.current_obj_idx, self.num_questions, [question.to_sql() for question in self.Questions])
     
-    def from_sql(current_obj_idx, num_questions, questions:List[Tuple[str, str, str]], Notebank, ConceptDatabase):
+    def from_sql(current_obj_idx, num_questions, questions:List[Tuple[int, int, str, List[str]]], Notebank, ConceptDatabase):
         q_suite = QuestionSuite(num_questions, Notebank, ConceptDatabase)
         q_suite.current_obj_idx = current_obj_idx
         q_suite.Questions = [Question.from_sql(q[0], q[1], q[2], [ConceptDatabase.get_concept(cpt) for cpt in q[3]]) for q in questions]
@@ -189,7 +190,7 @@ class Question(JSONSerializable, SQLSerializable):
          self.subject = q_subject
          self.type = q_type
          self.data = question_data
-         self.concepts = concepts
+         self.concepts = [c for c in concepts if c is not None]
          self.student_response = None # Initialize to None
          
     def __repr__(self) -> str:

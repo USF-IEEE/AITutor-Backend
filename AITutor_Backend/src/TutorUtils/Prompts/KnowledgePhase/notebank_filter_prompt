@@ -53,6 +53,31 @@ An example input/output of the Notebank will look something like this:
 ]}
 
 // Output:
-Main Concept: Q Learning and Deep Q Learning\nStudent expresses interest in learning about Q Learning and how to implement it in a video game agent.\nStudent has limited understanding of Q Learning.\nStudent wants to learn how to implement Deep Q Learning.\nTutor shall educate on the following concepts:\nConcept: Markov Decision Process (MDP)\nConcept: Q Function\nConcept: Bellman EquationConcept: Exploration and Exploitation\nConcept: Q Learning Algorithm\nConcept: Convergence and Optimality\nConcept: Applications and Extensions\nConcept: Deep Q Learning\nConcept: Neural Networks\nConcept: Experience Replay\nConcept: Target Network\nConcept: Double Q Learning\nConcept: Prioritized Experience Replay\nConcept: Distributed Q Learning\nConcept: Rainbow DQN\nTutor should include examples and visualizations to illustrate the learning process\nTutor should include practical exercises and coding assignments to practice implementing and applying Q Learning algorithms.\nTutor should cover deep Q learning and its various components, including neural networks, experience replay, target network, double Q learning, prioritized experience replay, distributed Q learning, and Rainbow DQN.\nTutor should conclude with an overview of other reinforcement learning algorithms such as Proximal Policy Optimization (PPO), Advantage Actor-Critic (A2C), Deep Deterministic Policy Gradients (DDPG), Asynchronous Advantage Actor-Critic (A3C), Generalized Advantage Estimation (GAE), Trust Region Policy Optimization (TRPO), and Soft Actor-Critic (SAC).\nTutor will include pseudocode and code examples during the teaching process.\nTutor will present the student with coding assignments to implement and apply Q Learning algorithms.\nStudent's Interest Statement: I like playing video games, mostly specifically Minecraft and CS-Go. I also play tennis and work at Dunkin Donuts.
+Main Concept: Q Learning and Deep Q Learning
+Student expresses interest in learning about Q Learning and how to implement it in a video game agent.
+Student has limited understanding of Q Learning.
+Student wants to learn how to implement Deep Q Learning.
+Tutor shall educate on the following concepts:
+Concept: Markov Decision Process (MDP)
+Concept: Q Function
+Concept: Bellman EquationConcept: Exploration and Exploitation
+Concept: Q Learning Algorithm
+Concept: Convergence and Optimality
+Concept: Applications and Extensions
+Concept: Deep Q Learning
+Concept: Neural Networks
+Concept: Experience Replay
+Concept: Target Network
+Concept: Double Q Learning
+Concept: Prioritized Experience Replay
+Concept: Distributed Q Learning
+Concept: Rainbow DQN
+Tutor should include examples and visualizations to illustrate the learning process
+Tutor should include practical exercises and coding assignments to practice implementing and applying Q Learning algorithms.
+Tutor should cover deep Q learning and its various components, including neural networks, experience replay, target network, double Q learning, prioritized experience replay, distributed Q learning, and Rainbow DQN.
+Tutor should conclude with an overview of other reinforcement learning algorithms such as Proximal Policy Optimization (PPO), Advantage Actor-Critic (A2C), Deep Deterministic Policy Gradients (DDPG), Asynchronous Advantage Actor-Critic (A3C), Generalized Advantage Estimation (GAE), Trust Region Policy Optimization (TRPO), and Soft Actor-Critic (SAC).
+Tutor will include pseudocode and code examples during the teaching process.
+Tutor will present the student with coding assignments to implement and apply Q Learning algorithms.
+Student's Interest Statement: I like playing video games, mostly specifically Minecraft and CS-Go. I also play tennis and work at Dunkin Donuts.
 
 Now it is your turn.

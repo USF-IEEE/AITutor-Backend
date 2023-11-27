@@ -47,7 +47,7 @@ class ConceptDatabase(SQLSerializable):
                 
             # model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
             if USE_OPENAI:
-                model = "gpt-3.5-turbo-16k"
+                model = "gpt-4-1106-preview"
                 # model = "gpt-3.5-turbo-16k"
                 response = self.client.chat.completions.create(
                     model=model,

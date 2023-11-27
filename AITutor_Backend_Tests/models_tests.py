@@ -1,6 +1,7 @@
 from django.test import TestCase
-from AITutor_Backend.models import SessionModel, TutorEnvModel, NotebankModel, ChatHistoryModel, ConceptDatabaseModel, ConceptModel, DatabaseManager
+from AITutor_Backend.models import SessionModel, TutorEnvModel, NotebankModel, ChatHistoryModel, ConceptDatabaseModel, ConceptModel, QuestionSuiteModel, QuestionModel, DatabaseManager
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase, Concept
+from AITutor_Backend.src.TutorUtils.questions import QuestionSuite, Question
 from asgiref.sync import sync_to_async, async_to_sync
 import uuid
 
@@ -24,6 +25,11 @@ class DatabaseManagerTestCase(TestCase):
         cd.Concepts.append(c1)
         c2 = Concept.create_from_concept_string_add_to_database("Concept 2", "Concept string mapping it to <Concept>Concept 1</Concept> which is super important.", "", cd)
         
+        # Add question suite and questions
+        qs = QuestionSuite(num_questions=1, Notebank=self.db_manager.tutor_env.notebank, ConceptDatabase=self.db_manager.tutor_env.concept_database)
+        q1 = Question(Question.Subject.MATH, Question.Type.TEXT_ENTRY, {"data": "Sample math question"}, [c1, c2])
+        qs.Questions.append(q1)
+        self.db_manager.tutor_env.question_suite = qs
         self.db_manager.tutor_env.concept_database = cd
         self.assertIsNotNone(cd, "Concept Database is none")
         # Add more assertions here based on expected state
@@ -41,6 +47,11 @@ class DatabaseManagerTestCase(TestCase):
         # Add concept database from other test:
         assert self.db_manager.tutor_env.concept_database is not None, "Error reloading the conceptdatabase model"
         c3 = Concept.create_from_concept_string_add_to_database("Concept 3", "Concept string mapping it to <Concept>Concept 2</Concept> which is super important.", "", self.db_manager.tutor_env.concept_database)
+        # Modify question suite and add new questions
+        q2 = Question(Question.Subject.CODE, Question.Type.CODE_ENTRY, {"data": "Sample coding question"}, [c3])
+        self.db_manager.tutor_env.question_suite.Questions.append(q2)
+        self.db_manager.tutor_env.question_suite.num_questions = 2
+        self.db_manager.tutor_env.question_suite.current_obj_idx = 1 # Update param field
         # Modify current state:
         self.db_manager.tutor_env.current_state = 2
         
@@ -51,7 +62,6 @@ class DatabaseManagerTestCase(TestCase):
         self.db_manager.load_tutor_env()
         self.operations_on_database1()
         self.db_manager.save_tutor_env()
-
         # Verify that Data saved correctly:
         updated_notebank = NotebankModel.objects.get(id=self.tutor_env_model.notebank.id)
         self.assertTrue("Updated test notes" in updated_notebank.notes.strip(), "Error while saving the Notebank")
@@ -68,6 +78,18 @@ class DatabaseManagerTestCase(TestCase):
         self.assertTrue("<Concept>Concept 1</Concept>" in concept_2.definition, "Error while parsing the concept's definition")
         
         self.assertEqual(self.tutor_env_model.curr_state, 0, "Error while saving the TutorEnvModel.")
+        
+        # Verify that QuestionSuite and Questions saved correctly after first operation
+        updated_qs = QuestionSuiteModel.objects.get(id=self.tutor_env_model.question_suite.id)
+        self.assertEqual(len(updated_qs.questions.all()), 1, "Error while saving Questions in QuestionSuite")
+        # Testing min on num_questions for generation
+        self.assertEqual(updated_qs.num_questions, 5, "Error saving num_questions Field on QuestionSuite Model")
+        self.assertEqual(updated_qs.current_obj_idx, -1, "Error saving Default current object index on QuestionSuiteModel")
+        question_1 = QuestionModel.objects.get(subject=Question.Subject.MATH.value, question_suite=updated_qs)
+        self.assertTrue("Concept 1" in question_1.concepts and "Concept 2" in question_1.concepts, "Error matching Concepts")
+        self.assertTrue("Sample math question" in question_1.data, "Error while saving a Question Model")
+
+        
         ## Create Modify Save Functionality works.
         
         ## Test Pull Modify Save Functionality:
@@ -88,8 +110,15 @@ class DatabaseManagerTestCase(TestCase):
         
         concept_3 = ConceptModel.objects.get(name="Concept 3", concept_database=updated_concept_database)
         self.assertEqual(concept_3.name, "Concept 3", "Error while saving a Concept Model")
-        
         self.assertTrue("<Concept>Concept 2</Concept>" in concept_3.definition, "Error while parsing the concept's definition")
         
+        updated_qs = QuestionSuiteModel.objects.get(id=self.tutor_env_model.question_suite.id)
+        self.assertEqual(len(updated_qs.questions.all()), 2, "Error while re-saving Questions in QuestionSuite")
+        self.assertEqual(updated_qs.num_questions, 2, "Error saving num_questions Field on QuestionSuite Model")
+        self.assertEqual(updated_qs.current_obj_idx, 1, "Error saving updated current object index on QuestionSuiteModel")
+        
+        question_2 = QuestionModel.objects.get(subject=Question.Subject.CODE.value, question_suite=updated_qs)
+        self.assertTrue("Concept 3" in question_2.concepts, "Error matching Concepts")
+        self.assertTrue("Sample coding question" in question_2.data, "Error while re-saving a Question Model")
         self.assertEqual(self.tutor_env_model.curr_state, 2, "Error while re-saving the TutorEnvModel.")
         ## Test Pull Modify Save Functionality works.

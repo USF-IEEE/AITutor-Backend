@@ -35,7 +35,7 @@ class TutorEnv(SQLSerializable,):
             while True:
                 f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:"
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model="gpt-3.5-turbo-16k",
                     messages=[
                         {
                             "role": "system",
@@ -65,7 +65,7 @@ class TutorEnv(SQLSerializable,):
             while True:
                 f"// Input:\n {self.env.notebank.env_string()}\n\n// Output:"
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model="gpt-3.5-turbo-16k",
                     messages=[
                         {
                             "role": "system",
@@ -114,8 +114,8 @@ class TutorEnv(SQLSerializable,):
                     presence_penalty=0,
                 )
                 try:
-                    notes = (response.choices[0].message.content).split("\\n")
-                    if len(notes > 3): return notes
+                    notes = (response.choices[0].message.content).split("\n")
+                    if len(notes) > 3: return notes
                 except:
                     pass
                 
@@ -167,11 +167,9 @@ class TutorEnv(SQLSerializable,):
                     # # TODO: Generate Slide Planner
                     
                     # # Generate Question Suite:
-                    # # TODO: Generate question suite
                     num_questions = int(user_input["num_questions"])
                     self.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-                    # Transition
-                    
+                    self.question_suite.generate_question_data()# Transition
                     self.env.current_state = TutorEnv.States.TEACHING
                     return {"test": "done generating"}
     def __init__(self,):

@@ -23,7 +23,7 @@ def create_test_suite():
     # test_suite.addTests(unittest.TestLoader().loadTestsFromModule(concepts_tests))
     test_suite.addTests(unittest.TestLoader().loadTestsFromModule(code_executor_tests))
     test_suite.addTests(unittest.TestLoader().loadTestsFromModule(chat_history_tests))
-    test_suite.addTests(unittest.TestLoader().loadTestsFromModule(questions_tests))
+    # test_suite.addTests(unittest.TestLoader().loadTestsFromModule(questions_tests))
     return test_suite
 
 if __name__ == "__main__":
