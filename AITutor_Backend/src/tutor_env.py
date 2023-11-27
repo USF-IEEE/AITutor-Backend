@@ -139,8 +139,10 @@ class TutorEnv(SQLSerializable,):
             ### PROMPTING PHASE
             if self.env.current_state == int(TutorEnv.States.PROMPTING):
                 prompt_obj, terminate = self.env.prompter.perform_tutor(user_prompt)
-                if terminate:
+                if terminate or prompt_obj._type == PromptAction.Type.TERMINATE:
+                    print(self.env.notebank.env_string())
                     concept_list = self.__get_concept_list()
+                    print(concept_list)
                     self.env.current_state = int(TutorEnv.States.GENERATION)
                     # TODO: Implement generation 
                     prompt_obj = PromptAction("[SEP]".join(concept_list),
