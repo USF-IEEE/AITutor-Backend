@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import AITutor_Backend.views as views 
+import AITutor_Backend.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('session/', views.session_view, name='session_view'),
+    path('load_chat/', views.load_chat_view, name="load_chat_view")
 ]

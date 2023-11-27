@@ -4,3 +4,11 @@ openai
 nltk
 numpy
 django
+django-cors-headers
+certifi
+replicate
+langchain
+tiktoken
+torch
+sympy
+python-pptx

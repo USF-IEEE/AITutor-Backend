@@ -1,0 +1,5 @@
+## Create the database files
+python manage.py makemigrations AITutor_Backend
+
+## Migrate changes to an existing database file
+./run_migrations.sh or ./run_migrations.bat

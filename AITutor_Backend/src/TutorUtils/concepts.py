@@ -2,14 +2,17 @@ from typing import Tuple, List
 import re
 import yaml
 import os
-import time
 import openai
-from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
-# openai.api_key = os.getenv("OPENAI_API_KEY")
-openai_api_key = "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"
-os.environ["OPENAI_API_KEY"] = openai_api_key
 
-class ConceptDatabase:
+from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
+from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
+from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
+from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
+
+USE_OPENAI = True
+
+
+class ConceptDatabase(SQLSerializable):
     class ConceptLLMAPI:
         CURR_ENV_MAIN_CONCEPT_DELIMITER = "$CURR_ENV.MAIN_CONCEPT$" # TODO: Add tutor plan string to the llm request
         CURR_ENV_CONCEPT_LIST_DELIMITER = "$CURR_ENV.CONCEPT_LIST$"
@@ -22,7 +25,7 @@ class ConceptDatabase:
             with open(prompt_file, "r", encoding="utf-8") as f:
                 self.__prompt_template = "\n".join(f.readlines())
             
-            self.client = openai.OpenAI()
+            self.client = openai.OpenAI() if USE_OPENAI else ReplicateAPI()
             
         def __get_prompt(self, tutor_plan, main_concept, concept_list, concept_name, error_msg):
             prompt = self.__prompt_template
@@ -38,54 +41,59 @@ class ConceptDatabase:
                 concept_name (str): _description_
 
             Returns:
-                _type_: _description_
+                str: LLM Output containing Concept Data
             """
-            
-            model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
-            # model = "gpt-4"
             prompt = self.__get_prompt(self.__tutor_plan, env_main_concept, env_concept_list, concept_name, error_msg)
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": prompt,
-                    },
-                    {
-                    "role": "user",
-                    "content": "Please carry out whatever task the system is asking you to do, as the AI Tutor our student's education relies it."
-                    }
-                ],
-                temperature=1,
-                max_tokens=3000,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
                 
-            )
-
-
-            return response.choices[0].message.content
+            # model = "gpt-3.5-turbo-1106" #if concept_name != env_main_concept else "gpt-4"
+            if USE_OPENAI:
+                model = "gpt-4-1106-preview"
+                # model = "gpt-3.5-turbo-16k"
+                response = self.client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": prompt,
+                        },
+                    ],
+                    temperature=0.9,
+                    max_tokens=3000,
+                    top_p=0.9,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                )
+                return response.choices[0].message.content
+            else:
+                return self.client.get_output(prompt, " ")
+        
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
-    def __init__(self, main_concept:str, tutor_plan:str = "", debug=False):
-        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
+    def __init__(self, main_concept:str, tutor_plan:str = "", generation=True):
+        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
         self.main_concept = main_concept
         self.Concepts = []
-        if not debug:
+        if generation:
             self.generate_concept(self.main_concept,)
     
     def get_concept_list_str(self,):
         return "\n".join([f"\t- \"{concept.name}\"" for concept in self.Concepts],) if self.Concepts else "The Concept List is Empty."
     
     def get_concept(self, concept_name:str): # We use edit distance of 4 as a max
-        concept = [concept for concept in self.Concepts if edit_distance(concept_name.lower(), concept.name.lower()) < 4]
-        return concept[0] if concept else None
+        concept = [(edit_distance(concept_name.lower(), concept.name.lower()), concept) for concept in self.Concepts if edit_distance(concept_name.lower(), concept.name.lower()) < 4]
+        if concept: concept.sort(key=lambda x: x[0])# Get the best match
+        return concept[0][1] if concept else None
     
     def generate_concept(self, concept_name, max_depth=4):
         """
         Generates a Concept from a LLM
         """
+        def escape_backslashes_in_quotes(text):
+            def replace_backslashes(match):
+                return match.group(0).replace('\\', '\\\\')
+            quoted_strings_regex = r'"([^"\\]*(?:\\.[^"\\]*)*)"'
+            return re.sub(quoted_strings_regex, replace_backslashes, text)
+            
         if max_depth == 0: 
             return 0# Some API call to LLM
         error_msg = "There is no current error detected in the parsing system."
@@ -95,7 +103,8 @@ class ConceptDatabase:
                 regex_match = ConceptDatabase.__CONCEPT_REGEX.findall(llm_output)
                 assert regex_match, f"Error parsing LLM Output for Concept: {concept_name}. Ensure you properly used the Yaml Creation rules."
                 # Extract the Yaml Data from the LLM Ouput
-                parsed_data = yaml.safe_load(regex_match[0])
+                parsed_data = escape_backslashes_in_quotes(regex_match[0])
+                parsed_data = yaml.safe_load(parsed_data)
                 # Type check
                 assert isinstance(parsed_data, dict), "Root should be a dictionary"
                 # Key check
@@ -112,18 +121,63 @@ class ConceptDatabase:
                 break
             except Exception as e:
                 error_msg = str(e)
+                
+    @staticmethod                
+    def from_sql(main_concept, tutor_plan, concepts):
+        """creates a ConceptDatabase from sql data.
 
+        Args:
+            main_concept (str): _description_
+            tutor_plan (str): plan from tutor
+            concepts (List[str, str, str]): List[(concept_name, concept_def, concept_latex)] 
+
+        Returns:
+            _type_: ConceptDatabase
+        """
+        cd = ConceptDatabase(main_concept, tutor_plan, generation=False)
+        cd.Concepts = [Concept(cpt[0], cpt[2]) for cpt in concepts]
+        
+        # Map the Graph:
+        for cpt_ref, cpt_data in zip(cd.Concepts, concepts):
+            def_sequence = [] # Where our tokens live
+            #Get all tokens from definition string, string or concept format
+            pattern = re.compile(r'<Concept>.*?<\/Concept>|\S+')
+            tokens = pattern.findall(cpt_data[1]) # Look through tokenized definition string
+            #Find concepts in main concept's definition using regex
+            for token in tokens:
+                if '<Concept>' in token:
+                    c_name = token.replace("<Concept>", "").replace("</Concept>", "")
+                    existing_concept = cd.get_concept(c_name)
+                    def_sequence.append(existing_concept) if existing_concept else def_sequence.append(c_name)     
+                else: # Token is just a word
+                    def_sequence.append(token)
+            # Update our Concept:
+            cpt_ref.set_definition(def_sequence)
+        return cd
+    
+    def to_sql(self, ):
+        """
+        Returns:
+            main_concept (str): 
+            concepts (List[str, str, str]): List[(concept_name, concept_def, concept_latex)]
+        """
+        return (self.main_concept, [c.to_sql() for c in self.Concepts])
+        
+        
      
-class Concept:
+class Concept(JSONSerializable):
     def __init__(self, name:str, latex:str):
          self.name = name
-         self.definition = None
-         self.refs = None
-         self.latex = latex
+         self.definition = ""
+         self.refs = []
+         self.latex = latex if latex else ""
 
     def __repr__(self) -> str:
         return f"Concept(name: {self.name}) <{self.__hash__()}>"
     
+    def format_json(self,):
+        map_concept = lambda c: c.name if isinstance(c, Concept) else c
+        return "{" + f"\"name\": \"{self.name}\",\n\"definition\": \"{''' '''.join([map_concept(c) for c in self.definition])}\",\n\"latex\": \"{self.name}\",\n" + "}"
     def set_definition(self, definition):
         self.definition = definition
         self.refs = [tkn for tkn in self.definition if isinstance(tkn, Concept)]
@@ -178,5 +232,13 @@ class Concept:
         # Update our Concept:
         concept.set_definition(def_sequence)
         return concept
+    
+    def to_sql(self,) -> Tuple[str, str, str]:
+        """Returns the state of Concept
 
-
+        Returns:
+            Tuple[str, str, str]: (concept_name, concept_def, concept_latex) 
+        """
+        map_word = lambda x: x if isinstance(x, str) else "<Concept>"+x.name+"</Concept>"
+        return (self.name, " ".join([map_word(cpt) for cpt in self.definition]), self.latex,)
+    
