@@ -160,6 +160,7 @@ class SlidePlanTests(unittest.TestCase):
         self.concept_db.Concepts.append(Concept("Concept 2", "Definition 2"))
 
     def test_generation_slides(self):
+        if not GENERATE_DATA: return
         notebank = NoteBank()
         [notebank.add_note(n) for n in regex_notes.split("\n")]
         slide_planner = SlidePlanner(notebank, cd)
