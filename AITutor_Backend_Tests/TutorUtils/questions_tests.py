@@ -134,7 +134,7 @@ class QuestionSuiteTests(unittest.TestCase):
 
     def test_generate_question_data(self):
         if not GENERATE_DATA: return
-        return # TODO: Integrate Generation Testing on GH Actions
+        # return # TODO: Integrate Generation Testing on GH Actions
         notebank = NoteBank()
         [notebank.add_note(note) for note in agent_ai_notes.split("\n")]
         cd = ConceptDatabase("Agent Artificial Intelligence", notebank.env_string())

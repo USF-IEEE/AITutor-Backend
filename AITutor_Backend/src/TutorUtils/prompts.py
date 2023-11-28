@@ -141,6 +141,7 @@ class PromptAction(JSONSerializable,):
     def __init__(self, prompt: str, type: 'PromptAction.Type', suggested_responses: List[str]):
         self._type = type
         self._data = prompt
+        self._suggested_responses = suggested_responses
         
 
     def format_json(self):
@@ -149,7 +150,7 @@ class PromptAction(JSONSerializable,):
         - type: ENUM (0-FILE, 1-TEXT, 2-RATING, (NEGATIVE)1-TERMINATE)
         - question: STR
         """
-        return {"type": int(self._type), "question": self._data}
+        return {"type": int(self._type), "question": self._data, "suggested_responses": self._suggested_responses.copy()}
     
     @staticmethod
     def parse_llm_action(llm_output: str) -> 'PromptAction':
