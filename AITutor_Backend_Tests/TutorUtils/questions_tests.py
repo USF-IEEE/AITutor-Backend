@@ -34,14 +34,7 @@ Tutor should gauge student's current understanding of agent AI concepts to creat
 Tutor should document their responses and preferences in the Notebank for future reference.
 """
 
-# Concept class definition (assuming it's already defined in your environment)
-# class Concept:
-#     def __init__(self, name, definition):
-#         self.name = name
-#         self.definition = definition
-#         self.refs = []
-
-# Defining the concepts in the subtree
+# Defining the concepts in the SubTree
 cd = ConceptDatabase("Regular Expression", "", generation=False)
 regular_expression = Concept.create_from_concept_string_add_to_database(
     "Regular Expression",

@@ -53,6 +53,7 @@ With the development of the Transformer architecture, Large Language Models (LLM
 - Agent Ability: GPT-3.5-turbo performed poorly on many agent taks, while GPT-4 was able to fulfil it's role almost in every situation without struggling to output correctly.
 
 - Cognitive Processes: 
+   - We are implying that a cognitive process is an algorithmic-like 
 GPT exhibits Mid and low-level cognitive ability with the following cognitive processes:
    - Planning, provided with information related to the environment, create a plan for filling out a Data Structure with relevant information based on the current state of the environment 
    - Translation, translate a Natural Language plan into a JSON Object / Data Structure usable in the environment/program.
@@ -65,3 +66,6 @@ This is crucial to our document generation;
 As the software engineers, we can "glue" cognitive processes together; Planning to Discrimination, Planning to Translation to Discrimination, Planning to Translation, ecetera
 
 With this, we can exploit a state-based system to perform our cognitive processes which will in turn lead to our document generations. We hypothesized prior to document generation that a LLM can exhibit cognitive ability, and here's why:
+   - Algorithms depend on patterns within data
+   - Komogorov Compression: consider a perfect compressor K which is able to perfectly compress all data, s.t. K(X) <= Any other ... TODO 
+   - NTP is Compression, i.e. we are simply maximizing the NLL of of the 

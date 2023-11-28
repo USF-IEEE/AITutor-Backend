@@ -232,13 +232,14 @@ class Concept(JSONSerializable):
         # Update our Concept:
         concept.set_definition(def_sequence)
         return concept
-    
+    def to_tokenized_def(self,):
+        map_word = lambda x: x if isinstance(x, str) else "<Concept>"+x.name+"</Concept>"
+        return " ".join([map_word(cpt) for cpt in self.definition])
     def to_sql(self,) -> Tuple[str, str, str]:
         """Returns the state of Concept
 
         Returns:
             Tuple[str, str, str]: (concept_name, concept_def, concept_latex) 
         """
-        map_word = lambda x: x if isinstance(x, str) else "<Concept>"+x.name+"</Concept>"
-        return (self.name, " ".join([map_word(cpt) for cpt in self.definition]), self.latex,)
+        return (self.name, self.to_tokenized_def(), self.latex,)
     

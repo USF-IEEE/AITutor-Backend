@@ -138,6 +138,13 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         q_suite.current_obj_idx = current_obj_idx
         q_suite.Questions = [Question.from_sql(q[0], q[1], q[2], [ConceptDatabase.get_concept(cpt) for cpt in q[3]]) for q in questions]
         return q_suite
+
+    def get_object(self, idx):
+        """
+        Returns Question Object iff idx is a valid Question Object index. Else, AssertionError
+        """
+        assert 0 <= idx < self.num_questions, "Cannot access Question Object Array Out of Bounds"
+        return self.Questions[idx]
         
 class Question(JSONSerializable, SQLSerializable):
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')

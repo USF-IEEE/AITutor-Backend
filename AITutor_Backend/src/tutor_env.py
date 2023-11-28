@@ -5,6 +5,7 @@ from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
+from AITutor_Backend.src.TutorUtils.slides import SlidePlanner, Slide
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 
@@ -150,6 +151,7 @@ class TutorEnv(SQLSerializable,):
                 return prompt_obj.format_json()
             ### END PROMPTING PHASE
             
+            ### GENERATION PHASE
             if self.env.current_state == TutorEnv.States.GENERATION:
                  # Generate Concept Database
                     # Add new concepts:
@@ -166,16 +168,50 @@ class TutorEnv(SQLSerializable,):
                     self.env.notebank.clear()
                     [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
                     # Generate Concept Database:
-                    self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner
                     # # TODO: Generate Slide Planner
-                    
+                    self.env.slide_planner = SlidePlanner(self.env.notebank)
+                    self.env.slide_planner.generate_slide_plan()
+                    self.env.slide_planner.generate_slide_deque()
                     # # Generate Question Suite:
                     num_questions = int(user_input["num_questions"])
-                    self.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-                    self.question_suite.generate_question_data()# Transition
+                    self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
+                    self.env.question_suite.generate_question_data()# Transition
                     self.env.current_state = TutorEnv.States.TEACHING
-                    return {"test": "done generating"}
+                    return {"status": "done generating"}
+            ### END GENERATION PHASE
+
+            self.env.current_state = int(user_input["current_state"])
+
+            ### TEACHING PHASE
+            if self.env.current_state == int(TutorEnv.States.TEACHING):
+                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
+                if obj_idx == self.slide_planner.current_obj_idx:
+                    # TODO: listen to user user_input and create a response 
+                    self.env.chat_history.hear(user_prompt)
+                    # ...
+                    return self.env.slide_planner.format_json().update({"tutor_statement": "todo: implement"})
+                else:
+                    return self.env.slide_planner.format_json().update({"tutor_statement": self.env.slide_planner.get_object(obj_idx).presentation})
+            ### END TEACHING PHASE
+            
+            ### TESTING PHASE
+            if self.env.current_state == int(TutorEnv.States.TESTING):
+                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
+                if obj_idx == self.slide_planner.current_obj_idx:
+                    if user_input["eval_response"]:
+                        # TODO: Evaluate the response the the question
+                        return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                    else:
+                        # TODO: listen to user user_input and create a response 
+                        self.env.chat_history.hear(user_prompt)
+                    # ...
+                    return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                else:
+                    return self.env.question_suite.format_json().update({"tutor_statement": self.env.question_suite.get_object(obj_idx).presentation})
+            ### END TESTING PHASE
+
     def __init__(self,):
         """ Creates base TutorEnv
         
@@ -194,6 +230,7 @@ class TutorEnv(SQLSerializable,):
         self.chat_history = ChatHistory()
         self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/notebank_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/prompt_plan_prompt", self.notebank, self.chat_history)
         self.concept_database = None
+        self.slide_planner = None
         self.question_suite = None
         self._content_generated = False
         self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_list_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/notebank_filter_prompt")
