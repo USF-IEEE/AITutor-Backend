@@ -213,6 +213,8 @@ class TutorEnv(SQLSerializable,):
         tutor_ref.current_state = current_state
         tutor_ref.notebank = NoteBank.from_sql(notebank_state)
         tutor_ref.chat_history = ChatHistory.from_sql(chat_history)
+        tutor_ref.prompter.notebank = tutor_ref.notebank
+        tutor_ref.prompter.chat_history = tutor_ref.chat_history
         return tutor_ref
             
     def to_sql(self,) -> str:

@@ -133,7 +133,7 @@ class DatabaseManager:
         # the possibly changed data from the TutorEnv Python object
 
         # Save Notebank:
-        self.tutor_env_model.notebank.notes = self.tutor_env.notebank.to_sql()
+        self.tutor_env_model.notebank.notes = self.tutor_env.notebank.to_sql().strip()
         self.tutor_env_model.notebank.save()
         
         # Save Chat:
@@ -253,5 +253,6 @@ class DatabaseManager:
             # Update small Parameters:
             self.tutor_env_model.curr_state = self.tutor_env.current_state
             self.tutor_env_model.save()
+            self.session.save()
 
         

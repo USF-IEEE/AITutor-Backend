@@ -39,7 +39,7 @@ class DatabaseManagerTestCase(TestCase):
         self.assertIsNotNone(self.db_manager.tutor_env, "Error reloading the tutorenv model")
         # Test the load_tutor_env method
         assert self.db_manager.tutor_env.notebank is not None, "Error reloading the notebank model"
-        self.db_manager.tutor_env.notebank.process_llm_action("""```json\n[{"action": "add", "note": "Updated test notes again"}]```""")
+        self.db_manager.tutor_env.notebank.process_llm_action("""```json\n[{"action": "add", "note": "Updated my test notes again"}]```""")
         assert self.db_manager.tutor_env.chat_history is not None, "Error reloading the chathistory model"
         self.db_manager.tutor_env.chat_history.hear("test user input more")
         self.db_manager.tutor_env.chat_history.respond("test user output more")
@@ -100,7 +100,7 @@ class DatabaseManagerTestCase(TestCase):
         self.db_manager.save_tutor_env()
         # Verify that Data saved correctly:
         updated_notebank = NotebankModel.objects.get(id=self.tutor_env_model.notebank.id)
-        self.assertTrue("Updated test notes" in updated_notebank.notes.strip() and "Updated test notes again" in updated_notebank.notes.strip(), "Error while re-saving the Notebank")
+        self.assertTrue("Updated test notes" in updated_notebank.notes.strip() and "Updated my test notes again" in updated_notebank.notes.strip(), "Error while re-saving the Notebank")
         
         updated_chat_history = ChatHistoryModel.objects.get(id=self.tutor_env_model.chat_history.id)
         self.assertTrue("test user input" in updated_chat_history.chat and "test user output" in updated_chat_history.chat and "test user input more" in updated_chat_history.chat and "test user output more" in updated_chat_history.chat, "Error while re-saving Chat History") 
