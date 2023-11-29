@@ -72,12 +72,9 @@ We hypothesized prior to document generation that a LLM can exhibit cognitive ab
       - Reflection
       - Planning and Reaction
       - Dialogue Generation
-
-   
    
    https://www.arxiv-vanity.com/papers/2304.03442/
    - Voyager: Minecraft GPT-4 Agent; demonstrates cognitive ability in Planning, execution, and error correcting. Exhibits Continuous Learning and Adaption, Generalization and Novel Problem-Solving, Autonomous Decision Making, Zero-Shot Generalization on unseen tasks, 
-
 
    Mind meets machine: Unravelling GPT-4’s cognitive psychology 
       - Common Sense Reasoning
@@ -98,8 +95,9 @@ We hypothesized prior to document generation that a LLM can exhibit cognitive ab
       - Is the current action good? (i.e. does this generation pass criteria)
       - Is the current state optimal? (i.e. is this state a termination state)
       - What information is relevant for future states? (i.e. Memory/selective information passing)
+I think therefore I am" <- include in paper as a side link
 
-- I have done my own research on why this may be; "I think therefore I am" <- include in paper as a quote 
+- I have done my own research on why this may be; "
 From: The Role of Language in Intelligence
 Daniel C. Dennett
 
@@ -115,8 +113,16 @@ Daniel C. Dennett
          - indentation
          - balanced tokens "[]", "{}", "()", 
          - punctuation: semicolons, commas, ecetera
+      
+### Why may this be?
 
-We focus on Document Generation.
+Model Size: research from Google, Deepmind and Stanford found that many of these emergent properties exist with bigger models; performance on cognitive tasks increased based on model size, Published in Transactions on Machine Learning Research (08/2022)
+Emergent Abilities of Large Language Models (https://arxiv.org/pdf/2206.07682.pdf).
+
+We use GPT-4 for Planning Tasks, harder Translation Tasks, and Discrimination Tasks: Speculating over 1 Trillion Parameters
+We Use GPT-3.5-turbo-16k for simple planning tasks, and most translation tasks. 
+
+We focus on Document Generation. Our research incorporates Agent Interaction, Planning and Memory Modules, Common Sense Reasoning, Conversational 
 
 Cognitive Abilities are crucial to our document generation;
 As the software engineers, we can "glue" programs and cognitive processes together; Planning to Discrimination, Planning to Translation to Discrimination, Planning to Translation, ecetera
@@ -137,3 +143,16 @@ With this, we can exploit a state-based system to perform our cognitive processe
 
 - Prompting: Enabling the MDP was not the challenging part, however getting the model to terminate was challenging. We found that the model likes the idea of continuing the process for as long as possible. 
 
+Consider the # of API Calls / # Process Iterations 
+
+- With strictly GPT-3.5-turbo you end up making more API Calls due to failures
+
+TODO: Perform metric comparison
+
+- Cognitive Processes over Cognitive Tasks:
+   - Translation performs worse than Planning and Translation in generation quality and ...
+
+
+ 
+# Online View Only of Paper: 
+(https://www.overleaf.com/read/sbwnyxczkrcj#49db64)
