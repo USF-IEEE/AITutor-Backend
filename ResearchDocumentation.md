@@ -46,7 +46,7 @@ With the development of the Transformer architecture, Large Language Models (LLM
 2. Convert “Ground Truth” as a Vector Embedding \( y^* \), convert System output as Vector Embedding \( y' \).
 3. Measure Cosine-Similarity between the embeddings.
 
-### Observations during Research
+### Research Notes
 
 We hypothesized prior to document generation that a LLM can exhibit cognitive ability, and here's why:
    - Algorithms depend on patterns within data
@@ -95,6 +95,7 @@ We hypothesized prior to document generation that a LLM can exhibit cognitive ab
       - Is the current action good? (i.e. does this generation pass criteria)
       - Is the current state optimal? (i.e. is this state a termination state)
       - What information is relevant for future states? (i.e. Memory/selective information passing)
+
 I think therefore I am" <- include in paper as a side link
 
 - I have done my own research on why this may be; "
