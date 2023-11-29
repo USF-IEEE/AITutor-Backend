@@ -1,0 +1,40 @@
+Regular Expression
+    Pattern Matching
+    String Manipulation
+    Expression Patterns
+        Concatenation
+        Disjunction
+        Range
+        Kleene Star
+        Anchors
+        Counters
+        Precedence
+        Substitution
+        Lookahead Assertions
+
+Text Normalization
+    Tokenization
+        Word Segmentation
+        Whitespace as a Separator
+        Special Cases (e.g., "New York", "rock ’n’ roll")
+        Emoticon and Hashtag Tokenization
+        Multi-language Tokenization (e.g., Japanese)
+    Lemmatization
+        Root Word Identification
+        Morphological Analysis
+    Stemming
+        Suffix Stripping
+        The Porter Algorithm
+    Sentence Segmentation
+        Punctuation as Cues (e.g., periods, exclamation points)
+
+Edit Distance
+    String Similarity Measurement
+    Operations: Insertions, Deletions, Substitutions
+    Applications
+        Spelling Correction
+        Speech Recognition
+        Coreference Resolution
+    Dynamic Programming
+        Algorithm for Computing Minimum Edit Distance
+        Alignment of Strings

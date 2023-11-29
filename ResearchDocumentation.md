@@ -69,3 +69,5 @@ With this, we can exploit a state-based system to perform our cognitive processe
    - Algorithms depend on patterns within data
    - Komogorov Compression: consider a perfect compressor K which is able to perfectly compress all data, s.t. K(X) <= Any other ... TODO 
    - NTP is Compression, i.e. we are simply maximizing the NLL of of the 
+
+- ChatGPT will freeze occasionally when making its predictions. Essentially, this would render the generation. We have to prompt it several times for it to get better. For a student trying to learn, this process migth get frustrating. This is why chatgpt might not be an adequate resource for just learning.

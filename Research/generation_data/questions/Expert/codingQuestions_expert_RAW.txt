@@ -1,0 +1,24 @@
+Multiple choice quesitons:
+Which of these regular expressions matches the set of all alphabetic strings?
+A) [A-Za-z]+
+B) [A-Za-z]*
+C) [A-Za-z]
+D) [^A-Za-z]
+
+Which of these regular expressions matches the set of all lower case alphabetic strings ending in a 'b'?
+A) [a-z]*b
+B) [a-z]+b
+C) b[a-z]+
+D) [b-z]*b
+
+Coding questions
+Implement an ELIZA-like program, using substitutions. Keep in mind that you would need a domain in which your program can legitimately engage in a lot of simple repetition.
+
+Compute the edit distance (using insertion cost 1, deletion cost 1, substitution cost 1) of “leda” to “deal”. Show your work (using the edit distance grid).
+
+Conceptual questions: 
+Write regular expressions for the following languages. By “word”, we mean an alphabetic string separated from other words by whitespace, any relevant
+punctuation, line breaks, and so forth.
+
+1. the set of all strings with two consecutive repeated words (e.g., “Humbert Humbert” and “the the” but not “the bug” or “the big bug”);
+2. all strings that start at the beginning of the line with an integer and that end at the end of the line with a word;

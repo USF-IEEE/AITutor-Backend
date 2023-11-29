@@ -1,7 +1,8 @@
 Identify the Concept List in the user's Planner. Ensure your output is in JSON format and is as such: {"concept_list":"..."}
 Think of a Concept List as the bold words in a textbook discussing some main concept such as Natural Language Processing. View the following examples, notice how some concepts are broken down further into other concepts which help contextualize them better.
 
-Here are some examples:
+Here are some examples...
+
 // Input: {"Notebank": [{"index": 0, "note": "User expresses interest in learning about agent AI."}
 {"index": 1, "note": "Main Concept: Agent AI"}
 {"index": 2, "note": "Student wants to learn about agent AI."}
@@ -28,7 +29,108 @@ in agent AI and any particular agent types or applications they want to learn ab
 {"index": 21, "note": "Tutor should gauge student's current understanding of agent AI concepts to create a targeted learning plan."}
 {"index": 22, "note": "Tutor should document their responses and preferences in the Notebank for future reference."}]}
 
-// Output: {"concept_list": ["Agent Artificial Intelligence", "Artificial Intelligence", "Agent", "Characteristics of Agents", "Agent Architectures", "Agent Environment", "Properties of Agent Environments", "Intelligent Agent", "Rational Agent", "Omniscient Agent", "Agent Behavior", "Actuator", "Sensor", "Observability", "Determenistic", " Stochastic", "Episodic", "Sequential", "Static", "Dynamic", "Discrete", "Continuous", "Known", "Unkown", "Agent Structure", "Simple Reflex Agents", "condition-action rule", "Model-based Agents", "Goal-based Agents", "Utility-based Agents", "Learning agents", "learning element", "performance element", "critic", "problem generator", "Environment State", "State Value", "Hidden Markov Models", "Markov Decision Process",  "Atomic Representation", "Factored Representation", "Structured Representation", "Natural Language Processing", "Agent Applications", "Multi-Agent Systems", "Ethical Impact of Agent AI"]}
+// Output: 
+This should generate the following Concept List of topics:
+
+Introduction to Artificial Intelligence
+    Fundamental Principles of AI
+    Historical Development and Key Milestones
+    Definition and Characteristics of Agents
+        Agent Types (e.g., Rational, Autonomous)
+        Agent Properties (e.g., Reactivity, Pro-activeness, Social Ability)
+        Agent Architectures
+        Simple Reflex Agents
+        Model-Based Reflex Agents
+        Goal-Based Agents
+        Utility-Based Agents
+        Learning Agents
+        Agent Environments
+
+    Classifications of Agents 
+        Static vs. Dynamic
+        Discrete vs. Continuous
+    
+    Design and Simulation of Environments
+
+    Agent Communication and Coordination
+        Communication Protocols and Languages 
+            KQML
+            FIPA-ACL
+        Coordination Mechanisms 
+            Negotiation
+            Auctions
+        Collaborative and Competitive Agent Interactions
+    
+    Learning Agents and Adaptive Behavior
+        Machine Learning Techniques in Agents
+        Adaptation and Evolution of Agents
+        Reinforcement Learning
+    
+    Multi-Agent Systems
+        Design and Management of Multi-Agent Systems
+        Cooperation and Competition among Agents
+        Distributed Problem Solving
+
+    Intelligent Agents in Games, Robotics, and Simulation
+        Agents in Video Games 
+            Non-Player Characters
+        Robotic Agents 
+            Drones
+            Autonomous 
+            Vehicles
+        Simulation Models Using Agents
+
+    Ethical Considerations and Future Trends in Agent AI
+        Ethical Implications of Autonomous Agents
+        Future Developments and Emerging Technologies
+        Social and Legal Issues
+
+With the correct JSON Object:
+```json
+{"concept_list":  [
+    "Introduction to Artificial Intelligence",
+    "Fundamental Principles of AI",
+    "Historical Development and Key Milestones",
+    "Definition and Characteristics of Agents",
+    "Agent Types (e.g., Rational, Autonomous)",
+    "Agent Properties (e.g., Reactivity, Pro-activeness, Social Ability)",
+    "Agent Architectures",
+    "Simple Reflex Agents",
+    "Model-Based Reflex Agents",
+    "Goal-Based Agents",
+    "Utility-Based Agents",
+    "Learning Agents",
+    "Agent Environments",
+    "Classifications (e.g., Static vs. Dynamic, Discrete vs. Continuous)",
+    "Design and Simulation of Environments",
+    "Agent Communication and Coordination",
+    "Communication Protocols and Languages (e.g., KQML, FIPA-ACL)",
+    "Coordination Mechanisms (e.g., Negotiation, Auctions)",
+    "Collaborative and Competitive Agent Interactions",
+    "Learning Agents and Adaptive Behavior",
+    "Machine Learning Techniques in Agents",
+    "Adaptation and Evolution of Agents",
+    "Reinforcement Learning",
+    "Multi-Agent Systems",
+    "Design and Management of Multi-Agent Systems",
+    "Cooperation and Competition among Agents",
+    "Distributed Problem Solving",
+    "Intelligent Agents in Games, Robotics, and Simulation",
+    "Agents in Video Games (e.g., Non-Player Characters)",
+    "Robotic Agents (e.g., Drones, Autonomous Vehicles)",
+    "Simulation Models Using Agents",
+    "Ethical Considerations and Future Trends in Agent AI",
+    "Ethical Implications of Autonomous Agents",
+    "Future Developments and Emerging Technologies",
+    "Social and Legal Issues",
+    "Programming Languages and Tools in AI Development",
+    "Common Programming Languages (e.g., Python, Java)",
+    "AI Development Frameworks and Libraries",
+    "Theoretical vs. Practical Approaches in Learning Agent AI",
+    "Theoretical Foundations and Research in Agent AI",
+    "Practical Implementations and Case Studies"]
+}
+```
 
 // Input: 
 {
@@ -49,4 +151,139 @@ in agent AI and any particular agent types or applications they want to learn ab
 ]
 }
 
-// Output: {"concept_list": ["Environmental Impact of Technology", "carbon footprint", "Role of AI in environmental protection", "environmental conservation", "renewable energy", "sustainable energy", "impact of computing on the environment", "e-waste management and recycling", "e-waste", "Energy Consumption in Data Centers", "energy consumption", "Data Centers", "sustainable software engineering", "classical software engineering", "technology", "ecosystem"]}
+// Output:
+Environmental Impacts of Technology
+    Effect on Global Ecosystems
+    Carbon Footprint of Tech Industries
+
+Technology and Sustainable Development
+    Relationship Between Technology and Sustainability
+    Balancing Technological Growth with Environmental Conservation
+
+Renewable Energy in Tech Sectors
+    Role of Renewable Energy Sources
+    Green Technology Initiatives (Case Studies)
+    Technological Solutions for Environmental Issues
+
+Specific Environmental Aspects of Technology
+    Impact of Computing on the Environment
+    Energy Consumption in Data Centers
+    E-Waste Management and Recycling
+    Role of AI in Environmental Protection
+    Sustainable Software Engineering Practices
+
+With the correct JSON Object:
+```json
+{"concept_list": ["Environmental Impacts of Technology",
+    "Effect on Global Ecosystems",
+    "Carbon Footprint of Tech Industries",
+    "Technology and Sustainable Development",
+    "Relationship Between Technology and Sustainability",
+    "Balancing Technological Growth with Environmental Conservation",
+    "Renewable Energy in Tech Sectors",
+    "Role of Renewable Energy Sources",
+    "Green Technology Initiatives (Case Studies)",
+    "Technological Solutions for Environmental Issues",
+    "Impact of Computing on the Environment",
+    "Energy Consumption in Data Centers",
+    "E-Waste Management and Recycling",
+    "Role of AI in Environmental Protection",
+    "Sustainable Software Engineering Practices"]}
+```
+
+// Input:
+{
+  "Notebank": [
+    {"index": 0, "note": "Student is keen to learn Java programming."},
+    {"index": 1, "note": "Main Concept: Java Programming"},
+    {"index": 2, "note": "Subconcept: Basic Java Syntax"},
+    {"index": 3, "note": "Subconcept: Data Types and Variables in Java"},
+    {"index": 4, "note": "Subconcept: Control Structures (if-else, loops)"},
+    {"index": 5, "note": "Subconcept: Object-Oriented Programming Concepts"},
+    {"index": 6, "note": "Subconcept: Classes and Objects in Java"},
+    {"index": 7, "note": "Subconcept: Inheritance and Polymorphism"},
+    {"index": 8, "note": "Subconcept: Interfaces and Abstraction"},
+    {"index": 9, "note": "Subconcept: Exception Handling"},
+    {"index": 10, "note": "Subconcept: Java Standard Libraries"},
+    {"index": 11, "note": "Student wishes to understand how to apply OOP principles in Java."},
+    {"index": 12, "note": "Tutor to assess student's current knowledge of programming basics."},
+    {"index": 13, "note": "Tutor to understand student's learning goals with Java."},
+    {"index": 14, "note": "Tutor to introduce real-world applications of Java."},
+    {"index": 15, "note": "Tutor to provide hands-on coding exercises."},
+    {"index": 16, "note": "Tutor to offer resources for further learning and practice in Java."},
+    {"index": 17, "note": "Tutor to encourage exploration of Java in different domains (web, software, mobile)."},
+    {"index": 18, "note": "Tutor to introduce student to Java development tools and environments."},
+    {"index": 19, "note": "Tutor to guide student through building a basic Java project."},
+    {"index": 20, "note": "Tutor to discuss the importance of clean code and best practices in Java."},
+    {"index": 21, "note": "Tutor to tailor lessons to the student's pace and style of learning."},
+    {"index": 22, "note": "Tutor to document student's progress and areas for improvement."}
+  ]
+}
+
+// Output:
+This should generate the following Concept List of topics:
+
+Java Programming
+    Basic Java Syntax
+    Data Types and Variables in Java
+    Control Structures (if-else, loops)
+    Java Standard Libraries
+
+Object-Oriented Programming (OOP) Concepts
+    Classes and Objects in Java
+    Inheritance and Polymorphism
+    Interfaces and Abstraction
+    Exception Handling
+
+Application of OOP Principles in Java
+    Real-world Applications of Java
+    Hands-on Coding Exercises
+    Building Basic Java Projects
+
+Java Development Tools and Environments
+
+Best Practices in Java Programming
+    Importance of Clean Code
+    Java Programming Best Practices
+    
+Learning and Improvement
+    Resources for Further Learning and Practice in Java
+    Tailoring Lessons to Student's Pace and Learning Style
+    Documenting Student's Progress and Areas for Improvement
+
+Exploration of Java in Different Domains
+    Java in Web Development
+    Java in Software Development
+    Java in Mobile Development
+
+With the correct JSON Object:
+```json
+{"concep_list": [
+    "Java Programming",
+    "Basic Java Syntax",
+    "Data Types and Variables in Java",
+    "Control Structures (if-else, loops)",
+    "Java Standard Libraries",
+    "Object-Oriented Programming (OOP) Concepts",
+    "Classes and Objects in Java",
+    "Inheritance and Polymorphism",
+    "Interfaces and Abstraction",
+    "Exception Handling",
+    "Application of OOP Principles in Java",
+    "Real-world Applications of Java",
+    "Hands-on Coding Exercises",
+    "Building Basic Java Projects",
+    "Java Development Tools and Environments",
+    "Best Practices in Java Programming",
+    "Importance of Clean Code",
+    "Java Programming Best Practices",
+    "Learning and Improvement",
+    "Resources for Further Learning and Practice in Java",
+    "Tailoring Lessons to Student's Pace and Learning Style",
+    "Documenting Student's Progress and Areas for Improvement",
+    "Exploration of Java in Different Domains",
+    "Java in Web Development",
+    "Java in Software Development",
+    "Java in Mobile Development"
+]}
+```

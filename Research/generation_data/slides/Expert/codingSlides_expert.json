@@ -1,0 +1,164 @@
+{
+    "slides": [
+        {
+            "Title": "Natural Language Processing",
+            "Description": "Professor John Licato University of South Florida Chapter 2:RegEx, Edit Distance",
+            "Latex": []
+        },
+        {
+            "Title": "Regular Expressions",
+            "Description": "\"Knowing [regular expressions] can mean the difference between solving a problem in 3 steps and solving it in 3,000 steps. When you\u2019re a nerd, you forget that the problems you solve with a couple keystrokes can take other people days of tedious, error-prone work to slog through.\"",
+            "Latex": []
+        },
+        {
+            "Title": "Regular Expressions",
+            "Description": "The following function called `isPhoneNumber(text)` is designed to check if the provided string is a phone number in a specific format using regex. def isPhoneNumber(text):    if len(text) != 12:        return False    for i in range(0, 3):        if not text[i].isdecimal():            return False    if text[3] != '-':        return False    for i in range(4, 7):        if not text[i].isdecimal():            return False    if text[7] != '-':        return False    for i in range(8, 12):        if not text[i].isdecimal():            return False    return Trueprint('415-555-4242 is a phone number:')print(isPhoneNumber('415-555-4242'))print('Moshi moshi is a phone number:')print(isPhoneNumber('Moshi moshi'))",
+            "Latex": []
+        },
+        {
+            "Title": "Regular Expressions",
+            "Description": "The following Python code uses the previously defined `isPhoneNumber` function within a loop to search through a longer string for valid phone number formats. message = 'Call me at 415-555-1011 tomorrow. 415-555-9999 is my office.'for i in range(len(message)):    chunk = message[i:i+12]    if isPhoneNumber(chunk):        print('Phone number found: ' + chunk)print('Done')",
+            "Latex": []
+        },
+        {
+            "Title": "Creating regex objects",
+            "Description": "r\u2019 = raw string\\d \u2013 placeholder for a single digit>>> import re>>> phoneNumRegex = re.compile(r\u2019\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d\u2019)",
+            "Latex": []
+        },
+        {
+            "Title": "Matching regex objects",
+            "Description": ">>> import re>>> phoneNumRegex = re.compile(r\u2019\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d\u2019)>>> mo = phoneNumRegex.search(\u2018My number is 415-555-4242.\u2019)>>> print(\u2018Phone number found: \u2019 + mo.group())Phone number found: 415-555-4242",
+            "Latex": []
+        },
+        {
+            "Title": "Text Normalization",
+            "Description": "\u2022We will work a lot with large datasets / corpora\n\u2022We often need to pre-process text\n\u2022Tokenizing (segmenting) words\n\u2022Normalizing word formats\n\u2022Segmenting sentences (e.g. by using punctuation)",
+            "Latex": []
+        },
+        {
+            "Title": "Tokenization \u2013 segmenting running text into words (or word-like units)",
+            "Description": ">>> text = 'That U.S.A. poster-print costs $12.40...'>>> pattern = r''', (?x)  # set flag to allow verbose regexps\n...     ([A-Z]\\.)+        # abbreviations, e.g. U.S.A....     | \\w+(-\\w+)*      # words with optional internal hyphens...     | \\$?\\d+(\\.\\d+)?%?  # currency and percentages, e.g. $12.40, 82%...     | \\.\\.\\.          # ellipsis...     | [][.,;\"'?():-_`]  # these are separate tokens; includes ], [... '''>>> nltk.regexp_tokenize(text, pattern)['That', 'U.S.A.', 'poster-print', 'costs', '$12.40', '...']",
+            "Latex": []
+        },
+        {
+            "Title": "Subword tokenization",
+            "Description": "\u2022How do we capture relations between words like:\n\u2013new, newer\n\u2013blow, blowing\n\u2013precipitation, precipitate\n\u2022Often useful to break tokens into *sub*words\u2022Usually split into token learners, and token segmenters",
+            "Latex": []
+        },
+        {
+            "Title": "Byte-pair encoding (BPE)",
+            "Description": "\u2022A way of performing subword tokenizationfunction BYTE-PAIR ENCODING(strings C, number of merges k) returns vocab VV <- all unique characters in C                  # initial set of tokens is charactersfor i = 1 to k do                                # merge tokens til k times    t_L, t_R <- Most frequent pair of adjacent tokens in C    t_new <- t_L + t_R                           # make new token by concatenating    V <- V + t_new                               # update the vocabulary    Replace each occurrence of t_L, t_R in C with t_new # and update the corpusreturn Vcorpus5 low_2 lowest_6 newer_3 wider_2 new_vocabulary_, d, e, i, l, n, o, r, s, t, wcorpus5 low _2 lowest _6 newer _3 wider _2 new _vocabulary_, d, e, i, l, n, o, r, s, t, w, er",
+            "Latex": []
+        },
+        {
+            "Title": "Word normalization",
+            "Description": "\u2022Case folding \u2013 e.g., making everything lowercase\u2022Lemmatization \u2013 folding lemmas together if they have the same root (dinner / dinners, am / are / is, etc.). \u2022Stemming \u2013 performing lemmatization by removing all but the roots of words (running / runner -> run)",
+            "Latex": []
+        },
+        {
+            "Title": "Minimum Edit Distance",
+            "Description": "Definition of Minimum Edit Distance",
+            "Latex": []
+        },
+        {
+            "Title": "How similar are two strings?",
+            "Description": "\u2022Spell correction\u2013The user typed \u201cgraffe\u201dWhich is closest? \u2022graf\u2022graft\u2022grail\u2022giraffe\u2022Computational Biology\u2022Align two sequences of nucleotides\u2022Resulting alignment:\u2022Also for Machine Translation, Information Extraction, Speech RecognitionAGGCTATCACCTGACCTCCAGGCCGATGCCCTAGCTATCACGACCGCGGTCGATTTGCCCGAC-AGGCTATCACCTGACCTCCAGGCCGA--TGCCC---TAG-CTATCAC--GACCGC--GGTCGATTTGCCCGAC",
+            "Latex": []
+        },
+        {
+            "Title": "Edit Distance",
+            "Description": "\u2022The minimum edit distance between two strings\u2022Is the minimum number of editing operations\u2013Insertion\u2013Deletion\u2013Substitution\u2022Needed to transform one into the other",
+            "Latex": []
+        },
+        {
+            "Title": "Minimum Edit Distance",
+            "Description": "\u2022Two strings and their alignment:INTENTION| | | | | | |*EXECUTION",
+            "Latex": []
+        },
+        {
+            "Title": "Minimum Edit Distance",
+            "Description": "\u2022If each operation has cost of 1\u2013Distance between these is 5\u2022If substitutions cost 2 (Levenshtein)\u2013Distance between them is 8INTENTION| | | | | | |*EXECUTIONd s s   is s",
+            "Latex": []
+        },
+        {
+            "Title": "Alignment in Computational Biology",
+            "Description": "\u2022Given a sequence of bases\u2022An alignment:\u2022Given two sequences, align each letter to a letter or gap-AGGCTATCACCTGACCTCCAGGCCGA--TGCCC---TAG-CTATCAC--GACCGC--GGTCGATTTGCCCGACAGGCTATCACCTGACCTCCAGGCCGATGCCCTAGCTATCACGACCGCGGTCGATTTGCCCGAC",
+            "Latex": []
+        },
+        {
+            "Title": "Other uses of Edit Distance in NLP",
+            "Description": "\u2022Evaluating Machine Translation and speech recognitionR Spokesman confirms    senior government adviser was shotH Spokesman said    the senior            adviser was shot dead              S      I              D                        I\u2022Named Entity Extraction and Entity Coreference\u2013IBM Inc. announced today\u2013IBM profits\u2013Stanford President John Hennessy announced yesterday\u2013for Stanford University President John Hennessy",
+            "Latex": []
+        },
+        {
+            "Title": "How to find the Min Edit Distance?",
+            "Description": "\u2022Searching for a path (sequence of edits) from the start string to the final string:\u2013Initial state: the word we\u2019re transforming\u2013Operators: insert, delete, substitute\u2013Goal state:  the word we\u2019re trying to get to\u2013Path cost: what we want to minimize: the number of edits37",
+            "Latex": []
+        },
+        {
+            "Title": "Minimum Edit as Search",
+            "Description": "\u2022But the space of all edit sequences is huge!\u2013We can\u2019t afford to navigate na\u00efvely\u2013Lots of distinct paths wind up at the same state.\u2022We don\u2019t have to keep track of all of them\u2022Just the shortest path to each of those revisted states.38",
+            "Latex": []
+        },
+        {
+            "Title": "Defining Min Edit Distance",
+            "Description": "\u2022For two strings\u2013X of length n \u2013Y of length m\u2022We define D(i,j)\u2013the edit distance between X[1..i] and Y[1..j] \u2022i.e., the first i characters of X and the first j characters of Y\u2013The edit distance between X and Y is thus D(n,m)",
+            "Latex": []
+        },
+        {
+            "Title": "Dynamic Programming for Minimum Edit Distance",
+            "Description": "\u2022Dynamic programming: A tabular computation of D(n,m)\u2022Solving problems by combining solutions to subproblems.\u2022Bottom-up\u2013We compute D(i,j) for small i,j \u2013And compute larger D(i,j) based on previously computed smaller values\u2013i.e., compute D(i,j) for all i (0 < i < n)  and j (0 < j < m)",
+            "Latex": []
+        },
+        {
+            "Title": "Defining Min Edit Distance (Levenshtein)",
+            "Description": "\u2022InitializationD(i,0) = iD(0,j) = j\u2022Recurrence Relation:For each  i = 1\u2026M   For each  j = 1\u2026N                       D(i-1,j) + 1          D(i,j)= min  D(i,j-1) + 1                       D(i-1,j-1) +   2; if X(i) \u2260 Y(j)                                         0; if X(i) = Y(j)\u2022Termination:D(N,M) is distance ",
+            "Latex": []
+        },
+        {
+            "Title": "The Edit Distance Table",
+            "Description": "The minimum edit distance between two strings is the minimum number of editing operations needed to transform one string into the other. The typical operations allowed are:1.Insertion (Ins): Add one character to the string.2.Deletion (Del): Remove one character from the string.3.Substitution (Sub): Replace one character with another.",
+            "Latex": []
+        },
+        {
+            "Title": "Computing alignments",
+            "Description": "\u2022Edit distance isn\u2019t sufficient\u2013We often need to align each character of the two strings to each other\u2022We do this by keeping a \u201cbacktrace\u201d\u2022Every time we enter a cell, remember where we came from\u2022When we reach the end, \u2013Trace back the path from the upper right corner to read off the alignment",
+            "Latex": []
+        },
+        {
+            "Title": "MinEdit with Backtrace",
+            "Description": "",
+            "Latex": []
+        },
+        {
+            "Title": "Adding Backtrace to Minimum Edit Distance",
+            "Description": "\u2022Base conditions:                                                        Termination:D(i,0) = i         D(0,j) = j         D(N,M) is distance \u2022Recurrence Relation:For each  i = 1\u2026M  For each  j = 1\u2026N                      D(i-1,j) + 1         D(i,j)= min  D(i,j-1) + 1                      D(i-1,j-1) +  2; if X(i) \u2260 Y(j)                                       0; if X(i) = Y(j)                     LEFT         ptr(i,j)=   DOWN                     DIAGinsertiondeletionsubstitutioninsertiondeletionsubstitution",
+            "Latex": []
+        },
+        {
+            "Title": "The Distance Matrix",
+            "Description": "Slide adapted from Serafim Batzoglouy \u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026  yMx0 \u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026  xNEvery non-decreasing path from (0,0) to (M, N) corresponds to an alignment of the two sequencesAn optimal alignment is composed of optimal subalignments",
+            "Latex": []
+        },
+        {
+            "Title": "Result of Backtrace",
+            "Description": "Two strings and their alignment:INTENTION| | | | | | |*EXECUTION",
+            "Latex": []
+        },
+        {
+            "Title": "Performance",
+            "Description": "Time:    O(nm)Space:    O(nm)Backtrace    O(n+m)",
+            "Latex": []
+        },
+        {
+            "Title": "Hearst Patterns for Hypernymy",
+            "Description": "\u2022Hyponym \u2013 \u201cIs-A\u201d relationship\u2022Hypernym \u2013 Opposite of hypernym\u2022Color is a hypernym of red; cat is a hypernym of white cat. \u2022A rule-based way of detecting hypernym relationships in text is through Hearst patterns",
+            "Latex": []
+        },
+        {
+            "Title": "Some Hearst Patterns",
+            "Description": "\u2022All bolded symbols (a, b, \u2026) are noun phrases\u2022Type 1 - Extract (b,a)\u2013\u201ca is b\u201d\u2013\u201ca is a type of b\u201d\u2013\u201ca is a kind of b\u201d\u2013\u201ca was b\u201d\u2013\u201ca was a type of b\u201d\u2013\u201ca was a kind of b\u201d\u2013\u201ca are b\u201d\u2013\u201ca are a type of b\u201d\u2013\u201ca are a kind of b\u201d\u2022Type 2 - Extract (a,b), (a,c), \u2026, (a,d)\u2013\u201ca, including b\u201d\u2013\u201ca, including b, c, \u2026, and d\u201d\u2013\u201ca, including b, c, \u2026, or d\u201d\u2013\u201ca, such as b\u201d\u2013\u201ca, such as b, c, \u2026, and d\u201d\u2013\u201ca, such as b, c, \u2026, or d\u201d\u2022There are many others!",
+            "Latex": []
+        }
+    ]
+}

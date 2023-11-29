@@ -142,6 +142,8 @@ The Main Concept is the center focus of the knowledge graph. We want to generate
 
 The Concept List is the concepts already discovered by our algorithm. Ensure to reference them if needed using the syntax described above as our algorithm will pick this up and map it accordingly. In other words, feel free to include concepts already referenced, or; expand the ones we haven't already discovered.
 
+The Notebank gives us crucial information about context of what concepts we should be generating. The Notebank also contains a list of important concepts which we will need to discover. The Notebank is a contextual reference for understanding the learning context under which the concepts are being generated for. Our concepts discovered in our graph should include the relevant concepts to the learning environment detailed in the Notebank.
+
 ## Environment State
 Here is the current Environment State:
 

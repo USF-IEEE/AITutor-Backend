@@ -1,0 +1,59 @@
+{ 
+    "slides":[
+        {
+            "Title":"Introduction to NLP: Regular Expressions, Text Normalization, and Edit Distance", 
+            "Description": "This chapter delves into fundamental tools and concepts in natural language processing, focusing on Regular Expressions, Text Normalization, and Edit Distance.",
+            "Latex": []
+        },
+        {
+            "Title":"Regular Expressions", 
+            "Description": "Regular expressions are sequences of characters used for pattern matching and string manipulation in text processing.",
+            "Latex": []
+        },
+        {
+            "Title":"Components of Regular Expressions", 
+            "Description": "Key components include Concatenation, Disjunction, Range, Kleene Star, Anchors, Counters, Precedence, Substitution, and Lookahead Assertions.",
+            "Latex": []
+        },
+        {
+            "Title":"Text Normalization", 
+            "Description": "Text normalization involves converting text into a more standardized form. This includes processes like tokenization, lemmatization, stemming, and sentence segmentation.",
+            "Latex": []
+        },
+        {
+            "Title":"Tokenization in NLP", 
+            "Description": "Tokenization is the task of breaking up text into individual tokens, which can be complex in languages like English with varied word separations and even more challenging in languages without spaces like Japanese.",
+            "Latex": []
+        },
+        {
+            "Title":"Lemmatization and Stemming", 
+            "Description": "Lemmatization involves finding the base or root form of a word, while stemming is a simpler process of removing word suffixes.",
+            "Latex": []
+        },
+        {
+            "Title":"Edit Distance", 
+            "Description": "Edit Distance measures the similarity between two strings based on the number of edits needed to transform one string into the other. Common edits include insertions, deletions, and substitutions.",
+            "Latex": []
+        },
+        {
+            "Title":"Applications of Edit Distance", 
+            "Description": "Edit distance is widely used in various NLP tasks, including spelling correction, speech recognition, and coreference resolution.",
+            "Latex": []
+        },
+        {
+            "Title":"Dynamic Programming in Edit Distance", 
+            "Description": "Dynamic programming is a method used to efficiently compute the minimum edit distance, providing a way to align two strings.",
+            "Latex": []
+        },
+        {
+            "Title":"ELIZA: An Early Example of NLP", 
+            "Description": "ELIZA is an early natural language processing system that used pattern matching to mimic conversation, serving as a historical example of the application of regular expressions in NLP.",
+            "Latex": []
+        },
+        {
+            "Title":"Summary of Key Points", 
+            "Description": "This chapter covered the essentials of regular expressions, text normalization tasks including tokenization and stemming, and the concept of edit distance in string comparison.",
+            "Latex": []
+        }
+    ]
+}

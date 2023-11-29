@@ -1,0 +1,88 @@
+FIRST TEST
+
+Multiple Choice Questions
+Which of the following regular expressions correctly identifies a valid email address format?
+a) [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}
+b) [A-Za-z]+@[A-Za-z]+\.[A-Za-z]{2,4}
+c) [A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]
+d) [@]+\.[A-Za-z]{2,4}
+
+In text normalization, what does the process of stemming primarily aim to achieve?
+a) Converting all text to lowercase.
+b) Removing prefixes and suffixes from a word.
+c) Translating text into another language.
+d) Identifying the root meaning of a sentence.
+
+Coding Questions
+Write a Python function that uses regular expressions to check if a given string is a valid date in the format dd-mm-yyyy.
+
+Implement a Python function that uses regular expressions to extract all the hashtags (e.g., #example) from a given string representing a social media post.
+
+Conceptual Questions
+How does edit distance contribute to improving the performance of a spell checker in natural language processing?
+
+Discuss the main differences and use-cases for lemmatization vs. stemming in the context of text normalization.
+
+
+
+SECOND TEST
+
+Multiple Choice Questions
+Which of the following regular expressions correctly matches any string of one or more lowercase letters followed by the letter 'b'?
+A) [a-z]*b
+B) [a-z]+b
+C) b[a-z]+
+D) [b-z]*
+
+In the context of text normalization, which of the following best describes the process of stemming?
+A) Separating punctuation from words
+B) Converting all characters to lowercase
+C) Finding the root form of a word by removing affixes
+D) Splitting text into individual sentences
+
+Coding Questions
+Write a Python function using regular expressions to check if a given string is a valid email address.
+
+Implement a basic function in Python to calculate the edit distance between two strings. You may assume equal cost for insertions, deletions, and substitutions.
+
+Conceptual Questions
+Explain how regular expressions can be used for sentence segmentation and the challenges that might arise with this approach.
+
+Discuss the difference between lemmatization and stemming, providing examples of when each might be more appropriate in NLP tasks.
+
+
+
+THIRD TEST
+
+Multiple Choice Questions
+What does the Kleene Star in a regular expression represent?
+A) Match the preceding character one or more times.
+B) Match the preceding character zero or more times.
+C) Match any single character except newline.
+D) Match the beginning of a line.
+
+Which of the following is a primary application of edit distance in NLP?
+A) Word tokenization.
+B) Sentence segmentation.
+C) Spelling correction.
+D) Part-of-speech tagging.
+
+Coding Questions
+Write a Python function `normalize_text(text)` that takes a string `text` and returns the text after replacing all occurrences of 'U.S.A.' with 'USA' and splitting it into a list of words. Use regular expressions.
+Example:
+   ```python
+   normalize_text("I visited the U.S.A. last year.") 
+   # Should return ['I', 'visited', 'the', 'USA', 'last', 'year.']
+   ```
+
+Implement a Python function `simple_edit_distance(str1, str2)` that calculates the edit distance between two strings `str1` and `str2` using only insertions and deletions, each having a cost of 1.
+Example:
+   ```python
+   simple_edit_distance("kitten", "sitting") 
+   # Should return 3
+   ```
+
+Conceptual Questions
+Explain how tokenization can be more complex in languages without clear word boundaries, such as Japanese, compared to languages like English.**
+
+Describe the difference between stemming and lemmatization in text normalization. Why might one be preferred over the other in certain NLP tasks?**
