@@ -1,5 +1,3 @@
-FIRST TEST
-
 Multiple Choice Questions
 Which of the following regular expressions correctly identifies a valid email address format?
 a) [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}
@@ -23,10 +21,6 @@ How does edit distance contribute to improving the performance of a spell checke
 
 Discuss the main differences and use-cases for lemmatization vs. stemming in the context of text normalization.
 
-
-
-SECOND TEST
-
 Multiple Choice Questions
 Which of the following regular expressions correctly matches any string of one or more lowercase letters followed by the letter 'b'?
 A) [a-z]*b
@@ -49,10 +43,6 @@ Conceptual Questions
 Explain how regular expressions can be used for sentence segmentation and the challenges that might arise with this approach.
 
 Discuss the difference between lemmatization and stemming, providing examples of when each might be more appropriate in NLP tasks.
-
-
-
-THIRD TEST
 
 Multiple Choice Questions
 What does the Kleene Star in a regular expression represent?
