@@ -19,7 +19,7 @@ Ensure your output contains a valid JSON Object.
 Output: 
 """
 
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. It is important to be concise and to the point, as the student may have questions. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure the material is presented properly. 
+SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. This should explain to the student the content being detailed in the Slide's Content listed below. This is spoken conversation between you and the student which you will be using to teach them the content displayed below, remember this is conversational. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure the material is presented properly. 
 
 Slide Content: $SLIDE_CONTENT$
 
