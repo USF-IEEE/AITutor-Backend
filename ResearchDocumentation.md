@@ -91,6 +91,7 @@ We hypothesized prior to document generation that a LLM can exhibit cognitive ab
       - Generating informational Context around a stimulus
 
    - Translation, translate a Natural Language plan into a JSON Object / Data Structure usable in the environment/program.
+
    - Discrimination, based on the environment state (ie. current generation state, current generation action, ...) discriminate:
       - Is the current action good? (i.e. does this generation pass criteria)
       - Is the current state optimal? (i.e. is this state a termination state)
@@ -129,6 +130,7 @@ Cognitive Abilities are crucial to our document generation;
 As the software engineers, we can "glue" programs and cognitive processes together; Planning to Discrimination, Planning to Translation to Discrimination, Planning to Translation, ecetera
 
 For Example, take the Cognitive Process of Generating a Slide:
+Method Generate Slide():
 - While not Termination State:
    - Plan What the Next Slide will be About, i.e What is the Title, what is its Purpose, and What Information is it going to be used to display?
    - Translate this Plan into a JSON Object for our program
@@ -137,6 +139,23 @@ For Example, take the Cognitive Process of Generating a Slide:
    - Generate the Slide's Context, i.e. the informational context, academic context and relevant information surrounding the chosen topic and purpose from the plan
    - Using the Slide's Context, parse and translate it into a Slide's Content JSON Object
    - Using the Slide's Context, parse and translate  it into a Slide's Presentation JSON Object 
+
+Environment State: (READ Memory Module, READ Chat History, READ current error,)
+Method LearnStudentSessionGoal():
+Initialize Environment to Prompting State
+Initialize Query < - "AI Tutor: How can I help you learn today?"
+While not Terminated:
+   q <- Student Responds to Query
+   Environment.ChatHistory = Environment.ChatHistory + q  
+   
+   using Environment.State as s_t:
+      plan_t <- Execute Planning Module (q, s_t)
+      Memory Object, Terminated <- Execute Memory Module(plan_t, s_t)
+      Use Memory Object to update Memory Module
+      if not Terminated:
+         Query, Terminated <- Execute Agent Interaction Module(plan_t, s_t) // Tutor can Terminate in either the Memory Module or the Agent Interactin Module
+
+   Terminated <- Termination State 
 
 With this, we can exploit a state-based system to perform our cognitive processes which will in turn lead to our document generations.
 

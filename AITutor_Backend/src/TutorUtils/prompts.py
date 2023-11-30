@@ -116,6 +116,9 @@ class Prompter:
     
     
     def perform_tutor(self, student_input:str):
+        """
+        Cognitive Process
+        """
         self.chat_history.hear(student_input) # DEBUGONLY: Remove this to include in TutorEnv
         # Construct the notebank:
         plan = self.perform_plan()
