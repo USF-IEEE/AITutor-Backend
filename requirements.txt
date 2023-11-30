@@ -11,4 +11,5 @@ langchain
 tiktoken
 torch
 sympy
-python-pptx
+python-pdf
+PyPDF2
