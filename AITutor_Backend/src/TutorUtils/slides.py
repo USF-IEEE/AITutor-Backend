@@ -19,11 +19,15 @@ Ensure your output contains a valid JSON Object.
 Output: 
 """
 
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above, create a spoken Presentation to present the information to the Student. It is important to be concise and to the point, as the student may have questions. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure the material is presented properly. After this, create a JSON object which we can parse for the Presentation content, e.g. 
+SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. It is important to be concise and to the point, as the student may have questions. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure the material is presented properly. 
+
+Slide Content: $SLIDE_CONTENT$
+
+After this, create a JSON object which we can parse for the Presentation content, e.g. 
 ```json
 {"presentation": "insert presentation content here..."}
 ```
-Ensure your output contains a valid JSON Object .
+Ensure your output contains a valid JSON Object.
 
 Output: """
 
@@ -115,7 +119,7 @@ class SlidePlan(JSONSerializable):
     def format_json(self):
         return {
             "title": self.title,
-            "purpose": self.purpose.name,
+            "purpose": self.purpose,
             "purpose_statement": self.purpose_statement,
             "concepts": [concept.name for concept in self.concepts]
         }
@@ -330,7 +334,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         # Try to get Presentation:
         # presentation_prompt = slide_prompt+"\n\nAI Tutor:\n"+s_description+"\n\nSystem:\n"+SLIDE_PRESENTATION_PROMPT
         while True:
-            llm_output = self.llm_api.conversational_JSON_request(slide_prompt, s_description, SLIDE_PRESENTATION_PROMPT, "gpt-3.5-turbo-16k")
+            llm_output = self.llm_api.conversational_JSON_request(slide_prompt.replace("$SLIDE_CONTENT$", s_content), s_description, SLIDE_PRESENTATION_PROMPT, "gpt-3.5-turbo-16k")
             success, s_presentation = Slide.parse_llm_for_presentation(llm_output)
             if success: break
         n_slide = Slide(title=slide_plan.title, description=s_description, presentation=s_presentation, content=s_content, latex_codes="", purpose=slide_plan.purpose, purpose_statement=slide_plan.purpose_statement, concepts=slide_plan.concepts.copy())
