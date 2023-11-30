@@ -1,0 +1,52 @@
+Main Concept: Derivatives in Calculus
+Student has expressed a desire to learn about derivatives, including the Definition of Derivatives, Interpretation of the Derivative, Differentiation Formulas, Product and Quotient Rule, Derivatives of Trig Functions, Derivatives of Exponential and Logarithm Functions, Derivatives of Hyperbolic Functions, Chain Rule, Implicit Differentiation, Related Rates, Higher Order Derivatives, and Logarithmic Differentiation.
+Student has no prior knowledge of these topics.
+Student is a college student requiring help for a calculus class - implying the need for a detailed and university-level understanding of the subject.
+The student hopes to perform better in the calculus class by understanding the basic concepts of derivatives, especially the product and quotient rules and related rates.
+Subconcept: Definition of a Derivative
+Subconcept: Interpretation of the Derivative
+Subconcept: Basic Differentiation Formulas
+Subconcept: The Power Rule
+Subconcept: Product Rule
+Subconcept: Quotient Rule
+Subconcept: Chain Rule
+Subconcept: Derivatives of Trigonometric Functions
+Subconcept: Derivatives of Exponential and Logarithm Functions
+Subconcept: Derivatives of Hyperbolic Functions
+Subconcept: Implicit Differentiation
+Subconcept: Related Rates
+Subconcept: Higher Order Derivatives
+Subconcept: Logarithmic Differentiation
+Further questions should assess the student's specific struggles to tailor the examples and practice.
+Tutor could include practical problems and examples involving these concepts
+Equations to include: differentiation formulas and rules.
+Tutor should employ a variety of teaching methods, including visual aids, to enhance understanding of concepts as they are highly visual in nature. Programs like Desmos and GeoGebra could be recommended as tools for student practice.
+Considering the academic context, the session will cover theory, practice problems, and guide the student towards textbooks or scholarly articles for comprehensive understanding.
+Formative assessment through problem-solving should be incorporated to measure the student's grasp of each concept.
+Structured homework problems tailored to the student's coursework will be provided to reinforce lesson material.
+Include student’s Learning Request R - Mastery of Product and Quotient Rule and Related Rates.
+Concept: Derivatives in Calculus
+Concept: Definition of a Derivative
+Concept: Interpretation of the Derivative
+Concept: Basic Differentiation Formulas
+Concept: The Power Rule
+Concept: Product Rule
+Concept: Quotient Rule
+Concept: Chain Rule
+Concept: Derivatives of Trigonometric Functions
+Concept: Derivatives of Exponential and Logarithm Functions
+Concept: Derivatives of Hyperbolic Functions
+Concept: Implicit Differentiation
+Concept: Related Rates
+Concept: Higher Order Derivatives
+Concept: Logarithmic Differentiation
+Concept: Further questions should assess the student's specific struggles to tailor the examples and practice.
+Concept: Including Practical Problems and Examples
+Concept: Employing a variety of teaching methods, including visual aids
+Concept: Theory, Practice Problems, and Guiding towards Comprehensive Understanding
+Concept: Formative Assessment through Problem-Solving
+Concept: Structured Homework Problems to Reinforce Lesson Material
+Concept: Mastery of Product and Quotient Rule and Related Rates
+Student's Interest Statement: I want to learn everythin about derivates I don't have prior derivative knowledge this is very important for me thanks
+Student's Slides Preference Statement: both Information and Examples
+Student's Questions Preference Statement: I want multiple choice questions, free response, and math

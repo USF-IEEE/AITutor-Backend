@@ -1,0 +1,62 @@
+# Derivatives
+
+## Basic Concepts
+- Understanding the Concept of a Derivative
+- Slope of a Tangent Line
+- Rate of Change Interpretation
+
+## Definition and Principles
+- Limit Definition of a Derivative
+- Notation and Terminology (e.g., `f'(x)`, `\frac{dy}{dx}`)
+
+# Differentiation Rules
+
+## Basic Rules
+- Power Rule
+- Sum Rule
+- Difference Rule
+- Constant Multiple Rule
+
+## Advanced Rules
+- Product Rule
+- Quotient Rule
+- Chain Rule
+
+# Special Function Derivatives
+
+## Trigonometric Functions
+- Sine, Cosine, Tangent
+- Inverse Trigonometric Functions
+
+## Exponential and Logarithmic Functions
+- Natural Exponential Function (e.g., `e^x`)
+- Natural Logarithm (e.g., `\ln(x)`)
+
+## Hyperbolic Functions
+- Hyperbolic Sine and Cosine (e.g., sinh, cosh)
+
+# Techniques in Differentiation
+
+## Implicit Differentiation
+- Differentiating Equations not Explicitly Solved for y
+
+## Logarithmic Differentiation
+- Technique for Complex Functions
+
+## Higher Order Derivatives
+- Second and Higher Derivatives
+- Applications (e.g., Acceleration in Physics)
+
+# Applications of Derivatives
+
+## Related Rates
+- Real-world Problems Involving Rate of Change
+
+## Graphical Interpretation
+- Analyzing Function Graphs (e.g., Concavity, Inflection Points)
+
+# Chain Rule
+
+## Composite Functions
+- Differentiation of Nested Functions
+- Practical Examples and Applications
