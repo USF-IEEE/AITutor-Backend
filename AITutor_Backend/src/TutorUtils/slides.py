@@ -19,15 +19,16 @@ Ensure your output contains a valid JSON Object.
 Output: 
 """
 
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. This should explain to the student the content being detailed in the Slide's Content listed below. This is spoken conversation between you and the student which you will be using to teach them the content displayed below, remember this is conversational. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure the material is presented properly. 
+SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. This should explain to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation.
 
 Slide Content: $SLIDE_CONTENT$
 
-After this, create a JSON object which we can parse for the Presentation content, e.g. 
+First, come up with the spoken presentation based on the context.
+After this, you need to convert the spoken presentation into a JSON Object. Ceate a JSON object which we can parse for the Presentation content, e.g. 
 ```json
-{"presentation": "insert presentation content here..."}
+{"presentation": "insert presentation conversation here..."}
 ```
-Ensure your output contains a valid JSON Object.
+Ensure your output contains a valid JSON Object containing the 'presentation' key.
 
 Output: """
 
