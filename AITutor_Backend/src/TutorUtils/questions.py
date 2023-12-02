@@ -3,6 +3,7 @@ from typing import Tuple, List
 import re
 import yaml
 import os
+
 import openai
 import json
 
@@ -11,7 +12,9 @@ from AITutor_Backend.src.BackendUtils.code_executor import CodeExecutor
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
+
 USE_OPENAI = True
+DEBUG = os.environ.get("DEBUG", 0)
 
 class QuestionSuite(JSONSerializable, SQLSerializable):
     ALLOWED_LIBS = [
@@ -92,6 +95,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         self.llm_api = QuestionSuite.QuestionLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_to_question_prompt", )
         
     def generate_question_data(self, ):
+        if DEBUG: print (f"Generating Question Data for {self.__ConceptDatabase.main_concept}")
         concept_list_str = self.__ConceptDatabase.get_concept_list_str()
         notebank_str = self.__Notebank.env_string()
         # Iterate through the Questions and Generate
@@ -118,7 +122,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     break
                 except Exception as e:
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"
-
+            if DEBUG: print(f"Question {question_idx}:", question.format_json())
             self.Questions.append(question)
         self.current_obj_idx = 0
             
