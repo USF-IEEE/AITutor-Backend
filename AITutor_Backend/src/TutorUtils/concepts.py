@@ -217,10 +217,6 @@ class Concept(JSONSerializable):
         #Get all tokens from definition string, string or concept format
         pattern = re.compile(r'<Concept>.*?<\/Concept>|\S+')
         tokens = pattern.findall(definition_str)
-
-        # Create futures Reference
-        futures = []
-        
         #Find concepts in main concept's definition using regex
         for token in tokens:
             if '<Concept>' in token:

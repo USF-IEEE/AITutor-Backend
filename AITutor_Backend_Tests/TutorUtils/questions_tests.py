@@ -107,6 +107,28 @@ lookahead_assertions = Concept.create_from_concept_string_add_to_database(
     "", cd
 )
 
+regex_notes = """User expresses interest in learning about regular expressions.
+Main Concept: Regular Expressions
+Student wants to learn about regular expressions.
+Subconcept: Introduction to Regular Expressions
+Subconcept: Text Normalization
+Subconcept: Expression Patterns
+Subconcept: Concatenation
+Subconcept: Disjunction
+Subconcept: Range
+Subconcept: Kleene Star and Plus
+Subconcept: Anchors
+Subconcept: Counters
+Subconcept: Precedence
+Subconcept: Substitution
+Subconcept: Lookahead Assertions
+Student has limited prior knowledge of regex concepts in string manipulation and pattern matching.
+Student wants to becom proficient in regular expressions.
+Student Interest Statement: I like bird watching, I have a nest in my backyard with a camera that tracks birds over time, its so cute.
+Student Slides Statement: I learn by example, the more examples the better.
+Student Questions Statement: I would like to tackle programming questions, text entry questions, and multiple choice questions.
+"""
+
 
 # Adding references (for demonstration, assuming this functionality is part of the Concept class)
 regular_expression.refs.extend([text_normalization, expression_patterns])
@@ -125,21 +147,22 @@ class QuestionSuiteTests(unittest.TestCase):
     def test_initialization(self):
         self.assertEqual(len(self.question_suite.Questions), 0, "Initial question list should be empty")
 
-    def test_generate_question_data(self):
+    def test_generate_example_questions(self):
         if not GENERATE_DATA: return
         # return # TODO: Integrate Generation Testing on GH Actions
         notebank = NoteBank()
-        [notebank.add_note(note) for note in agent_ai_notes.split("\n")]
-        cd = ConceptDatabase("Agent Artificial Intelligence", notebank.env_string())
+        [notebank.add_note(note) for note in regex_notes.split("\n")]
+        cd = ConceptDatabase("Regular Expressions", notebank.env_string())
         q_suite = QuestionSuite(10, notebank, cd)
         q_suite.generate_question_data()
-        self.assertEqual(len(self.question_suite.Questions), 10, "QuestionSuite should generate specified number of questions")
+        self.assertEqual(len(q_suite.Questions), 10, "QuestionSuite should generate specified number of questions")
 
     def test_generate_and_env_string_format(self):
         if not GENERATE_DATA: return         
         q_suite = QuestionSuite(5, self.notebank, cd)
         q_suite.generate_question_data()
         env_string = q_suite.env_string()
+        self.assertEqual(len(q_suite.Questions), 5, "Failed at properly generating 5 questions for the Question Suite")
         self.assertIsInstance(env_string, str, "Environment string should be a string")
 
     def test_to_sql_and_from_sql(self):
