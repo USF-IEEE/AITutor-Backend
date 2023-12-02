@@ -1,5 +1,9 @@
 import unittest
 import os
+import json
+
+GENERATE_DATA = bool(os.environ.get("GENERATE_TESTS", 0))
+
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite, Question
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase, Concept
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank
@@ -29,10 +33,111 @@ Tutor to ask student about their preference for a theoretical or practical appro
 Tutor should gauge student's current understanding of agent AI concepts to create a targeted learning plan.
 Tutor should document their responses and preferences in the Notebank for future reference.
 """
+
+# Defining the concepts in the SubTree
+cd = ConceptDatabase("Regular Expression", "", generation=False)
+regular_expression = Concept.create_from_concept_string_add_to_database(
+    "Regular Expression",
+    "A sequence of characters that form a search pattern, often used for string matching and manipulation.",
+    "", cd
+)
+
+text_normalization = Concept.create_from_concept_string_add_to_database(
+    "Text normalization",
+    "Process of transforming text into a more consistent format, often used in conjunction with <Concept>Regular Expression</Concept>.",
+    "", cd
+)
+
+expression_patterns = Concept.create_from_concept_string_add_to_database(
+    "Expression Patterns",
+    "Specific patterns used within a <Concept>Regular Expression</Concept>, including Concatenation, Disjunction, etc.",    "", cd)
+
+# Sub-concepts of Expression Patterns
+concatenation = Concept.create_from_concept_string_add_to_database(
+    "Concatenation",
+    "A type of <Concept>Expression Pattern</Concept> where two strings are joined end-to-end.",
+    "", cd
+)
+
+disjunction = Concept.create_from_concept_string_add_to_database(
+    "Disjunction",
+    "A type of <Concept>Expression Pattern</Concept> representing a choice between alternatives.",
+    "", cd
+)
+
+range_c = Concept.create_from_concept_string_add_to_database(
+    "Range",
+    "A <Concept>Expression Pattern</Concept> that specifies a range of characters to match.",
+    "", cd
+)
+
+kleene = Concept.create_from_concept_string_add_to_database(
+    "Kleene",
+    "A <Concept>Expression Pattern</Concept> indicating zero or more occurrences of the previous element.",
+    "", cd
+)
+
+anchors = Concept.create_from_concept_string_add_to_database(
+    "Anchors",
+    "Special <Concept>Expression Patterns</Concept> that assert a position within the text.",
+    "", cd
+)
+
+counters = Concept.create_from_concept_string_add_to_database(
+    "Counters",
+    "Quantifiers in a <Concept>Regular Expression</Concept> that specify how many times a component should occur.",
+    "", cd
+)
+
+precedence = Concept.create_from_concept_string_add_to_database(
+    "Precedence",
+    "The order in which operations in a <Concept>Regular Expression</Concept> are carried out.",
+    "", cd
+)
+
+substitution = Concept.create_from_concept_string_add_to_database(
+    "Substitution",
+    "Replacing text in a string that matches a <Concept>Regular Expression</Concept>.",
+    "", cd
+)
+
+lookahead_assertions = Concept.create_from_concept_string_add_to_database(
+    "Lookahead Assertions",
+    "Conditional <Concept>Expression Patterns</Concept> in a <Concept>Regular Expression</Concept> that look ahead in the text.",
+    "", cd
+)
+
+regex_notes = """User expresses interest in learning about regular expressions.
+Main Concept: Regular Expressions
+Student wants to learn about regular expressions.
+Subconcept: Introduction to Regular Expressions
+Subconcept: Text Normalization
+Subconcept: Expression Patterns
+Subconcept: Concatenation
+Subconcept: Disjunction
+Subconcept: Range
+Subconcept: Kleene Star and Plus
+Subconcept: Anchors
+Subconcept: Counters
+Subconcept: Precedence
+Subconcept: Substitution
+Subconcept: Lookahead Assertions
+Student has limited prior knowledge of regex concepts in string manipulation and pattern matching.
+Student wants to becom proficient in regular expressions.
+Student Interest Statement: I like bird watching, I have a nest in my backyard with a camera that tracks birds over time, its so cute.
+Student Slides Statement: I learn by example, the more examples the better.
+Student Questions Statement: I would like to tackle programming questions, text entry questions, and multiple choice questions.
+"""
+
+
+# Adding references (for demonstration, assuming this functionality is part of the Concept class)
+regular_expression.refs.extend([text_normalization, expression_patterns])
+expression_patterns.refs.extend([concatenation, disjunction, range_c, kleene, anchors, counters, precedence, substitution, lookahead_assertions])
+
 class QuestionSuiteTests(unittest.TestCase):
     def setUp(self):
         self.notebank = NoteBank()
-        self.concept_db = ConceptDatabase("Test Concept", generation=False)
+        self.concept_db = ConceptDatabase("Test Concept 1", generation=False)
         self.concept_db.Concepts.append(Concept("Test Concept 1", ""))
         self.concept_db.Concepts.append(Concept("Test Concept 2", ""))
         self.concept_db.Concepts.append(Concept("Test Concept 3", ""))
@@ -42,21 +147,23 @@ class QuestionSuiteTests(unittest.TestCase):
     def test_initialization(self):
         self.assertEqual(len(self.question_suite.Questions), 0, "Initial question list should be empty")
 
-    def test_generate_question_data(self):
+    def test_generate_example_questions(self):
+        if not GENERATE_DATA: return
         # return # TODO: Integrate Generation Testing on GH Actions
-        if not os.environ["OPENAI_API_KEY"]: return
         notebank = NoteBank()
-        [notebank.add_note(note) for note in agent_ai_notes.split("\n")]
-        cd = ConceptDatabase("Agent Artificial Intelligence", notebank.env_string())
+        [notebank.add_note(note) for note in regex_notes.split("\n")]
+        cd = ConceptDatabase("Regular Expressions", notebank.env_string())
         q_suite = QuestionSuite(10, notebank, cd)
         q_suite.generate_question_data()
-        self.assertEqual(len(self.question_suite.Questions), 10, "QuestionSuite should generate specified number of questions")
+        self.assertEqual(len(q_suite.Questions), 10, "QuestionSuite should generate specified number of questions")
 
-    def test_env_string_format(self):
-        return # TODO: Integrate Generation Testing on GH Actions
-        self.question_suite.generate_question_data()
-        env_string = self.question_suite.env_string()
-        self.assertTrue(isinstance(env_string, str), "Environment string should be a string")
+    def test_generate_and_env_string_format(self):
+        if not GENERATE_DATA: return         
+        q_suite = QuestionSuite(5, self.notebank, cd)
+        q_suite.generate_question_data()
+        env_string = q_suite.env_string()
+        self.assertEqual(len(q_suite.Questions), 5, "Failed at properly generating 5 questions for the Question Suite")
+        self.assertIsInstance(env_string, str, "Environment string should be a string")
 
     def test_to_sql_and_from_sql(self):
         q_suite = QuestionSuite(3, self.notebank, self.concept_db)
@@ -116,6 +223,45 @@ class QuestionTests(unittest.TestCase):
         self.assertEqual(question.data["data"], "some math thing add 5 and 7.", "Error parsing LLM output for question data parameter.")
         self.assertEqual(question.data["calculation_script"], "print(5+7)", "Error parsing LLM output for calculation_script parameter.")
         
+        # Test Case: Math Multiple Choice with Incorrect Format
+        json_output = """```json{"subject": 0, "type": 1, "data": "A math question?", "latex_code": "f(x)", "entry1":"x", "correct_entry": "entry1", "concepts": ["Test Concept 1"]}```"""
+        with self.assertRaises(AssertionError, msg="Should raise an error due to missing entry2"):
+            Question.create_question_from_JSON(json_output, self.concept_db)
+
+        # Test Case: Literature Text Entry with Missing Passage
+        json_output = """```json{"subject": 2, "type": 0, "data": "Question about a novel?", "rubric": "[5 points] detailed analysis", "concepts": ["Test Concept 1"]}```"""
+        with self.assertRaises(AssertionError, msg="Should raise an error due to missing reading passage"):
+            Question.create_question_from_JSON(json_output, self.concept_db)
+
+        # Test Case: Code Question with Missing Test Case Script
+        json_output = """```json{"subject": 1, "type": 3, "data": "Write a function in Python.", "concepts": ["Test Concept 1"]}```"""
+        with self.assertRaises(AssertionError, msg="Should raise an error due to missing test_cases_script"):
+            Question.create_question_from_JSON(json_output, self.concept_db)
+
+        # Test Case: Calculation Question without Calculation Script
+        json_output = """```json{"subject": 0, "type": 2, "data": "Calculate 5 * 5.", "latex_code": "5 \\times 5", "concepts": ["Test Concept 1"]}```"""
+        with self.assertRaises(AssertionError, msg="Should raise an error due to missing calculation_script"):
+            Question.create_question_from_JSON(json_output, self.concept_db)
+
+        # Test Case: Incorrect JSON Format
+        json_output = """```json"subject": 1, "type": 2, "data": "Syntax Error.", "concepts": ["Test Concept 1"]}```"""
+        with self.assertRaises(ValueError, msg="Should raise an error due to incorrect JSON format"):
+            Question.create_question_from_JSON(json_output, self.concept_db)
+
+        # Test Case: Valid Conceptual Question (Multiple Choice)
+        json_output = """```json{"subject": 3, "type": 1, "data": "Conceptual question?", "entry1": "Option A", "entry2": "Option B", "correct_entry": "entry1", "concepts": ["Test Concept 1"]}```"""
+        question = Question.create_question_from_JSON(json_output, self.concept_db)
+        self.assertIsNotNone(question, "Question creation from JSON should be successful for a valid conceptual question")
+        self.assertEqual(question.data["data"], "Conceptual question?", "Error parsing LLM output for question data parameter.")
+        self.assertEqual(question.data["correct_entry"], "entry1", "Error parsing LLM output for correct_entry parameter.")
+
+        # Test Case: Literature Multiple Choice Question
+        json_output = """```json{"subject": 2, "type": 1, "data": "Question about a poem?", "entry1": "Option A", "entry2": "Option B", "correct_entry": "entry1", "reading_passage": "Some poem text here", "concepts": ["Test Concept 1"]}```"""
+        question = Question.create_question_from_JSON(json_output, self.concept_db)
+        self.assertIsNotNone(question, "Question creation from JSON should be successful for a literature multiple choice question")
+        self.assertEqual(question.data["reading_passage"], "Some poem text here", "Error parsing LLM output for reading_passage parameter.")
+
+
 
     def test_to_sql_and_from_sql(self):
         sql_data = self.question.to_sql()

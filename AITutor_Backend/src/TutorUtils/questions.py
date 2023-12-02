@@ -3,6 +3,7 @@ from typing import Tuple, List
 import re
 import yaml
 import os
+
 import openai
 import json
 
@@ -11,7 +12,9 @@ from AITutor_Backend.src.BackendUtils.code_executor import CodeExecutor
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
+
 USE_OPENAI = True
+DEBUG = os.environ.get("DEBUG", 0)
 
 class QuestionSuite(JSONSerializable, SQLSerializable):
     ALLOWED_LIBS = [
@@ -92,6 +95,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         self.llm_api = QuestionSuite.QuestionLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_to_question_prompt", )
         
     def generate_question_data(self, ):
+        if DEBUG: print (f"Generating Question Data for {self.__ConceptDatabase.main_concept}")
         concept_list_str = self.__ConceptDatabase.get_concept_list_str()
         notebank_str = self.__Notebank.env_string()
         # Iterate through the Questions and Generate
@@ -118,7 +122,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     break
                 except Exception as e:
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"
-
+            if DEBUG: print(f"Question {question_idx}:", question.format_json())
             self.Questions.append(question)
         self.current_obj_idx = 0
             
@@ -138,6 +142,13 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         q_suite.current_obj_idx = current_obj_idx
         q_suite.Questions = [Question.from_sql(q[0], q[1], q[2], [ConceptDatabase.get_concept(cpt) for cpt in q[3]]) for q in questions]
         return q_suite
+
+    def get_object(self, idx):
+        """
+        Returns Question Object iff idx is a valid Question Object index. Else, AssertionError
+        """
+        assert 0 <= idx < self.num_questions, "Cannot access Question Object Array Out of Bounds"
+        return self.Questions[idx]
         
 class Question(JSONSerializable, SQLSerializable):
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
@@ -237,7 +248,7 @@ class Question(JSONSerializable, SQLSerializable):
         
         # Type Based Assertions
         if q_type == Question.Type.MULTIPLE_CHOICE:
-            assert len([k for k in q_data.keys() if "entry" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
+            assert len([k for k in q_data.keys() if "entry" in k and not "correct" in k]) > 1, f"Error in creating Multiple Choice Question: provided less than 2 Choices. Output: {llm_output}"
             assert q_data.get("correct_entry", None) and q_data["correct_entry"] in q_data and "entry" in q_data["correct_entry"], "Error in creating Multiple Choice Question: did not provide correct_entry field (the correct answer choice)"
             
         elif q_type == Question.Type.TEXT_ENTRY:

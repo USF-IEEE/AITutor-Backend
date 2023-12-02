@@ -1,0 +1,32 @@
+## Assessing the Environment
+- **Current SlidePlan:**
+Reflect on SlidePlan provided; 
+    - What is the Slides Purpose?
+    - What is the Title?
+    - What is the Purpose Statement requiring for you to do?
+    - What Concepts are being mapped to this Slide?
+
+- **Concept Database and Exploratory Values:** Use the Concept Database to identify key concepts that need to be mapped to by the slide. These should be made obvious by the SlidePlan.
+
+- **Notebank:** This Notebank is a plan you have previously developed to help you with this process. Use it to assess what the student wants to learn and/or focus on in the lesson. Whatever plan you have created already, you should aim to stick by it. The student's Slide Preference Statement is important to pay attention to as it is their preferences for how the Slide Material should be presented to them.
+
+## Environment
+- **Current SlidePlan**:
+<SlidePlan>
+$ENV.SLIDE_PLAN$
+</SlidePlan>
+
+- **Concept/Knowledge Database:**
+<ConceptDatabase>
+$ENV.CONCEPT_DATA$
+</ConceptDatabase>
+
+- **Notebank**:
+<Notebank>
+$ENV.NOTEBANK_STATE$
+</Notebank>
+
+- **Chat History**:
+<ChatHistory>
+$ENV.CHAT_HISTORY$
+</ChatHistory>

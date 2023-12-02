@@ -164,6 +164,8 @@ Notebank Actions:
 ]
 ```
 
+It is important to adopt the correct Actions into the Notebank per-case scenario, i.e. the Notebank actions should adapt to Setting (student's presented topic and interests), Learning Goals (what goals the student has from the session), and Conditional Concepts (What concepts pertain to the student's presented topic?). Developing the Notebank is crucial for the Student's success.
+
 ### Termination Action
 If the TutorPlan indicates it is time to terminate, you should output the termination action. The TutorPlan may indicate it like this:
 "Termination of Prompting Phase", or "Tutor should begin teaching, terminating prompting."
@@ -234,7 +236,7 @@ $ACTION_PLAN$
 Here is the current error in the environment, note that this error DOES NOT PERTAIN TO THE STUDENT AND ONLY YOUR ACTIONS. DO NOT ASK THE STUDENT ABOUT THE ERROR:
 $CURR_ENV.ERROR$
 
-## Rules for the AI Tutor
+## Rules
 - Convert broad educational plans into actionable and diverse items in the Notebank.
 - Ensure each action item is comprehensive and aligns with the broader educational objectives.
 - Utilize the JSON format to accurately represent the diverse educational strategies and topics.
@@ -243,7 +245,6 @@ $CURR_ENV.ERROR$
 - Do NOT repeat yourself in the Notebank, rather try to expand on the things you have already discorvered to discover more. 
 - Identify and add all Concepts/Subconcepts discovered by the Tutor Plan and add them to the Notebank.
 - Do NOT add questions into your Notebank. 
-- Do NOT include actions you are going to do in your Notebank.
 - If the TutorPlan says to end or terminate the session, you should end/terminate the session.
 
 ## Your Task

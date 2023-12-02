@@ -2,6 +2,7 @@ from django.db import models
 from AITutor_Backend.src.tutor_env import TutorEnv
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
+from AITutor_Backend.src.TutorUtils.slides import SlidePlanner
 # from AITutor_Backend.src.TutorUtils.prompts import Prompter
 import uuid
 from asgiref.sync import sync_to_async, async_to_sync
@@ -20,9 +21,6 @@ class QuestionSuiteModel(models.Model):
     num_questions = models.IntegerField()
     current_obj_idx = models.IntegerField()
 
-    def __str__(self):
-        return f"QuestionSuite {self.id} with {self.num_questions} questions"
-
 class QuestionModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     subject = models.IntegerField()
@@ -33,6 +31,25 @@ class QuestionModel(models.Model):
 
     def __str__(self):
         return f"Question {self.id} of type {self.type} in subject {self.subject}"
+
+class SlidePlannerModel(models.Model):
+    num_slides = models.IntegerField()
+    current_obj_idx = models.IntegerField()
+
+class SlideModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.TextField()
+    description = models.TextField()
+    presentation = models.TextField()
+    content = models.TextField()
+    ltx_codes =  models.TextField()
+    purpose = models.IntegerField()
+    purpose_statement = models.TextField()
+    concepts = models.TextField()
+    slide_planner = models.ManyToManyField(SlidePlannerModel, related_name='slides')
+
+    def __str__(self):
+        return f"Slide {self.id} of type {self.type} in subject {self.subject}"
 
 class NotebankModel(models.Model):
     notes = models.TextField()  # Assuming 'VARCHAR[n]' means text field
@@ -45,6 +62,7 @@ class TutorEnvModel(models.Model):
     chat_history = models.OneToOneField('ChatHistoryModel', on_delete=models.CASCADE)
     concept_database = models.ForeignKey('ConceptDatabaseModel', on_delete=models.SET_NULL, null=True, blank=True)
     question_suite = models.OneToOneField('QuestionSuiteModel', on_delete=models.SET_NULL, null=True, blank=True)
+    slide_planner = models.OneToOneField('SlidePlannerModel', on_delete=models.SET_NULL, null=True, blank=True)
     curr_state = models.SmallIntegerField()
 
 class SessionModel(models.Model):
@@ -101,7 +119,28 @@ class DatabaseManager:
 
             # Recreate the ConceptDatabase object from the loaded data:
             self.concept_database = ConceptDatabase.from_sql(self.main_concept, self.tutor_env.notebank.env_string(),concept_data)
-        
+            # class SlideModel(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # title = models.TextField()
+    # description = models.TextField()
+    # presentation = models.TextField()
+    # content = models.TextField()
+    # ltx_codes =  models.TextField()
+    # purpose = models.IntegerField()
+    # purpose_statement = models.TextField()
+    # concepts = models.TextField()
+    # slide_planner = models.ManyToManyField(QuestionSuiteModel, related_name='slides')   
+        # Load the SlidePlanner associated with the TutorEnv:
+        self.slide_planner_model = self.tutor_env_model.slide_planner
+        if self.slide_planner_model:
+            self._num_slides = self.slide_planner_model.num_slides
+            self._sp_obj_idx = self.slide_planner_model.current_obj_idx
+            slide_data = []
+            for slide in self.slide_planner_model.slides.all():
+                slide_data.append([slide.title, slide.description, slide.presentation, slide.content, slide.ltx_codes, slide.purpose, slide.purpose_statement, slide.concepts.split("[SEP]")])
+            
+            self.slide_planner = SlidePlanner.from_sql(self._sp_obj_idx, self._num_slides, slide_data, self.tutor_env.notebank, self.concept_database)
+
         # Load the QuestionSuite associated with the TutorEnv:
         self.question_suite_model = self.tutor_env_model.question_suite
         if self.question_suite_model:
@@ -118,6 +157,8 @@ class DatabaseManager:
             self.tutor_env.concept_database = self.concept_database
         if self.question_suite_model:
             self.tutor_env.question_suite = self.question_suite
+        if self.slide_planner_model:
+            self.tutor_env.slide_planner = self.slide_planner
 
         
     
@@ -133,7 +174,7 @@ class DatabaseManager:
         # the possibly changed data from the TutorEnv Python object
 
         # Save Notebank:
-        self.tutor_env_model.notebank.notes = self.tutor_env.notebank.to_sql()
+        self.tutor_env_model.notebank.notes = self.tutor_env.notebank.to_sql().strip()
         self.tutor_env_model.notebank.save()
         
         # Save Chat:
@@ -193,6 +234,69 @@ class DatabaseManager:
             # Save the main concept
             self.concept_database_model.main_concept = main_concept
             self.concept_database_model.save()
+        # Save the Slide Planner:
+        if self.tutor_env.slide_planner:
+            sp_obj_idx, num_slides, slides = self.tutor_env.slide_planner.to_sql()
+            if not self.slide_planner_model: # Model was created on this time-step
+                self.slide_planner_model = SlidePlannerModel(num_slides=num_slides, current_obj_idx=sp_obj_idx)
+                self.slide_planner_model.save()
+                # Link Concepts:
+                slide_models = []
+                for slide_data in slides:
+                    slide_id = uuid.uuid4()
+                    slide_model = SlideModel.objects.create(
+                        id=slide_id,
+                        title=slide_data[0],
+                        description=slide_data[1],
+                        presentation=slide_data[2],
+                        content=slide_data[3],
+                        ltx_codes=slide_data[4],
+                        purpose=slide_data[5],
+                        purpose_statement=slide_data[6],
+                        concepts="[SEP]".join(slide_data[7])
+                    )
+                    slide_models += [slide_model]
+                # Link the concepts to the ConceptDatabaseModel:
+                self.slide_planner_model.slides.set(slide_models)
+                
+                self.tutor_env_model.slide_planner = self.slide_planner_model
+                self.tutor_env_model.save()
+            self.slide_planner_model.num_slides = self.tutor_env.slide_planner.num_slides
+            self.slide_planner_model.current_obj_index = self.tutor_env.slide_planner.current_obj_idx
+            self.slide_planner_model.save()
+
+            slide_models = []
+            for slide_data in slides:
+                try:
+                    # Attempt to get the question associated with the specific QuestionSuiteModel:
+                    slide_model = SlideModel.objects.get(
+                        title=slide_data[0],
+                        content=slide_data[3], 
+                        purpose_statement=slide_data[6],
+                        slide_planner=self.slide_planner_model
+                    )
+                    # Slides do not change :)
+                    slide_model.save()
+                except SlideModel.DoesNotExist:
+                    # If it does not exist, create it and add it to the current QuestionSuiteModel:
+                    slide_model = SlideModel.objects.create(
+                        title=slide_data[0],
+                        description=slide_data[1],
+                        presentation=slide_data[2],
+                        content=slide_data[3],
+                        ltx_codes=slide_data[4],
+                        purpose=slide_data[5],
+                        purpose_statement=slide_data[6],
+                        concepts="[SEP]".join(slide_data[7])
+                    )
+                slide_models.append(slide_model)
+
+            self.slide_planner_model.slides.set(slide_models)
+            self.slide_planner_model.current_obj_idx = self.tutor_env.slide_planner.current_obj_idx
+            self.slide_planner_model.num_slides = self.tutor_env.slide_planner.num_slides
+            self.tutor_env_model.slide_planner = self.slide_planner_model
+            self.slide_planner_model.save()
+            self.tutor_env_model.save()
 
         # Save the Question Suite:
         if self.tutor_env.question_suite:
@@ -250,8 +354,9 @@ class DatabaseManager:
             self.question_suite_model.save()
             self.tutor_env_model.save()
 
-            # Update small Parameters:
-            self.tutor_env_model.curr_state = self.tutor_env.current_state
-            self.tutor_env_model.save()
+        # Update small Parameters:
+        self.tutor_env_model.curr_state = self.tutor_env.current_state
+        self.tutor_env_model.save()
+        self.session.save()
 
         

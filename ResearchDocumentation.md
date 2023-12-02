@@ -46,8 +46,133 @@ With the development of the Transformer architecture, Large Language Models (LLM
 2. Convert “Ground Truth” as a Vector Embedding \( y^* \), convert System output as Vector Embedding \( y' \).
 3. Measure Cosine-Similarity between the embeddings.
 
-### Observations during Research
+### Research Notes
+
+We hypothesized prior to document generation that a LLM can exhibit cognitive ability, and here's why:
+   - Algorithms depend on patterns within data
+   - Komogorov Compression: consider a perfect compressor K which outputs the shortest program of 1's and 0's for computing any given input X, is able to perfectly compress all data X, s.t. for all other Compressor C on C(X):
+      K(X) \leq |C(X)| + K(C) + O(1)
+   From this, we can derive the following equation, such that given a perfect compressor K, a dataset X and a dataset Y, the compression of CONCAT(X, Y):
+      K(X, Y) = K(X) + K(Y|X) + O(log(K(X|Y)))
+   such that, for any perfect compression K(X, Y), K will use the program K(X) to generate the program for Y. In a discussion of the Simons Institute, Ilya Sutskaver states the following: "First, “generate” X, then “use” X to generate Y, and this can’t be too different from generating the two datasets jointly".
+
+   - NTP is Compression, i.e. MLE is a Compression task which language models were optimized on.
+   - There are a 1-1 Correspondence between Compressors and Predictors: 
+   - Ilya mentions that GPTs are optimized over an infinite space of programs using Stochastic Gradient Descent for compressing random documents on the internet, essentially the task of K(X, Y). 
+   - This means that given any document D, GPT is the the theoretical best program for compressing D that we can find using SGD, given the Maximum Likelyhood Estimation Loss being optimized. This allows us to do some fairly interesting things, such as sampling a Probability distrobution P for W given a partially completed Document D'. 
+   - Finetuning of Large Language Models for Chat-Assistants and Q/A oracles has proven to demonstrate that IQ ratings will increase the longer you do fine-tuning on high quality data; i.e, use Next Token Prediction to answer questions and use language in an Agent fashion can be proven to be effective just through the task of compression. 
+
+- Cognitive Processes: 
+   - We are implying that a cognitive process is an algorithmic-like pattern matching and decision-making problem which is not necessarily easy to develop a logical algorithm (typed-program) for without the utilization of a world model
+   - GPT exibits algorithmic-like pattern matching and decision making:
+   Generative Agents: Interactive Simulacra of Human Behavior
+      - Coordination and Event Planning
+      - Novel Agent Architecture
+      - Memory and Retrieval 
+      - Reflection
+      - Planning and Reaction
+      - Dialogue Generation
+   
+   https://www.arxiv-vanity.com/papers/2304.03442/
+   - Voyager: Minecraft GPT-4 Agent; demonstrates cognitive ability in Planning, execution, and error correcting. Exhibits Continuous Learning and Adaption, Generalization and Novel Problem-Solving, Autonomous Decision Making, Zero-Shot Generalization on unseen tasks, 
+
+   Mind meets machine: Unravelling GPT-4’s cognitive psychology 
+      - Common Sense Reasoning
+      - Language Processing and Creativity
+      - Analogical Reasoning
+      - Integrating Various Cognitive Skills
+
+   - We propose we can simplify the cognitive abilities into the following cognitive processes:
+   
+   - Planning, also posit as information generation, provided with information related to the environment, create a plan for:
+      - filling out a Data Structure with relevant information based on the current state of the environment
+      - Memory and Planning modules used for future reference in specific states
+      - Performing Actions which will modify the current state of the environment
+      - Generating informational Context around a stimulus
+
+   - Translation, translate a Natural Language plan into a JSON Object / Data Structure usable in the environment/program.
+
+   - Discrimination, based on the environment state (ie. current generation state, current generation action, ...) discriminate:
+      - Is the current action good? (i.e. does this generation pass criteria)
+      - Is the current state optimal? (i.e. is this state a termination state)
+      - What information is relevant for future states? (i.e. Memory/selective information passing)
+
+I think therefore I am" <- include in paper as a side link
+
+- I have done my own research on why this may be; "
+From: The Role of Language in Intelligence
+Daniel C. Dennett
+
+- "... our brains are in effect joined together into a single cognitive system that dwarfs all others. They are joined by one of the innovations that has invaded our brains and no others: language."
+- "permits our hypotheses to die in our stead."
+   - Language is a complex multi-dimensional graph; we use language to form words which we compound into ideas which we use to relate to other ideas. https://www.nature.com/articles/s41599-022-01089-5/figures/5
+   - These ideas relate the world of the Subjective and the world of the Objective.
+   - Bad (token) predictions are optimized by good predictions. To make a good prediction, given that our model has not memorized our training data:
+      - The model must extract the patterns (to some degree) of the multi-dimensional graph of language in order to predict the next token
+      - This means that for unorganized or complex random internet data, our model has to be able to abstract the pattern of the data on the fly; meaning it must generalize to some degree
+      - Many have speculated the expressive power of Deep Neural Networks, as a well-trained (quality and large amounts of training data) and a deep neural network will be able to perform arbitrary computation on the patterns expressed by the input data
+      E.g. when we are coding there are many patterns we exhibit: 
+         - indentation
+         - balanced tokens "[]", "{}", "()", 
+         - punctuation: semicolons, commas, ecetera
+      
+### Why may this be?
+
+Model Size: research from Google, Deepmind and Stanford found that many of these emergent properties exist with bigger models; performance on cognitive tasks increased based on model size, Published in Transactions on Machine Learning Research (08/2022)
+Emergent Abilities of Large Language Models (https://arxiv.org/pdf/2206.07682.pdf).
+
+We use GPT-4 for Planning Tasks, harder Translation Tasks, and Discrimination Tasks: Speculating over 1 Trillion Parameters
+We Use GPT-3.5-turbo-16k for simple planning tasks, and most translation tasks. 
+
+We focus on Document Generation. Our research incorporates Agent Interaction, Planning and Memory Modules, Common Sense Reasoning, Conversational 
+
+Cognitive Abilities are crucial to our document generation;
+As the software engineers, we can "glue" programs and cognitive processes together; Planning to Discrimination, Planning to Translation to Discrimination, Planning to Translation, ecetera
+
+For Example, take the Cognitive Process of Generating a Slide:
+Method Generate Slide():
+- While not Termination State:
+   - Plan What the Next Slide will be About, i.e What is the Title, what is its Purpose, and What Information is it going to be used to display?
+   - Translate this Plan into a JSON Object for our program
+   - Discriminate whether or not the Current state, i.e. the set of Slide Plans already discovered, is a termination state; i.e.  acceptable to teach the Student
+- For Each Slide Plan SP in the Slide Plan Set:
+   - Generate the Slide's Context, i.e. the informational context, academic context and relevant information surrounding the chosen topic and purpose from the plan
+   - Using the Slide's Context, parse and translate it into a Slide's Content JSON Object
+   - Using the Slide's Context, parse and translate  it into a Slide's Presentation JSON Object 
+
+Environment State: (READ Memory Module, READ Chat History, READ current error,)
+Method LearnStudentSessionGoal():
+Initialize Environment to Prompting State
+Initialize Query < - "AI Tutor: How can I help you learn today?"
+While not Terminated:
+   q <- Student Responds to Query
+   Environment.ChatHistory = Environment.ChatHistory + q  
+   
+   using Environment.State as s_t:
+      plan_t <- Execute Planning Module (q, s_t)
+      Memory Object, Terminated <- Execute Memory Module(plan_t, s_t)
+      Use Memory Object to update Memory Module
+      if not Terminated:
+         Query, Terminated <- Execute Agent Interaction Module(plan_t, s_t) // Tutor can Terminate in either the Memory Module or the Agent Interactin Module
+
+   Terminated <- Termination State 
+
+With this, we can exploit a state-based system to perform our cognitive processes which will in turn lead to our document generations.
+
+- Agent Ability: GPT-3.5-turbo performed poorly at first on many agent taks, while GPT-4 was able to fulfill it's role almost in every situation without struggling to maneuver the environments correctly.
 
 - Prompting: Enabling the MDP was not the challenging part, however getting the model to terminate was challenging. We found that the model likes the idea of continuing the process for as long as possible. 
 
-- Agent Ability: GPT-3.5-turbo performed poorly on many agent taks, while GPT-4 was able to fulfil it's role almost in every situation without struggling to output correctly.
+Consider the # of API Calls / # Process Iterations 
+
+- With strictly GPT-3.5-turbo you end up making more API Calls due to failures
+
+TODO: Perform metric comparison
+
+- Cognitive Processes over Cognitive Tasks:
+   - Translation performs worse than Planning and Translation in generation quality and ...
+
+
+ 
+# Online View Only of Paper: 
+(https://www.overleaf.com/read/sbwnyxczkrcj#49db64)

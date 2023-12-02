@@ -12,3 +12,4 @@ tiktoken
 torch
 sympy
 python-pptx
+pypdf2

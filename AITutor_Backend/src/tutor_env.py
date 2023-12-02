@@ -5,6 +5,7 @@ from AITutor_Backend.src.TutorUtils.chat_history import *
 from AITutor_Backend.src.BackendUtils.sql_serialize import *
 from AITutor_Backend.src.TutorUtils.prompts import Prompter, PromptAction
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
+from AITutor_Backend.src.TutorUtils.slides import SlidePlanner, Slide
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 
@@ -28,7 +29,18 @@ class TutorEnv(SQLSerializable,):
                 self.__concept_list_prompt = f.read()
             with open(notebank_filter_file, "r") as f:
                 self.__notebank_filter_prompt = f.read()
-            
+        
+        def slide_planner_task(self):
+            self.env.slide_planner = SlidePlanner(self.env.notebank)
+            self.env.slide_planner.generate_slide_plan()
+            self.env.slide_planner.generate_slide_deque()
+            return True
+
+        def question_suite_task(self, num_questions):
+            self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
+            self.env.question_suite.generate_question_data()
+            return True
+
         def __get_main_concept(self, ):
             import openai
             client = openai.Client()
@@ -139,8 +151,10 @@ class TutorEnv(SQLSerializable,):
             ### PROMPTING PHASE
             if self.env.current_state == int(TutorEnv.States.PROMPTING):
                 prompt_obj, terminate = self.env.prompter.perform_tutor(user_prompt)
-                if terminate:
+                if terminate or prompt_obj._type == PromptAction.Type.TERMINATE:
+                    print(self.env.notebank.env_string())
                     concept_list = self.__get_concept_list()
+                    print(concept_list)
                     self.env.current_state = int(TutorEnv.States.GENERATION)
                     # TODO: Implement generation 
                     prompt_obj = PromptAction("[SEP]".join(concept_list),
@@ -148,12 +162,15 @@ class TutorEnv(SQLSerializable,):
                 return prompt_obj.format_json()
             ### END PROMPTING PHASE
             
+            ### GENERATION PHASE
             if self.env.current_state == TutorEnv.States.GENERATION:
                  # Generate Concept Database
                     # Add new concepts:
                     for concept in user_input["list_concepts"]:
                         self.env.notebank.add_note(f"Concept: {concept}")
                     self.env.notebank.add_note(f"Student's Interest Statement: {user_input['student_interests']}")
+                    self.env.notebank.add_note(f"Student's Slides Preference Statement: {user_input['student_slides']}")
+                    self.env.notebank.add_note(f"Student's Questions Preference Statement: {user_input['student_questions']}")
                     main_concept = self.__get_main_concept()
                     self.env.notebank.add_note(f"Main Concept: {main_concept}")
 
@@ -162,16 +179,61 @@ class TutorEnv(SQLSerializable,):
                     self.env.notebank.clear()
                     [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
                     # Generate Concept Database:
-                    self.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
-                    # # Generate Slide Planner
-                    # # TODO: Generate Slide Planner
-                    
+                    self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    # # Generate Slide Planner:
+                    self.env.slide_planner = SlidePlanner(self.env.notebank)
+                    self.env.slide_planner.generate_slide_plan()
+                    self.env.slide_planner.generate_slide_deque()
                     # # Generate Question Suite:
                     num_questions = int(user_input["num_questions"])
-                    self.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-                    self.question_suite.generate_question_data()# Transition
+                    self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
+                    self.env.question_suite.generate_question_data()# Transition
                     self.env.current_state = TutorEnv.States.TEACHING
-                    return {"test": "done generating"}
+                    with ThreadPoolExecutor(max_workers=2) as executor:
+                        # Submit slide planner tasks
+                        slide_planner_future = executor.submit(self.slide_planner_task)
+                        # Submit question suite task
+                        question_suite_future = executor.submit(self.question_suite_task, num_questions)
+                        # Wait for the slide planner task to complete
+                        slide_planner_result = slide_planner_future.result()
+                        # Wait for the question suite task to complete
+                        question_suite_result = question_suite_future.result()
+
+                    
+
+                    return {"status": "done generating"}
+            ### END GENERATION PHASE
+
+            self.env.current_state = int(user_input["current_state"])
+
+            ### TEACHING PHASE
+            if self.env.current_state == int(TutorEnv.States.TEACHING):
+                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
+                if obj_idx == self.slide_planner.current_obj_idx:
+                    # TODO: listen to user user_input and create a response 
+                    self.env.chat_history.hear(user_prompt)
+                    # ...
+                    return self.env.slide_planner.format_json().update({"tutor_statement": "todo: implement"})
+                else:
+                    return self.env.slide_planner.format_json().update({"tutor_statement": self.env.slide_planner.get_object(obj_idx).presentation})
+            ### END TEACHING PHASE
+            
+            ### TESTING PHASE
+            if self.env.current_state == int(TutorEnv.States.TESTING):
+                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
+                if obj_idx == self.slide_planner.current_obj_idx:
+                    if user_input["eval_response"]:
+                        # TODO: Evaluate the response the the question
+                        return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                    else:
+                        # TODO: listen to user user_input and create a response 
+                        self.env.chat_history.hear(user_prompt)
+                    # ...
+                    return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                else:
+                    return self.env.question_suite.format_json().update({"tutor_statement": self.env.question_suite.get_object(obj_idx).presentation})
+            ### END TESTING PHASE
+
     def __init__(self,):
         """ Creates base TutorEnv
         
@@ -190,6 +252,7 @@ class TutorEnv(SQLSerializable,):
         self.chat_history = ChatHistory()
         self.prompter = Prompter("AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/notebank_prompt", "AITutor_Backend/src/TutorUtils/Prompts/PromptingPhase/prompt_plan_prompt", self.notebank, self.chat_history)
         self.concept_database = None
+        self.slide_planner = None
         self.question_suite = None
         self._content_generated = False
         self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_list_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/notebank_filter_prompt")
@@ -209,6 +272,8 @@ class TutorEnv(SQLSerializable,):
         tutor_ref.current_state = current_state
         tutor_ref.notebank = NoteBank.from_sql(notebank_state)
         tutor_ref.chat_history = ChatHistory.from_sql(chat_history)
+        tutor_ref.prompter.notebank = tutor_ref.notebank
+        tutor_ref.prompter.chat_history = tutor_ref.chat_history
         return tutor_ref
             
     def to_sql(self,) -> str:

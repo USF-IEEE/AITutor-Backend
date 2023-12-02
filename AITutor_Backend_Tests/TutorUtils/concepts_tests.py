@@ -1,7 +1,11 @@
+import os
 import unittest
+
+GENERATE_DATA = bool(os.environ.get("GENERATE_TESTS", 0))
+
 from AITutor_Backend.src.TutorUtils.concepts import *
 
-class NotebankTests(unittest.TestCase):
+class ConceptTests(unittest.TestCase):
     def test_concept_graph(self,):
         cd = ConceptDatabase("", generation=False)
         c1 = Concept("Concept 1", "")
@@ -37,5 +41,6 @@ in agent AI and any particular agent types or applications they want to learn ab
 {"index": 20, "note": "Tutor to ask student about their preference for a theoretical or practical approach to learning agent AI."}
 {"index": 21, "note": "Tutor should gauge student's current understanding of agent AI concepts to create a targeted learning plan."}
 {"index": 22, "note": "Tutor should document their responses and preferences in the Notebank for future reference."}]}"""
+        if not GENERATE_DATA: return
         cd = ConceptDatabase("Agent Artificial Intelligence", tutor_plan)
         assert len(cd.Concepts) > 5, "Did not map correctly."
