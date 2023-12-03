@@ -155,4 +155,3 @@ CORS_ALLOW_CREDENTIALS = True
 
 #edit on deployment !!!!Important
 CORS_ALLOW_ALL_ORIGINS = True
-
