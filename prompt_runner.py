@@ -28,6 +28,8 @@ while True:
             concept_list = output["question"].split("[SEP]")
             data["list_concepts"] = concept_list
             data["student_interests"] = student_interests
+            data['student_slides'] = student_slides
+            data['student_questions'] = student_questions
             data["num_questions"] = num_questions
             print(concept_list)
         else: question = output["question"]
