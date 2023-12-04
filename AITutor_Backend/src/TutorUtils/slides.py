@@ -10,7 +10,7 @@ from AITutor_Backend.src.TutorUtils.concepts import *
 from enum import IntEnum
 from typing import List, Tuple
 
-SLIDE_CONTENT_PROMPT = """You now have a new Task; With the Slide Description above, create the content that will be displayed on the slide. It should encapsulting and displaying the conceptual information for the Student to view. This should be at most 5 sentences or 5 bullet slides, so it is important you cover everything you need to within this constraint. If you are exampling an algorithm or mathematical equation, use plaintext symbols. This content is the main content of the slide which the Student will see while you teach them. After this, create a JSON object which we can parse for the Content, e.g. 
+SLIDE_CONTENT_PROMPT = """You now have a new Task; With the provided Slide Description and the learning environment above, create the content that will be displayed on the slide. It should encapsulting and displaying the conceptual information for the Student to view. This should be at most 5 sentences or 5 bullet slides, so it is important you cover everything you need to within this constraint. If you are exampling an algorithm or mathematical equation, use plaintext symbols. This content is the main content of the slide which the Student will see while you teach them. After this, create a JSON object which we can parse for the Content, e.g. 
 ```json
 {"content": "insert content here..."}
 ``` 
@@ -19,11 +19,15 @@ Ensure your output contains a valid JSON Object.
 Output: 
 """
 
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. This should explain to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation.
+SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the provided Slide Description and the learning environment above, create a spoken Presentation to present the information to the Student. This should take the format of a conversational demonstration to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation.
 
-Slide Content: $SLIDE_CONTENT$
+This is a short context of previous slides. Understand that if you are in the middle of a presentation, your conversation should reflect this.
 
-First, come up with the spoken presentation based on the context.
+**Slide's Context (short collection of previous slides that came before this one)**: $SLIDE_CONTEXT$
+
+**Current Slide Content**: $SLIDE_CONTENT$
+
+First, come up with the spoken presentation based on the context of this slide and the content of the current slide.
 After this, you need to convert the spoken presentation into a JSON Object. Ceate a JSON object which we can parse for the Presentation content, e.g. 
 ```json
 {"presentation": "insert presentation conversation here..."}
@@ -31,6 +35,49 @@ After this, you need to convert the spoken presentation into a JSON Object. Ceat
 Ensure your output contains a valid JSON Object containing the 'presentation' key.
 
 Output: """
+
+
+DOC_SYSTEM_PROMPT= """## Environment Backstory and Call to Action
+Take on the role of an expert and all-knowing Tutor. You have previously developed a plan for a Slides Presentation related to teaching a student a topic. You will be tasked with generating a document for a student which the User will provide you. 
+
+ We have set up a learning environment for you to aid you in the process of teaching the Student. In this environment, you have access to a Notebank, a Slide Window Context, and the Slide Plan for the slide being presented to you for this task. You have already generated the Slide's Description, which will also be available for you to see below. 
+
+### Purpose of the Slide:
+Refer to each section based on the Environment's current SlidePlan Purpose, i.e. the ENUM Value listed as Purpose: X, use this to refer to the documentation below:
+
+**Introductory:** The Content should introduce a new Set of Concepts Provided in the Slide Description
+
+**Relative:** The content should relate the Concepts Provided in the Slide Description
+
+**Exploratory:** The Content should explore new concepts provided in the slide description by adding sub topics which we havent learned about to a larger topic, such as exploring the chain rule after learning what derivatives are.
+
+**Explanative:** The Content should explain the Concepts provided in the Slide Description.
+
+**Examplative:** The Content should provide an example to the student based on the Slide Description.
+
+## Assessing the Environment
+- **Current SlidePlan:**
+Reflect on SlidePlan provided; 
+    - What is the Title?
+    - What is the Purpose Statement requiring for you to do? This should fall under one of the above categories.
+    - What are the Concepts? This should be related to the Slide Description you've already created.
+
+- **Notebank:** This Notebank is a plan you have previously developed to help you with this process. Use it to assess what the student wants to learn and/or focus on in the lesson. Whatever plan you have created already, you should aim to stick by it. The student's Slide Preference Statement is important to pay attention to as it is their preferences for how the Slide Material should be presented to them.
+
+- **Slide Description**: You should base the document off of the Slide Description which the Assistant has already created.
+
+## Environment
+- **Notebank**:
+<Notebank>
+$ENV.NOTEBANK_STATE$
+</Notebank>
+
+- **Current SlidePlan**:
+<SlidePlan>
+$ENV.SLIDE_PLAN$
+</SlidePlan>
+
+"""
 
 class Purpose(IntEnum):
     Introductory = 0
@@ -248,7 +295,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
 
                 return response.choices[0].message.content
             else:
-                return self.client.get_output(prompt, " ")
+                return self.client.get_output(system, "[ASSISTANT]"+assistant+"[ASSISTANT]\n"+ + "[USER]" + user+"[/USER]")
             
         def _load_prompt(self, prompt_template, state_dict):
             prompt_string = prompt_template
@@ -328,14 +375,15 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         s_description = self.llm_api.request_output_from_llm(slide_prompt, "gpt-4-1106-preview")
         # Try to get content:
         # content_prompt = slide_prompt+"\n\nAI Tutor:\n"+s_description+"\n\nSystem:\n"+SLIDE_content_PROMPT
+        system_prompt = DOC_SYSTEM_PROMPT.replace("$ENV.SLIDE_PLAN$", slide_plan.env_string()).replace("$ENV.NOTEBANK_STATE$", notebank_state)
         while True:
-            llm_output = self.llm_api.conversational_JSON_request(slide_prompt, s_description, SLIDE_CONTENT_PROMPT, "gpt-3.5-turbo-16k")
+            llm_output = self.llm_api.conversational_JSON_request(system_prompt, s_description, SLIDE_CONTENT_PROMPT, "gpt-3.5-turbo-16k")
             success, s_content = Slide.parse_llm_for_content(llm_output)
             if success: break
         # Try to get Presentation:
         # presentation_prompt = slide_prompt+"\n\nAI Tutor:\n"+s_description+"\n\nSystem:\n"+SLIDE_PRESENTATION_PROMPT
         while True:
-            llm_output = self.llm_api.conversational_JSON_request(slide_prompt.replace("$SLIDE_CONTENT$", s_content), s_description, SLIDE_PRESENTATION_PROMPT, "gpt-3.5-turbo-16k")
+            llm_output = self.llm_api.conversational_JSON_request(system_prompt, s_description, SLIDE_PRESENTATION_PROMPT.replace("$SLIDE_CONTENT$", s_content), "gpt-3.5-turbo-16k")
             success, s_presentation = Slide.parse_llm_for_presentation(llm_output)
             if success: break
         n_slide = Slide(title=slide_plan.title, description=s_description, presentation=s_presentation, content=s_content, latex_codes="", purpose=slide_plan.purpose, purpose_statement=slide_plan.purpose_statement, concepts=slide_plan.concepts.copy())
@@ -353,7 +401,11 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
     def _generate_concept_exploration_map_str(self):
         return '\n'.join([f"{concept.name}: {sum([1 for slide_plan in self.SlidePlans if concept in slide_plan.concepts])}" for concept in self.ConceptDatabase.Concepts])
     
-    def _generate_slide_window_context(self,):
+    def _generate_slide_window_context(self, idx):
         """
         [curr]
         """
+        newline = "\n"
+        s = """[Previous Slides]\n""" + \
+            f"""[{f'{newline+newline}'.join([f"Previous Slide: {newline}"+str(slide.format_json()) for i, slide in enumerate(self.SlidePlans[max(0, idx-2):idx])])}]"""+ "[/Previous Slides]"
+        if idx == self.num_slides-1: s+= "This is the Last Slide in the deque. Consider adding closing Remarks."
