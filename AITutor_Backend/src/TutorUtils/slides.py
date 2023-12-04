@@ -335,7 +335,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         self.llm_api = SlidePlanner.SlideLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_plan_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_to_obj_prompt","AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_plan_termination_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_description_prompt") # LLM API for generating slide plans
     
     def format_JSON(self,):
-        return {"slides": [slide.format_json() for slide in self.Slides], "current_obj_idx": self.current_obj_idx, }
+        return {"slides": [slide.format_json() for slide in self.Slides], "current_obj_idx": self.current_obj_idx, "num_slides": self.num_slides}
     
     def get_object(self, idx):
         """
