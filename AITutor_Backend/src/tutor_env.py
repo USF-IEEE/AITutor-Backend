@@ -8,6 +8,7 @@ from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
 from AITutor_Backend.src.TutorUtils.slides import SlidePlanner, Slide
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
+from concurrent.futures import ThreadPoolExecutor
 
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
@@ -31,14 +32,20 @@ class TutorEnv(SQLSerializable,):
                 self.__notebank_filter_prompt = f.read()
         
         def slide_planner_task(self):
-            self.env.slide_planner = SlidePlanner(self.env.notebank)
-            self.env.slide_planner.generate_slide_plan()
-            self.env.slide_planner.generate_slide_deque()
+            try:
+                self.env.slide_planner.generate_slide_plan()
+                self.env.slide_planner.generate_slide_deque()
+            except Exception as e:
+                print(f"Error while creating Slide Planner: {e}")
+                return False
             return True
 
-        def question_suite_task(self, num_questions):
-            self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-            self.env.question_suite.generate_question_data()
+        def question_suite_task(self,):
+            try:
+                self.env.question_suite.generate_question_data()
+            except Exception as e:
+                print("Error while creating Question Suite: {e}")
+                return False
             return True
 
         def __get_main_concept(self, ):
@@ -182,8 +189,6 @@ class TutorEnv(SQLSerializable,):
                     notes = self.__get_filtered_notebank()
                     self.env.notebank.clear()
                     [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
-                    print("\n".join(notes))
-                    exit()
                     # Generate Concept Database:
                     self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner:
@@ -201,6 +206,7 @@ class TutorEnv(SQLSerializable,):
                         slide_planner_result = slide_planner_future.result()
                         # Wait for the question suite task to complete
                         question_suite_result = question_suite_future.result()
+                        assert slide_planner_result and question_suite_result, "Failed at creating Question Suite or Slide Planner. Check for error in logs."
 
                     
 
