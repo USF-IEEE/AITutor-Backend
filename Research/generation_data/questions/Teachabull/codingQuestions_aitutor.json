@@ -1,66 +1,72 @@
 {
     "questions": [
         {
-            "subject": 1, 
-            "type": 3, 
+            "subject": 1,
+            "type": 3,
             "data": {
-                "data": "Write a Python function 'calculate_edit_distance' that takes in two strings and returns the Edit Distance between them using the Levenshtein algorithm. Comment each step to explain your logic.", 
-                "boilerplate": "def calculate_edit_distance(str1, str2):\n    # Start by setting up a table to hold the edit distances between all prefixes of the first string and all prefixes of the second\n    # HINT: Consider the base cases - where one of the strings is empty\n    pass # Your code here", 
-                "test_cases_script": "assert calculate_edit_distance('kitten', 'sitting') == 3; assert calculate_edit_distance('intention', 'execution') == 5; assert calculate_edit_distance('Saturday', 'Sunday') == 3;", 
-                "concepts": ["Basic Syntax and Operators of Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+                "data": "In the context of processing tweets or social media text, write a Python function `extract_hashtags` that takes a string as an input and returns a list of hashtags in the text. You are required to use regular expressions in your solution. Consider that a hashtag is defined as a string that begins with a hash symbol (#) and is followed by alphanumeric characters without spaces.",
+                "boilerplate": "def extract_hashtags(text):\n    # TODO: Your code here\n    pass",
+                "test_cases_script": "assert extract_hashtags(\"Loving the #AI and #NLP talks at the conference!\") == [\"#AI\", \"#NLP\"]\nassert extract_hashtags(\"This is a #great_day!\") == [\"#great_day\"]\nassert extract_hashtags(\"Hello world!\") == []",
+                "concepts": [
+                    "Regular Expressions",
+                    "Applications of Regular Expressions in NLP"
+                ]
             }
         },
         {
-            "subject": 1, 
-            "type": 3, 
+            "subject": 1,
+            "type": 0,
             "data": {
-                "data": "Given a noisy text input, write a Python function `normalize_and_segment(text)` that uses regular expressions to normalize the text by removing special characters and excessive white spaces. Then, segment the normalized text into sentences. Assume a sentence ends with a period followed by a space.", 
-                "boilerplate": "import re\ndef normalize_and_segment(text):\n    # Your code here\n    return sentences", 
-                "test_cases_script": "assert normalize_and_segment('Hello! This is an  example   text... ')==['Hello', 'This is an example text']", 
-                "concepts": ["Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+                "data": "Implement a function `count_vowels` in Python that takes a string input and returns the number of vowels in the string. Consider the following vowels: a, e, i, o, u, and their uppercase counterparts.",
+                "rubric": "Rubric: [1 Point] Correct implementation of the function; [1 Point] Correct count of vowels; [1 Point] Correct handling of uppercase vowels; [1 Point] Clean, readable code with appropriate comments.",
+                "concepts": [
+                    "Regular Expressions"
+                ]
             }
         },
-
         {
-            "subject": 1, 
-            "type": 3, 
+            "subject": 1,
+            "type": 3,
             "data": {
-                "data": "Write a Python function called `tokenize_text` that uses regular expressions to normalize and tokenize an input string. The function should convert the text to lowercase, remove punctuation, and split the text into a list of tokens (words). Provide a brief comment within your code explaining the purpose of the regular expression used.", 
-                "boilerplate": "def tokenize_text(text):\n\t# TODO: Implement the function using a regular expression\n\tpass", 
-                "test_cases_script": "assert tokenize_text('Hello, World!') == ['hello', 'world']\nassert tokenize_text('NLP is fun!') == ['nlp', 'is', 'fun']", 
-                "concepts": ["Natural Language Processing (NLP)", "Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+                "data": "Write a Python function to calculate the Edit Distance between two strings using the Levenshtein distance algorithm. Your function should take two arguments (string1, string2) and return the minimum number of operations required to convert string1 into string2. You can limit your solution to insertions, deletions, and substitutions as the allowed edit operations.",
+                "boilerplate": "def edit_distance(str1, str2):\n    # Your code here\n    pass",
+                "test_cases_script": "assert edit_distance('kitten', 'sitting') == 3\nassert edit_distance('intention', 'execution') == 5\nassert edit_distance('algorithm', 'altruistic') == 6",
+                "concepts": [
+                    "Edit Distance",
+                    "Applications of Edit Distance Algorithm in NLP"
+                ]
             }
         },
-
-        {   
-            "subject": 1, 
-            "type": 0, 
-            "data": {
-                "data": "Define regular expressions and explain their role in text processing within the domain of Natural Language Processing. Provide an example that illustrates how a regular expression is used in NLP.', 'rubric': 'Rubric: [1 Points] Student provides a clear and concise definition of regular expressions. [2 Points] Student explains the role of regular expressions in NLP. [2 Points] Student provides a correct and relevant example of regular expressions usage in NLP.", 
-                "concepts": ["Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
-            }
-        },
-
         {
-            "subject": 1, 
-            "type": 3, 
+            "subject": 1,
+            "type": 3,
             "data": {
-                "data": "Implement a Python function that uses regular expressions to segment text into sentences and then calculate the edit distance between the first two segmented sentences. Assume you are provided with a simple edit distance function that takes in two strings.", 
-                "boilerplate": "import re\n\n# Function to segment text into sentences using regular expressions\ndef segment_sentences(text):\n    pass  # TODO: Implement sentence segmentation logic using regular expressions\n\n# Function to calculate the edit distance between two strings\ndef edit_distance(s1, s2):\n    pass  # TODO: Implement edit distance calculation\n\n# Example usage\nsentences = segment_sentences(text)\nedit_dist = edit_distance(sentences[0], sentences[1])\nprint(edit_dist)\n", 
-                "test_cases_script": "text = 'This is sentence 1. This is sentence 2. This is sentence 3.';\n\n# Test case 1: Check if the sentences are correctly segmented\nsentences = segment_sentences(text)\nassert sentences == ['This is sentence 1.', 'This is sentence 2.', 'This is sentence 3.'], f'Expected sentences to be [\\'This is sentence 1.\\', \\'This is sentence 2.\\', \\'This is sentence 3.\\'], but got {sentences}'\n\n# Test case 2: Check if the edit distance is correctly calculated\nedit_dist = edit_distance(sentences[0], sentences[1])\nassert edit_dist == 0, f'Expected edit distance to be 0, but got {edit_dist}'\n\n# Test case 3: Check if the edit distance is correctly calculated for different sentences\nedit_dist = edit_distance(sentences[0], sentences[2])\nassert edit_dist == 1, f'Expected edit distance to be 1, but got {edit_dist}'\n\nprint('All test cases passed!')\n", 
-                "concepts": ["Regular Expressions", "Sentence Segmentation Techniques", "Edit Distance"]
+                "data": "Write a Python function named `lemmatize_tokens` that takes a string as input and returns a list of lemmatized tokens. Your implementation should tokenize the text and then apply lemmatization to each token.",
+                "boilerplate": "def lemmatize_tokens(text):\n    # Your code here\n    # You may use NLTK library for tokenizing and lemmatization\n\n    pass  # Replace with your implementation",
+                "test_cases_script": "sample_text = \"The striped bats are hanging on their feet for best\"\nassert lemmatize_tokens(sample_text) == [\"The\", \"striped\", \"bat\", \"be\", \"hanging\", \"on\", \"their\", \"foot\", \"for\", \"best\"], \"Test case failed!\"",
+                "concepts": [
+                    "Natural Language Processing (NLP)",
+                    "Tokenization of Text",
+                    "Lemmatization"
+                ]
             }
         },
-
         {
-            "subject": 1, 
-            "type": 3, 
+            "subject": 1,
+            "type": 3,
             "data": {
-                "data": "Regular expressions are essential for text normalization tasks in NLP. Write a Python function named `normalize_text` that takes a string as input and normalizes it using regular expressions. Your function should convert text to lowercase, remove leading and trailing whitespace, replace email addresses with the string '<EMAIL>', and replace website URLs with '<URL>'.", 
-                "boilerplate": "import re\n\ndef normalize_text(text):\n    # Convert to lowercase\n    text = text.lower()\n\n    # Remove leading and trailing whitespace\n    text = text.strip()\n\n    # Replace email addresses and websites\n    # Your code here\n\n    return text", 
-                "test_cases_script": "assert normalize_text('  Contact: John.Doe@example.com ') == 'contact: <EMAIL>'\nassert normalize_text('Visit us at https://www.example.com for more info.') == 'visit us at <URL> for more info.'\nassert normalize_text('  Hello world   ') == 'hello world'", 
-                "concepts": ["Regular Expressions", "Text Normalization"]
+                "data": "Write a Python function that uses regular expressions to count the number of times a specific word appears in a given text.",
+                "boilerplate": "import re\n\ndef count_word_occurrences(word, text):\n\t# TODO: Complete the function\n\tpass",
+                "test_cases_script": "text = '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor euismod nunc, nec lacinia libero ultrices nec. Nulla vitae sagittis ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi vitae neque viverra, euismod nisl in, tristique odio. Nulla facilisi. Sed vehicula lorem massa, a ultrices quam iaculis et. Donec pretium viverra accumsan. Proin in lorem velit. Integer nec interdum enim, sit amet condimentum libero. Phasellus sagittis, sapien sed dapibus imperdiet, purus metus bibendum mauris, quis congue ipsum eros quis nibh.'''\n\nassert count_word_occurrences('Lorem', text) == 1\nassert count_word_occurrences('semper', text) == 0\nassert count_word_occurrences('amet', text) == 2",
+                "concepts": [
+                    "Regular Expressions",
+                    "Uses of Regular Expressions in NLP",
+                    "Basic Syntax and Operators of Regular Expressions"
+                ],
+                "teaching_note": "Regular expressions are a powerful tool for pattern matching in text. In this question, you will use regular expressions to count the number of times a specific word appears in a given text. Remember to use the re module in Python to access the regular expression functions. You can use the re.findall() function to find all occurrences of the word in the text and then use the len() function to count the number of matches."
             }
         }
-    ]
+    ],
+    "current_obj_idx": -1,
+    "num_questions": 5
 }

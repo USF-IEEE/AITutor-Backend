@@ -86,6 +86,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             return self._load_prompt(self.__plan_to_question_prompt, env_state)
         
     def __init__(self, num_questions, Notebank, ConceptDatabase):
+        super(QuestionSuite, self).__init__()
         self.current_obj_idx = -1
         self.__Notebank = Notebank
         self.__ConceptDatabase = ConceptDatabase
@@ -149,6 +150,10 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         """
         assert 0 <= idx < self.num_questions, "Cannot access Question Object Array Out of Bounds"
         return self.Questions[idx]
+
+    def format_json(self):
+        return {"questions": [question.format_json() for question in self.Questions], "current_obj_idx": self.current_obj_idx, "num_questions": self.num_questions}
+
         
 class Question(JSONSerializable, SQLSerializable):
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
