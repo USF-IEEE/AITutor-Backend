@@ -37,7 +37,7 @@ def make_environment_response(environment_data, current_state, sid, status=200):
 
 def process_session_data(data):
     # Extract User Input:
-        if not data["user_prompt"]: return (make_error_response)("No user prompt provided, ensure you are sending over the proper data.", data["session_key"])     
+        if not "user_prompt" in data: return (make_error_response)("No user prompt provided, ensure you are sending over the proper data.", data["session_key"])     
         # Further processing:
         db_manager =  DatabaseManager(session_id=data["session_key"])
         db_manager.load_tutor_env()

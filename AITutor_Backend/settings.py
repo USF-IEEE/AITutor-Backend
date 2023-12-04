@@ -152,3 +152,6 @@ CORS_ALLOWED_ORIGINS = [
 
 # Optional: Allow credentials (cookies, authorization headers)
 CORS_ALLOW_CREDENTIALS = True
+
+#edit on deployment !!!!Important
+CORS_ALLOW_ALL_ORIGINS = True

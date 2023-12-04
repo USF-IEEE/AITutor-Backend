@@ -181,13 +181,10 @@ class TutorEnv(SQLSerializable,):
                     # Generate Concept Database:
                     self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner:
-                    self.env.slide_planner = SlidePlanner(self.env.notebank)
-                    self.env.slide_planner.generate_slide_plan()
-                    self.env.slide_planner.generate_slide_deque()
+                    self.env.slide_planner = SlidePlanner(self.env.notebank, self.env.concept_database)
                     # # Generate Question Suite:
                     num_questions = int(user_input["num_questions"])
                     self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-                    self.env.question_suite.generate_question_data()# Transition
                     self.env.current_state = TutorEnv.States.TEACHING
                     with ThreadPoolExecutor(max_workers=2) as executor:
                         # Submit slide planner tasks
