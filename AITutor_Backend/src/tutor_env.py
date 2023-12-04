@@ -29,7 +29,18 @@ class TutorEnv(SQLSerializable,):
                 self.__concept_list_prompt = f.read()
             with open(notebank_filter_file, "r") as f:
                 self.__notebank_filter_prompt = f.read()
-            
+        
+        def slide_planner_task(self):
+            self.env.slide_planner = SlidePlanner(self.env.notebank)
+            self.env.slide_planner.generate_slide_plan()
+            self.env.slide_planner.generate_slide_deque()
+            return True
+
+        def question_suite_task(self, num_questions):
+            self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
+            self.env.question_suite.generate_question_data()
+            return True
+
         def __get_main_concept(self, ):
             import openai
             client = openai.Client()
@@ -175,16 +186,24 @@ class TutorEnv(SQLSerializable,):
                     exit()
                     # Generate Concept Database:
                     self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
-                    # # Generate Slide Planner
-                    # # TODO: Generate Slide Planner
-                    self.env.slide_planner = SlidePlanner(self.env.notebank)
-                    self.env.slide_planner.generate_slide_plan()
-                    self.env.slide_planner.generate_slide_deque()
+                    # # Generate Slide Planner:
+                    self.env.slide_planner = SlidePlanner(self.env.notebank, self.env.concept_database)
                     # # Generate Question Suite:
                     num_questions = int(user_input["num_questions"])
                     self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
-                    self.env.question_suite.generate_question_data()# Transition
                     self.env.current_state = TutorEnv.States.TEACHING
+                    with ThreadPoolExecutor(max_workers=2) as executor:
+                        # Submit slide planner tasks
+                        slide_planner_future = executor.submit(self.slide_planner_task)
+                        # Submit question suite task
+                        question_suite_future = executor.submit(self.question_suite_task, num_questions)
+                        # Wait for the slide planner task to complete
+                        slide_planner_result = slide_planner_future.result()
+                        # Wait for the question suite task to complete
+                        question_suite_result = question_suite_future.result()
+
+                    
+
                     return {"status": "done generating"}
             ### END GENERATION PHASE
 

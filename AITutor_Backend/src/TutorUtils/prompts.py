@@ -10,6 +10,8 @@ from AITutor_Backend.src.BackendUtils.json_serialize import *
 import json
 USE_OPENAI = True
 
+DEBUG = os.environ.get("DEBUG", 0)
+
 class Prompter:
     class PrompterLLMAPI:
         CURR_ENV_NOTEBANK_DELIMITER = "$NOTEBANK.STATE$" #Environment for the notebankd
@@ -116,10 +118,13 @@ class Prompter:
     
     
     def perform_tutor(self, student_input:str):
+        """
+        Cognitive Process
+        """
         self.chat_history.hear(student_input) # DEBUGONLY: Remove this to include in TutorEnv
         # Construct the notebank:
         plan = self.perform_plan()
-        print(f"\n[Plan]\n{plan}\n[/PLAN]\n")
+        if DEBUG: print(f"\n[Plan]\n{plan}\n[/PLAN]\n")
         terminate = self.perform_notebank(plan)
         # Construct the prompting:
         llm_prompt = None

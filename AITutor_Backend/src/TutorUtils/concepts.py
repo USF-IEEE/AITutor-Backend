@@ -3,14 +3,15 @@ import re
 import yaml
 import os
 import openai
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 
 USE_OPENAI = True
-
+DEBUG = os.environ.get("DEBUG", 0)
 
 class ConceptDatabase(SQLSerializable):
     class ConceptLLMAPI:
@@ -69,11 +70,12 @@ class ConceptDatabase(SQLSerializable):
         
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
-    def __init__(self, main_concept:str, tutor_plan:str = "", generation=True):
+    def __init__(self, main_concept:str, tutor_plan:str = "", generation=True, max_threads=120): #TODO: Fix potential Resource lock issue 
         self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
         self.main_concept = main_concept
         self.Concepts = []
         if generation:
+            self.__thread_pool_exec = ThreadPoolExecutor(max_threads)
             self.generate_concept(self.main_concept,)
     
     def get_concept_list_str(self,):
@@ -115,7 +117,7 @@ class ConceptDatabase(SQLSerializable):
                 c_def = parsed_data["Concept"]["definition"]
                 c_latex =  parsed_data["Concept"].get("latex_code", None)
                 if c_latex and (c_latex.lower() == "none" or c_latex.lower() == "null"): c_latex = "" 
-                new_concept = Concept.create_from_concept_string_add_to_database(c_name, c_def, c_latex, self, max_depth-1)    
+                new_concept = Concept.create_from_concept_string_add_to_database(c_name, c_def, c_latex, self, max_depth-1, self.__thread_pool_exec)    
                 if max_depth == 0: break
                 assert new_concept, "Could not create concept from LLM Output, ensure you have properly entered the information and did not include any additional information outside of what's required."
                 break
@@ -183,7 +185,7 @@ class Concept(JSONSerializable):
         self.refs = [tkn for tkn in self.definition if isinstance(tkn, Concept)]
 
     @staticmethod
-    def create_from_concept_string_add_to_database(concept_name: str, definition_str: str, latex_code:str, ConceptDatabase: ConceptDatabase, curr_max_depth = 3) -> 'Concept':
+    def create_from_concept_string_add_to_database(concept_name: str, definition_str: str, latex_code:str, ConceptDatabase: ConceptDatabase, curr_max_depth = 3, thread_pool_exec=None) -> 'Concept':
         """
         Creates a Concept from a tokenized concept string and adds it to the ConceptDatabase provided.
 
@@ -202,7 +204,7 @@ class Concept(JSONSerializable):
          concept_name: 
 
         """
-
+        if DEBUG: print("generating Concept:", concept_name)
         if curr_max_depth < 0:
             return None
         

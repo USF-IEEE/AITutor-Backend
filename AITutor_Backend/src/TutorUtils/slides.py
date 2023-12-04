@@ -2,6 +2,7 @@ import json
 from typing import List, Tuple, Union
 import re
 from enum import IntEnum
+import threading
 import openai
 from AITutor_Backend.src.BackendUtils.json_serialize import *
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
@@ -10,7 +11,11 @@ from AITutor_Backend.src.TutorUtils.concepts import *
 from enum import IntEnum
 from typing import List, Tuple
 
+import os
+DEBUG = os.environ.get("DEBUG", 0)
+
 SLIDE_CONTENT_PROMPT = """You now have a new Task; With the provided Slide Description and the learning environment above, create the content that will be displayed on the slide. It should encapsulting and displaying the conceptual information for the Student to view. This should be at most 5 sentences or 5 bullet slides, so it is important you cover everything you need to within this constraint. If you are exampling an algorithm or mathematical equation, use plaintext symbols. This content is the main content of the slide which the Student will see while you teach them. After this, create a JSON object which we can parse for the Content, e.g. 
+
 ```json
 {"content": "insert content here..."}
 ``` 
@@ -64,7 +69,7 @@ Reflect on SlidePlan provided;
 
 - **Notebank:** This Notebank is a plan you have previously developed to help you with this process. Use it to assess what the student wants to learn and/or focus on in the lesson. Whatever plan you have created already, you should aim to stick by it. The student's Slide Preference Statement is important to pay attention to as it is their preferences for how the Slide Material should be presented to them.
 
-- **Slide Description**: You should base the document off of the Slide Description which the Assistant has already created.
+- **Slide Description**: You should base the document off of the Slide Description which the Assistant has already created. This is to be thought of as your plan for the slide.
 
 ## Environment
 - **Notebank**:
@@ -333,7 +338,17 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         self.num_slides = 0
         self.current_obj_idx = 0
         self.llm_api = SlidePlanner.SlideLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_plan_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_to_obj_prompt","AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_plan_termination_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_description_prompt") # LLM API for generating slide plans
+    def to_sql(self):
+        return (self.current_obj_idx, self.num_slides, [slide.to_sql() for slide in self.Slides])
     
+    @staticmethod
+    def from_sql(current_obj_idx, num_slides, slides, notebank, concept_database):
+        slide_planer = SlidePlanner(notebank, concept_database)
+        slide_planer.current_obj_idx = current_obj_idx
+        slide_planer.num_slides = num_slides
+        slide_planer.Slides = [Slide.from_sql(s[0], s[1], s[2], s[3], s[4], s[5], s[6], [concept_database.get_concept(cpt) for cpt in s[7]]) for s in slides]
+        return slide_planer
+
     def format_JSON(self,):
         return {"slides": [slide.format_json() for slide in self.Slides], "current_obj_idx": self.current_obj_idx, "num_slides": self.num_slides}
     
@@ -345,6 +360,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         return self.Slides[idx]
 
     def generate_slide_plan(self):
+        if DEBUG: print(f"Generating Slide Plan for {self.ConceptDatabase.main_concept}")
         notebank_state = self.Notebank.env_string()
         while True:
             # Prepare input for LLM
@@ -367,7 +383,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
             if "[TERM]" in llm_output:
                 break
 
-    def generate_slide(self, slide_plan:SlidePlan):
+    def generate_slide(self, slide_plan:SlidePlan, index, results, generation_lock):
         notebank_state = self.Notebank.env_string()
         # Prepare Slide Description Prompt
         slide_prompt = self.llm_api.prompt_sideplan_description(slide_plan, notebank_state)
@@ -387,13 +403,28 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
             success, s_presentation = Slide.parse_llm_for_presentation(llm_output)
             if success: break
         n_slide = Slide(title=slide_plan.title, description=s_description, presentation=s_presentation, content=s_content, latex_codes="", purpose=slide_plan.purpose, purpose_statement=slide_plan.purpose_statement, concepts=slide_plan.concepts.copy())
-
-        self.Slides.append(n_slide)
-        self.num_slides+=1
+        with generation_lock: # Data sensitive 
+            results.append((index, n_slide))
+            if DEBUG: print("Created Slide:", n_slide.format_json())
+            self.num_slides+=1
     
     def generate_slide_deque(self,):
-        for slide_plan_ref in self.SlidePlans:
-            self.generate_slide(slide_plan_ref)
+        results = []
+        threads = []
+        generation_lock = threading.Lock()
+        for (idx, slide_plan_ref) in enumerate(self.SlidePlans):
+            thread = threading.Thread(target=self.generate_slide, args=(slide_plan_ref, idx, results))
+            threads.append(thread)
+            thread.start()
+
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+        
+        # Sort and Save Results
+        results.sort(key=lambda x: x[0])
+        self.Slides = [r[0] for r in results]
+        
 
     def _generate_slideplans_str(self):
         return '\n'.join([f"{slide_plan.title}: {slide_plan.purpose}, {slide_plan.purpose_statement}, Concepts: {', '.join([c.name for c in slide_plan.concepts if c is not None])}" for slide_plan in self.SlidePlans])

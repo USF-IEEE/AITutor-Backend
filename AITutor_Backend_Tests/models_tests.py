@@ -1,7 +1,9 @@
 from django.test import TestCase
-from AITutor_Backend.models import SessionModel, TutorEnvModel, NotebankModel, ChatHistoryModel, ConceptDatabaseModel, ConceptModel, QuestionSuiteModel, QuestionModel, DatabaseManager
+from AITutor_Backend.models import SessionModel, TutorEnvModel, NotebankModel, ChatHistoryModel, ConceptDatabaseModel, ConceptModel, QuestionSuiteModel, QuestionModel, SlidePlannerModel, SlideModel, DatabaseManager
 from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase, Concept
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite, Question
+from AITutor_Backend.src.TutorUtils.slides import SlidePlanner, Slide, Purpose
+
 from asgiref.sync import sync_to_async, async_to_sync
 import uuid
 
@@ -25,11 +27,18 @@ class DatabaseManagerTestCase(TestCase):
         cd.Concepts.append(c1)
         c2 = Concept.create_from_concept_string_add_to_database("Concept 2", "Concept string mapping it to <Concept>Concept 1</Concept> which is super important.", "", cd)
         
+        # Add slide and slideplanner
+        slide = Slide("Test Title", "Test Description", "Test Presentation", "Test Content", [], Purpose.Explanative, "Test Purpose Statement", [c1, c2])
+        slide_planner = SlidePlanner(self.db_manager.tutor_env.notebank, self.db_manager.tutor_env.concept_database)
+        slide_planner.Slides.append(slide)
+        slide_planner.num_slides = 1
+        slide_planner.current_obj_idx = 0
         # Add question suite and questions
         qs = QuestionSuite(num_questions=1, Notebank=self.db_manager.tutor_env.notebank, ConceptDatabase=self.db_manager.tutor_env.concept_database)
         q1 = Question(Question.Subject.MATH, Question.Type.TEXT_ENTRY, {"data": "Sample math question"}, [c1, c2])
         qs.Questions.append(q1)
         self.db_manager.tutor_env.question_suite = qs
+        self.db_manager.tutor_env.slide_planner = slide_planner
         self.db_manager.tutor_env.concept_database = cd
         self.assertIsNotNone(cd, "Concept Database is none")
         # Add more assertions here based on expected state
@@ -47,6 +56,16 @@ class DatabaseManagerTestCase(TestCase):
         # Add concept database from other test:
         assert self.db_manager.tutor_env.concept_database is not None, "Error reloading the conceptdatabase model"
         c3 = Concept.create_from_concept_string_add_to_database("Concept 3", "Concept string mapping it to <Concept>Concept 2</Concept> which is super important.", "", self.db_manager.tutor_env.concept_database)
+
+        # Modify slide planner and add more slides
+        slide_planner = self.db_manager.tutor_env.slide_planner
+        self.assertIsNotNone(slide_planner, "Error retrieving SlidePlanner from TutorEnv")
+        self.assertGreaterEqual(len(slide_planner.Slides), 1, "Error in the number of Slides in     SlidePlanner")
+        slide2 = Slide("Test Title 2", "Test Description 2", "Test Presentation 2", "Test Content 2", [], Purpose.Exploratory, "Test Purpose Statement 2", [c3])
+        self.db_manager.tutor_env.slide_planner.Slides.append(slide2)
+        self.db_manager.tutor_env.slide_planner.current_obj_idx = 1
+        self.db_manager.tutor_env.slide_planner.num_slides = 2
+
         # Modify question suite and add new questions
         q2 = Question(Question.Subject.CODE, Question.Type.CODE_ENTRY, {"data": "Sample coding question"}, [c3])
         self.db_manager.tutor_env.question_suite.Questions.append(q2)
@@ -78,7 +97,11 @@ class DatabaseManagerTestCase(TestCase):
         self.assertTrue("<Concept>Concept 1</Concept>" in concept_2.definition, "Error while parsing the concept's definition")
         
         self.assertEqual(self.tutor_env_model.curr_state, 0, "Error while saving the TutorEnvModel.")
-        
+        updated_sp = SlidePlannerModel.objects.get(id=self.tutor_env_model.slide_planner.id)
+        self.assertIsNotNone(updated_sp, "SlidePlanner was not created.")
+        self.assertEqual(len(updated_sp.slides.all()), 1, "Incorrect number of slides in SlidePlanner.")
+        self.assertEqual(updated_sp.slides.all()[0].title, "Test Title", "Slide title does not match.")
+
         # Verify that QuestionSuite and Questions saved correctly after first operation
         updated_qs = QuestionSuiteModel.objects.get(id=self.tutor_env_model.question_suite.id)
         self.assertEqual(len(updated_qs.questions.all()), 1, "Error while saving Questions in QuestionSuite")
@@ -111,6 +134,12 @@ class DatabaseManagerTestCase(TestCase):
         concept_3 = ConceptModel.objects.get(name="Concept 3", concept_database=updated_concept_database)
         self.assertEqual(concept_3.name, "Concept 3", "Error while saving a Concept Model")
         self.assertTrue("<Concept>Concept 2</Concept>" in concept_3.definition, "Error while parsing the concept's definition")
+
+        updated_sp = SlidePlannerModel.objects.get(id=self.tutor_env_model.slide_planner.id)
+        self.assertIsNotNone(updated_sp, "SlidePlanner was not reloaded correctly.")
+        self.assertEqual(len(updated_sp.slides.all()), 2, "Incorrect number of slides after modification.")
+        self.assertEqual(updated_sp.slides.all()[1].title, "Test Title 2", "Slide title was not updated properly.")
+
         
         updated_qs = QuestionSuiteModel.objects.get(id=self.tutor_env_model.question_suite.id)
         self.assertEqual(len(updated_qs.questions.all()), 2, "Error while re-saving Questions in QuestionSuite")
