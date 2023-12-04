@@ -96,7 +96,11 @@ class TutorEnv(SQLSerializable,):
                     presence_penalty=0,
                 )
                 try:
-                    json_data = json.loads(response.choices[0].message.content)
+                    json_regex = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
+                    regex_match = json_regex.findall(response.choices[0].message.content)
+                    assert regex_match
+                    regex_match = regex_match[0].replace("```json", "").replace("```", "").strip()
+                    json_data = json.loads(regex_match)
                     if "concept_list" in json_data: return json_data["concept_list"]
                 except:
                     pass
@@ -178,6 +182,8 @@ class TutorEnv(SQLSerializable,):
                     notes = self.__get_filtered_notebank()
                     self.env.notebank.clear()
                     [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
+                    print("\n".join(notes))
+                    exit()
                     # Generate Concept Database:
                     self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
                     # # Generate Slide Planner:

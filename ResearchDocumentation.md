@@ -161,6 +161,12 @@ With this, we can exploit a state-based system to perform our cognitive processe
 
 - Agent Ability: GPT-3.5-turbo performed poorly at first on many agent taks, while GPT-4 was able to fulfill it's role almost in every situation without struggling to maneuver the environments correctly.
 
+With this, we can exploit a state-based system to perform our cognitive processes which will in turn lead to our document generations. We hypothesized prior to document generation that a LLM can exhibit cognitive ability, and here's why:
+   - Algorithms depend on patterns within data
+   - NTP is Compression, i.e. we are simply maximizing the NLL of of the 
+
+- ChatGPT will freeze occasionally when making its predictions. Essentially, this would render the generation. We have to prompt it several times for it to get better. For a student trying to learn, this process migth get frustrating. This is why chatgpt might not be an adequate resource for just learning.
+
 - Prompting: Enabling the MDP was not the challenging part, however getting the model to terminate was challenging. We found that the model likes the idea of continuing the process for as long as possible. 
 
 Consider the # of API Calls / # Process Iterations 

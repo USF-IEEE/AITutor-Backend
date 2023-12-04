@@ -1,0 +1,66 @@
+{
+    "questions": [
+        {
+            "subject": 1, 
+            "type": 3, 
+            "data": {
+                "data": "Write a Python function 'calculate_edit_distance' that takes in two strings and returns the Edit Distance between them using the Levenshtein algorithm. Comment each step to explain your logic.", 
+                "boilerplate": "def calculate_edit_distance(str1, str2):\n    # Start by setting up a table to hold the edit distances between all prefixes of the first string and all prefixes of the second\n    # HINT: Consider the base cases - where one of the strings is empty\n    pass # Your code here", 
+                "test_cases_script": "assert calculate_edit_distance('kitten', 'sitting') == 3; assert calculate_edit_distance('intention', 'execution') == 5; assert calculate_edit_distance('Saturday', 'Sunday') == 3;", 
+                "concepts": ["Basic Syntax and Operators of Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+            }
+        },
+        {
+            "subject": 1, 
+            "type": 3, 
+            "data": {
+                "data": "Given a noisy text input, write a Python function `normalize_and_segment(text)` that uses regular expressions to normalize the text by removing special characters and excessive white spaces. Then, segment the normalized text into sentences. Assume a sentence ends with a period followed by a space.", 
+                "boilerplate": "import re\ndef normalize_and_segment(text):\n    # Your code here\n    return sentences", 
+                "test_cases_script": "assert normalize_and_segment('Hello! This is an  example   text... ')==['Hello', 'This is an example text']", 
+                "concepts": ["Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+            }
+        },
+
+        {
+            "subject": 1, 
+            "type": 3, 
+            "data": {
+                "data": "Write a Python function called `tokenize_text` that uses regular expressions to normalize and tokenize an input string. The function should convert the text to lowercase, remove punctuation, and split the text into a list of tokens (words). Provide a brief comment within your code explaining the purpose of the regular expression used.", 
+                "boilerplate": "def tokenize_text(text):\n\t# TODO: Implement the function using a regular expression\n\tpass", 
+                "test_cases_script": "assert tokenize_text('Hello, World!') == ['hello', 'world']\nassert tokenize_text('NLP is fun!') == ['nlp', 'is', 'fun']", 
+                "concepts": ["Natural Language Processing (NLP)", "Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+            }
+        },
+
+        {   
+            "subject": 1, 
+            "type": 0, 
+            "data": {
+                "data": "Define regular expressions and explain their role in text processing within the domain of Natural Language Processing. Provide an example that illustrates how a regular expression is used in NLP.', 'rubric': 'Rubric: [1 Points] Student provides a clear and concise definition of regular expressions. [2 Points] Student explains the role of regular expressions in NLP. [2 Points] Student provides a correct and relevant example of regular expressions usage in NLP.", 
+                "concepts": ["Regular Expressions", "Applications of Edit Distance Algorithm in NLP"]
+            }
+        },
+
+        {
+            "subject": 1, 
+            "type": 3, 
+            "data": {
+                "data": "Implement a Python function that uses regular expressions to segment text into sentences and then calculate the edit distance between the first two segmented sentences. Assume you are provided with a simple edit distance function that takes in two strings.", 
+                "boilerplate": "import re\n\n# Function to segment text into sentences using regular expressions\ndef segment_sentences(text):\n    pass  # TODO: Implement sentence segmentation logic using regular expressions\n\n# Function to calculate the edit distance between two strings\ndef edit_distance(s1, s2):\n    pass  # TODO: Implement edit distance calculation\n\n# Example usage\nsentences = segment_sentences(text)\nedit_dist = edit_distance(sentences[0], sentences[1])\nprint(edit_dist)\n", 
+                "test_cases_script": "text = 'This is sentence 1. This is sentence 2. This is sentence 3.';\n\n# Test case 1: Check if the sentences are correctly segmented\nsentences = segment_sentences(text)\nassert sentences == ['This is sentence 1.', 'This is sentence 2.', 'This is sentence 3.'], f'Expected sentences to be [\\'This is sentence 1.\\', \\'This is sentence 2.\\', \\'This is sentence 3.\\'], but got {sentences}'\n\n# Test case 2: Check if the edit distance is correctly calculated\nedit_dist = edit_distance(sentences[0], sentences[1])\nassert edit_dist == 0, f'Expected edit distance to be 0, but got {edit_dist}'\n\n# Test case 3: Check if the edit distance is correctly calculated for different sentences\nedit_dist = edit_distance(sentences[0], sentences[2])\nassert edit_dist == 1, f'Expected edit distance to be 1, but got {edit_dist}'\n\nprint('All test cases passed!')\n", 
+                "concepts": ["Regular Expressions", "Sentence Segmentation Techniques", "Edit Distance"]
+            }
+        },
+
+        {
+            "subject": 1, 
+            "type": 3, 
+            "data": {
+                "data": "Regular expressions are essential for text normalization tasks in NLP. Write a Python function named `normalize_text` that takes a string as input and normalizes it using regular expressions. Your function should convert text to lowercase, remove leading and trailing whitespace, replace email addresses with the string '<EMAIL>', and replace website URLs with '<URL>'.", 
+                "boilerplate": "import re\n\ndef normalize_text(text):\n    # Convert to lowercase\n    text = text.lower()\n\n    # Remove leading and trailing whitespace\n    text = text.strip()\n\n    # Replace email addresses and websites\n    # Your code here\n\n    return text", 
+                "test_cases_script": "assert normalize_text('  Contact: John.Doe@example.com ') == 'contact: <EMAIL>'\nassert normalize_text('Visit us at https://www.example.com for more info.') == 'visit us at <URL> for more info.'\nassert normalize_text('  Hello world   ') == 'hello world'", 
+                "concepts": ["Regular Expressions", "Text Normalization"]
+            }
+        }
+    ]
+}
