@@ -208,8 +208,8 @@ class TutorEnv(SQLSerializable,):
                         question_suite_result = question_suite_future.result()
                         assert slide_planner_result and question_suite_result, "Failed at creating Question Suite or Slide Planner. Check for error in logs."
 
-                    learning_obj = self.env.slide_planner.format_json()
-                    
+                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": "Alright, lets get started shall we! " + self.env.slide_planner.get_object(obj_idx).presentation})
+                    self.env.chat_history.respond(learning_obj["conversational_response"])
                     return learning_obj
             ### END GENERATION PHASE
 
@@ -217,30 +217,38 @@ class TutorEnv(SQLSerializable,):
 
             ### TEACHING PHASE
             if self.env.current_state == int(TutorEnv.States.TEACHING):
-                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
-                if obj_idx == self.slide_planner.current_obj_idx:
+                
+                obj_idx = user_input.get("obj_idx", self.env.slide_planner.current_obj_idx)
+                if obj_idx == self.env.slide_planner.current_obj_idx:
                     # TODO: listen to user user_input and create a response 
                     self.env.chat_history.hear(user_prompt)
                     # ...
-                    return self.env.slide_planner.format_json().update({"tutor_statement": "todo: implement"})
+                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": "todo: implement"})
                 else:
-                    return self.env.slide_planner.format_json().update({"tutor_statement": self.env.slide_planner.get_object(obj_idx).presentation})
+                    self.env.slide_planner.current_obj_idx = obj_idx
+                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": self.env.slide_planner.get_object(obj_idx).presentation})
+            
+                self.env.chat_history.respond(learning_obj["conversational_response"])
+                return learning_obj
             ### END TEACHING PHASE
             
             ### TESTING PHASE
             if self.env.current_state == int(TutorEnv.States.TESTING):
-                obj_idx = user_input.get("obj_idx", self.slide_planner.current_obj_idx)
-                if obj_idx == self.slide_planner.current_obj_idx:
-                    if user_input["eval_response"]:
+                obj_idx = user_input.get("obj_idx", self.env.question_suite.current_obj_idx)
+                if obj_idx == self.env.question_suite.current_obj_idx:
+                    if user_input["submit_response"]:
                         # TODO: Evaluate the response the the question
-                        return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                        return self.env.question_suite.format_json().update({"conversational_response": "todo: implement"})
                     else:
                         # TODO: listen to user user_input and create a response 
                         self.env.chat_history.hear(user_prompt)
                     # ...
-                    return self.env.question_suite.format_json().update({"tutor_statement": "todo: implement"})
+                    testing_obj = self.env.question_suite.format_json().update({"conversational_response": "todo: implement"})
                 else:
-                    return self.env.question_suite.format_json().update({"tutor_statement": self.env.question_suite.get_object(obj_idx).presentation})
+                    self.env.question_suite.current_obj_idx = obj_idx
+                    testing_obj = self.env.question_suite.format_json().update({"conversational_response": self.env.question_suite.get_object(obj_idx).presentation})
+                self.env.chat_history.respond(testing_obj["conversational_response"])
+                return testing_obj
             ### END TESTING PHASE
 
     def __init__(self,):

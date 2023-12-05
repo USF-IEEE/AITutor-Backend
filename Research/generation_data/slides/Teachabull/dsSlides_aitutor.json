@@ -259,5 +259,6 @@
         }
     ],
     "current_obj_idx": 0,
-    "num_slides": 16
+    "num_slides": 16,
+    "conversational_response": ""
 }

@@ -91,7 +91,7 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         self.__Notebank = Notebank
         self.__ConceptDatabase = ConceptDatabase
         assert isinstance(num_questions, int), "Cannot Create a QuestionSuite without specifying (int) number of questions. Check the Data Type provided for num_questions"
-        self.num_questions = max(min(25, num_questions), 5)
+        self.num_questions = max(min(25, num_questions), 1)
         self.Questions = []
         self.llm_api = QuestionSuite.QuestionLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_to_question_prompt", )
         

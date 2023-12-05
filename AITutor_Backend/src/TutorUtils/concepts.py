@@ -179,7 +179,11 @@ class Concept(JSONSerializable):
     
     def format_json(self,):
         map_concept = lambda c: c.name if isinstance(c, Concept) else c
-        return "{" + f"\"name\": \"{self.name}\",\n\"definition\": \"{''' '''.join([map_concept(c) for c in self.definition])}\",\n\"latex\": \"{self.name}\",\n" + "}"
+        return {
+            "name": self.name,
+            "definition": " ".join([map_concept(c) for c in self.definition]),
+            "latex": self.latex
+        }
     def set_definition(self, definition):
         self.definition = definition
         self.refs = [tkn for tkn in self.definition if isinstance(tkn, Concept)]

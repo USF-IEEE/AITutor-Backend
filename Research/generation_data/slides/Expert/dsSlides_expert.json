@@ -1,0 +1,154 @@
+{
+    "slides": [
+        {
+            "Title": "In class practice: In-place quick-sort modifies the input sequence using element swapping and does  not explicitly create subsequences.",
+            "Description": "Show how the in-place quick sort works on the sequence",
+            "Latex": []
+        },
+        {
+            "Title": "Graphs",
+            "Description": "Everything can be a Graph Problem",
+            "Latex": []
+        },
+        {
+            "Title": "Graphs",
+            "Description": "A graph is a pair (V, E), where\nV is a set of nodes, called vertices\nE is a collection of pairs of vertices, called edges\nVertices and edges are positions and store elements\nExample:\nA vertex represents an airport and stores the three-letter airport code\nAn edge represents a flight route between two airports and stores the mileage of the route",
+            "Latex": []
+        },
+        {
+            "Title": "Graphs and Edges",
+            "Description": "Directed edge\nordered pair of vertices (u,v)\nfirst vertex u is the origin\nsecond vertex v is the destination\ne.g., a flight\nDirected graph\nall the edges are directed\ne.g., route network\nUndirected edge\nunordered pair of vertices (u,v)\ne.g., a flight route\n\nUndirected graph\nall the edges are undirected\ne.g., flight network",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Applications",
+            "Description": "Electronic circuits\nPrinted circuit board\nIntegrated circuit\nTransportation networks\nHighway network\nFlight network\nComputer networks\nLocal area network\nInternet\nWeb",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Database",
+            "Description": "Nodes represent entities: people, businesses, accounts, or any other item to be tracked. Equivalent (Roughly) of record/relation/row in relational DB or document in a document database. Edges represent the relationship between nodes. Meaningful patterns emerge when examining the connections and interconnections of nodes, properties, and edges. Properties are relevant information to nodes. Example, if Wikipedia was a nodes, properties could be website or reference material",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Database",
+            "Description": "Bob and Alice know each other\nBob and Alice are members of the Chess Group\nBob has been a member since February, 14, 2011\nAlice has been a member since July, 1, 2005",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Terminology",
+            "Description": "U and V are the endpoints of a\nEnd vertices (or endpoints) of an edge\na, d, and b are incident on V\nEdges sharing a vertex are incident\nU and V are adjacent\nAdjacent vertices are share an edge",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Terminology",
+            "Description": "X has degree 5\nDegree of a vertex is the number of edges incident\nh and i are parallel edges\n Edges that are incident to the same two vertices\nj is a self-loop\nAn edge that connects a vertex to itself",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Terminology",
+            "Description": "Path\nSequence of alternating vertices/edges Begins and ends with a vertex\nEdges preceded and followed by endpoints\nP2 = (U,c,W,e,X,g,Y,f,W,d,V) (not simple path)\n\nSimple Path\nPath such that all its vertices and edges are distinct\nP1 = (V,b,X,h,Z) (simple path)",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Terminology",
+            "Description": "Cycle\nCircular sequence of vertices/edges \nEdges preceded and followed by endpoints\nC2 = (U,c,W,e,X,g,Y,f,W,d,V,a,\u21b5) (not simple cycle)\n\nSimple Cycle\nCycle such that all its vertices and edges are distinct\nC1 = (V,b,X,g,Y,f,W,c,U,a,\u21b5) (simple cycle)",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Properties",
+            "Description": "Notation:\nn - number of vertices\nm - number of edges\ndeg(v) - degree of vertex v\nExample:\nn = 4, m = 6, deg(v) = 3\n\nProperty 1: Total contribution of the edges\n\u03a3v deg(v) = 2m\nEach edge is counted twice\nExample: 2m = 12 = \u03a3v deg(v)\nProperty 2: Simple graph with n vertices has O(n2) edges.\nIn an undirected graph with no self-loops and no parallel edges: m \u2264 (n / 2) (n \u2212 1) \nEach vertex has degree at most (n \u2212 1)\nExample: 6 \u2264 (4 / 2) (4 - 1)",
+            "Latex": []
+        },
+        {
+            "Title": "Directed Graph Properties",
+            "Description": "Notation:\nn - number of vertices\nm - number of edges\nindeg(v) - Incoming deg. of vertex v\noutdeg(v) - Outgoing deg. of vertex v\nExample:\nn = 4, m = 6\n\nProperty 1: Total contribution of the edges\n\u03a3v indeg(v) = \u03a3v outdeg(v) = m\nEdge contributes one to outdeg of its origin and one to indeg of its destination\nExample: \u03a3v indeg(v) = 6 = \u03a3v outdeg(v)\nProperty 2: Simple graph with n vertices has O(n2) edges.\nIn an directed graph with no self-loops and no parallel edges: m \u2264 n (n \u2212 1)\nEach vertex has indeg of at most (n \u2212 1), an outdeg of at most (n \u2212 1), and (indeg(v) + outdeg(v)) \u2264 (n - 1)\nExample: 6 \u2264 4 (4 - 1)",
+            "Latex": []
+        },
+        {
+            "Title": "Graph ADT",
+            "Description": "Vertices and edges are positions that store elements\nAccessor methods:\ne.endVertices(): a list of the two end vertices of e\ne.opposite(v): the vertex opposite of v on e\nu.isAdjacentTo(v): true if and only if u and v are adjacent\n*v: reference to element associated with vertex v\n*e: reference to element associated with edge e\nUpdate methods:\ninsertVertex(o): insert a vertex storing element o\ninsertEdge(v, w, o): insert an edge (v, w) storing element o\neraseVertex(v): remove vertex v (and its incident edges)\neraseEdge(e): remove edge e\nIterable collection methods:\nincidentEdges(v): list of edges incident to v\nadjacentVertices(v): lists all vertices that share an edge from the vertex v\nvertices(): list of all vertices in the graph\nedges(): list of all edges in the graph",
+            "Latex": []
+        },
+        {
+            "Title": "A Note on the Data Structures in the Book",
+            "Description": "The description of the data structures in the book are fully featured\nThese are not the only ways to implement graph data structures\nIn this presentation, I will show less complicated versions of each of the methods for storing a graph\n  After seeing these versions of graph data structures, section 13.2 should make more sense",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structures",
+            "Description": "Adjacency List:\nVertices are stored as Records/Objects\nEvery Vertex stores a list of adjacent Vertices\nAllows the storage of additional data on the Vertices \nAdditional data stored if edges are also Objects\nAdjacency Matrix:\nTwo-dimensional matrix\nRows represent source Vertices\nColumns represent destination Vertices \nData on Edges and Vertices stored externally",
+            "Latex": []
+        },
+        {
+            "Title": "Graph DS: Adjacency List Structure",
+            "Description": "Graph DS: Adjacency List Structure",
+            "Latex": []
+        },
+        {
+            "Title": "Graph DS: Adjacency Matrix Structure",
+            "Description": "Graph DS: Adjacency Matrix Structure",
+            "Latex": []
+        },
+        {
+            "Title": "Other Graph Data Structures",
+            "Description": "Incidence Matrix:\nTwo-dimensional Boolean matrix\nRows represent the Vertices\nColumns represent the Edges\nEntries indicate whether the Vertex at a row is incident to the Edge at a column",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structures",
+            "Description": "Graph Data Structures",
+            "Latex": []
+        },
+        {
+            "Title": "Book Data Structures",
+            "Description": "Book Data Structures",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structure: Edge List",
+            "Description": "Graph Data Structure: Edge List\nVertex Object\nElement\nReference to position in Vertex Sequence\nEdge Object\nElement\nOrigin Vertex Object\nDestination Vertex Object\nReference to position in Edge Sequence\nVertex Sequence\nSequence of Vertex Object\nEdge Sequence\nSequence of Edge Object",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structure: Edge List",
+            "Description": "Graph Data Structure: Edge List\nUnder the assumption that collections V and E are realized with doubly linked lists\nSpace used is O(n + m), where n is the number of vertices and m is the number of edges",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structure: Adjacency List Structure",
+            "Description": "Graph Data Structure: Adjacency List Structure",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structure: Adjacency Matrix Content",
+            "Description": "Graph Data Structure: Adjacency Matrix \nAugmented Vertex Objects\nInteger key (index) associated with vertex\n2D-Array Adjacency Array\nReference to Edge Object for adjacent vertices\nNull for nonadjacent vertices\nThe \u201cold fashioned\u201d version just has 0 for no edge and 1 for edge",
+            "Latex": []
+        },
+        {
+            "Title": "Graph Data Structure: Adjacency Matrix",
+            "Description": "Graph Data Structure: Adjacency Matrix\nUnder the assumption that collections V and E are realized with doubly linked lists\nSpace used is O(n*n), where n",
+            "Latex": []
+        },
+        {
+            "Title": "Question:",
+            "Description": "Question:\nOf the three data structures (Adjacency list, Adjacency matrix, and Incidence matrix), what would be the best memory footprint for a simple undirected graph with:\n10 Vertices and 15 Edges?\n2 Vertices and 1 Edges?",
+            "Latex": []
+        },
+        {
+            "Title": "Answer:",
+            "Description": "Answer:\n10 Vertices and 15 Edges? \nV + E = 25, V * V = 100, V * E = 150\nAdjacency List\n\n2 Vertices and 1 Edges? \nV + E = 3, V * V = 4, V * E = 2\nIncidence Matrix",
+            "Latex": []
+        },
+        {
+            "Title": "Question:",
+            "Description": "Question:\nCan the worst case memory footprint of a Adjacency Matrix be smaller than a Adjacency List:\nFor a simple undirected graph?\nFor a simple directed graph?",
+            "Latex": []
+        },
+        {
+            "Title": "Answer:",
+            "Description": "Answer:\nn is the number of vertices and m is the number of edges.\nSimple Undirected Graph: m \u2264 (n / 2) (n \u2212 1)\nSimple Directed Graph: m \u2264 n (n \u2212 1)\nWithout loops or parallel edges, n will always grow faster than m: O(n + m) \u2264 O(n2)\nSo the answer is No. The best they can be is equal\n\n ----------------------------------------",
+            "Latex": []
+        }
+    ]
+}

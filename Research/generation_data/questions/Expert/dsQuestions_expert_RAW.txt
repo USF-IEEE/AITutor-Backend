@@ -1,0 +1,60 @@
+1.
+Of the three data structures (Adjacency list, Adjacency matrix, and Incidence matrix), what would be the best memory footprint for a simple undirected graph with:
+10 Vertices and 15 Edges?
+2 Vertices and 1 Edges? 
+
+2.
+Can the worst case memory footprint of a Adjacency Matrix be smaller than a Adjacency List:
+For a simple undirected graph?
+For a simple directed graph?
+
+3.
+Find the DFS and BFS for the following directed graph. (Start from 0)
+Adjacency List:
+Node 0: 1, 3, 4
+Node 1: 2, 4
+Node 2: 5
+Node 3: 4, 6
+Node 4: 5, 7
+Node 5:
+Node 6: 4, 7
+Node 7: 5, 8
+Node 8: 
+
+    a) DFS
+    b) BFS
+     
+4.
+What are time and space complexities for BFS?
+
+5.
+What are time and space complexities for DFS?
+
+6.
+Write a Python Function that implements Breadth-First Search.
+
+Assume the Deque provided has deque.push_front(obj), deque.push_back(obj), deque.pop_front(), deque.pop_back()
+
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.edges = [] # List of Nodes
+
+def BreadthFirstSearch(start_node: Node, end_node: Node, frontier:Deque):
+    # TODO: implement BFS, assume the Graph has already been initialized
+    pass
+
+
+7.
+Write a Python Function that implements Depth-First Search.
+
+Assume the Deque provided has deque.push_front(obj), deque.push_back(obj), deque.pop_front(), deque.pop_back()
+
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.edges = [] # List of Nodes
+
+def DepthFirstSearch(current_node: Node, visited: set, frontier:Deque):
+    # TODO: implement BFS
+    pass
