@@ -208,9 +208,9 @@ class TutorEnv(SQLSerializable,):
                         question_suite_result = question_suite_future.result()
                         assert slide_planner_result and question_suite_result, "Failed at creating Question Suite or Slide Planner. Check for error in logs."
 
+                    learning_obj = self.env.slide_planner.format_json()
                     
-
-                    return {"status": "done generating"}
+                    return learning_obj
             ### END GENERATION PHASE
 
             self.env.current_state = int(user_input["current_state"])

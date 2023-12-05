@@ -1,0 +1,14 @@
+{
+  "concepts": [
+    {"name": "Graph Terminology"},
+    {"name": "Graph Representations"},
+    {"name": "Graph Traversal"},
+    {"name": "Paths and Cycles"},
+    {"name": "Connectivity"},
+    {"name": "Graph Algorithms"},
+    {"name": "Advanced Topics"},
+    {"name": "C++ Specifics"},
+    {"name": "Applications"},
+    {"name": "Complexity Analysis"}
+  ]
+}
