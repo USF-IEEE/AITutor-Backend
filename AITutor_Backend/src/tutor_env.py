@@ -14,8 +14,8 @@ class TutorEnv(SQLSerializable,):
     class States(IntEnum):
             PROMPTING=0
             TEACHING=1
-            GUIDING=2
-            TESTING=3
+            TESTING=2
+            METRICS=3 #TODO: IMPLEMENT
             GENERATION=4
     class Executor(SQLSerializable,):
         def __init__(self, env:'TutorEnv', main_concept_file, concept_list_file, notebank_filter_file):
