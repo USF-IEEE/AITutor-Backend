@@ -144,11 +144,8 @@ class Slide(JSONSerializable, SQLSerializable):
     def format_json(self):
         return {
             "title": self.title,
-            "presentation": self.presentation,
             "content": self.content,
             "latex_codes": self.latex_codes,
-            "purpose": self.purpose,
-            "purpose_statement": self.purpose_statement,
             "concepts": [concept.name for concept in self.concepts]
         }
     
