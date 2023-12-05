@@ -413,11 +413,14 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
                     break
                 except Exception as err: # TODO: Fix error handling
                     error = str(err)
+            if not slide_plan:
+                continue
             self.SlidePlans.append(slide_plan)
             slideplan_prompt = self.llm_api.prompt_terminate_slideplan(self._generate_slideplans_str(), self._generate_concept_exploration_map_str(), notebank_state)
             llm_output = self.llm_api.request_output_from_llm(slideplan_prompt, "gpt-4-1106-preview")    
             if "[TERM]" in llm_output:
                 break
+            
 
     def generate_slide(self, slide_plan:SlidePlan, index, results, generation_lock):
         notebank_state = self.Notebank.env_string()
