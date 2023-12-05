@@ -201,7 +201,7 @@ class TutorEnv(SQLSerializable,):
                         # Submit slide planner tasks
                         slide_planner_future = executor.submit(self.slide_planner_task)
                         # Submit question suite task
-                        question_suite_future = executor.submit(self.question_suite_task, num_questions)
+                        question_suite_future = executor.submit(self.question_suite_task)
                         # Wait for the slide planner task to complete
                         slide_planner_result = slide_planner_future.result()
                         # Wait for the question suite task to complete

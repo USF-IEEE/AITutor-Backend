@@ -12,7 +12,7 @@ from enum import IntEnum
 from typing import List, Tuple
 
 import os
-DEBUG = os.environ.get("DEBUG", 0)
+DEBUG = bool(os.environ.get("DEBUG", 0))
 
 SLIDE_CONTENT_PROMPT = """You now have a new Task; With the provided Slide Plan and the learning environment above, you will translate the Slide Plan into the Content Section that will be displayed on the Slide Layout for the current slide during your lecture. This should be a bulleted and conccise overview of what you would normally see on a presentation slide for a lecture, and serve as a learning guide for your student. It is important you cover the essentials required for the student to understand the conceptual content presented to them. This content will be used to present data to the Student, who will be learning material which.
 Our slides will appear visually like so:

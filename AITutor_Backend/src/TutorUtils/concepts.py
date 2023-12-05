@@ -11,7 +11,7 @@ from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 
 USE_OPENAI = True
-DEBUG = os.environ.get("DEBUG", 0)
+DEBUG = bool(os.environ.get("DEBUG", 0))
 
 class ConceptDatabase(SQLSerializable):
     class ConceptLLMAPI:

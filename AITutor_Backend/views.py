@@ -87,12 +87,7 @@ def load_chat_view(request): # TODO: FIX
     if request.method == "POST":
         raw_data = request.body.decode('utf-8')
         json_data = json.loads(raw_data)
-        data = {
-                "is_audio": json_data.get("is_audio", ""),
-                "user_prompt": json_data.get("user_prompt", ""),
-                "session_key": json_data.get("session_key", ""),
-                # TODO: add more modalities e.g. files, audio, ...
-            }
+        data = dict(json_data)
         # Handle the case where a session key is provided:
         if 'session_key' in data and data["session_key"]:
             return process_session_data(data)
