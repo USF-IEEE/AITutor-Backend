@@ -1,0 +1,99 @@
+Multiple Choice Questions
+
+Question 1: Which of the following is not a common way to represent a graph?
+
+    Adjacency Matrix
+    Adjacency List
+    Edge List
+    Priority Queue
+
+Answer: 4. Priority Queue
+
+Question 2: In a depth-first search traversal of a graph, which data structure is typically used?
+
+    Queue
+    Stack
+    Linked List
+    Vector
+
+Answer: 2. Stack
+
+Question 3: Which algorithm is used for finding the shortest path in a graph with non-negative edge weights?
+
+    Kruskal's Algorithm
+    Dijkstra's Algorithm
+    Bellman-Ford Algorithm
+    Floyd-Warshall Algorithm
+
+Answer: 2. Dijkstra's Algorithm
+Coding Question
+
+Problem: Implement a function in C++ to perform a Breadth-First Search (BFS) on a graph represented using an adjacency list. The function should take a starting vertex and print the order of traversal.
+
+Solution:
+
+cpp
+
+#include <iostream>
+#include <list>
+#include <queue>
+
+using namespace std;
+
+class Graph {
+    int numVertices;
+    list<int> *adjLists;
+public:
+    Graph(int vertices) {
+        numVertices = vertices;
+        adjLists = new list<int>[vertices];
+    }
+
+    void addEdge(int src, int dest) {
+        adjLists[src].push_back(dest);
+    }
+
+    void BFS(int startVertex);
+};
+
+void Graph::BFS(int startVertex) {
+    vector<bool> visited(numVertices, false);
+    queue<int> queue;
+
+    visited[startVertex] = true;
+    queue.push(startVertex);
+
+    while (!queue.empty()) {
+        int currVertex = queue.front();
+        cout << "Visited " << currVertex << " ";
+        queue.pop();
+
+        for (auto it = adjLists[currVertex].begin(); it != adjLists[currVertex].end(); ++it) {
+            int adjVertex = *it;
+            if (!visited[adjVertex]) {
+                visited[adjVertex] = true;
+                queue.push(adjVertex);
+            }
+        }
+    }
+}
+
+int main() {
+    Graph g(4);
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 2);
+    g.addEdge(2, 3);
+
+    g.BFS(0);
+
+    return 0;
+}
+
+Free Response Questions
+
+Question 1: Explain the difference between a depth-first search and a breadth-first search in graph traversal. Discuss the scenarios where each would be preferable.
+
+Question 2: Describe how you would use Dijkstra’s algorithm to find the shortest path in a graph. What are the limitations of this algorithm?
+
+Question 3: Discuss the concept of a Minimum Spanning Tree (MST). How do Kruskal's and Prim's algorithms find an MST, and in what scenarios would you choose one over the other?

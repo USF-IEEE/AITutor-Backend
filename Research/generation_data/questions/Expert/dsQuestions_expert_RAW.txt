@@ -58,3 +58,78 @@ class Node:
 def DepthFirstSearch(current_node: Node, visited: set, frontier:Deque):
     # TODO: implement BFS
     pass
+
+8.
+For each of the following questions, circle either T (True) or F (False). Explain your choice. (No
+credit if no explanation given.)
+ (T/F) While running DFS on a directed graph, if from vertex u we visit a finished vertex
+v, then the edge (u, v) is a cross-edge.
+Explain:
+
+9.
+Suppose you want to get from s to t on weighted graph G with nonnegative edge
+weights, but you would like to stop by u if it isn’t too inconvenient. (Here too incon-
+venient means that it increases the length of your travel by more than 10%.)
+Describe an efficient algorithm that would determine an optimal s to t path given your
+preference for stopping at u along the way if not too inconvenient. It should either
+return the shortest path from s to t, or the shortest path from s to t containing u
+
+10.
+Explain how the “rod-cutting” problem described in class can still be solved by dy-
+namic programming, even if cuts now cost $1 each. (In class, we assumed cuts were
+free.) Here is the pseudocode for the original solution, where the cuts were free:
+r = [0] * (n + 1)
+for k in range(1, n + 1):
+ans = p[k]
+for i range(1, k):
+ans = max(ans, p[i] + r[k - i])
+r[k] = ans
+(It suffices to explain how to express rn, the maximum revenue achievable for a rod of
+size n, in terms of r1, r2, ..., rn−1 and the prices pi that the market will pay for a piece
+of length i, for i = 1, 2, ...n.)
+
+11.
+Suppose that you implement Dijkstra’s algorithm using a priority queue algorithm that
+requires O(V ) time to initialize, worst-case f (V, E) time for each EXTRACT-MIN
+operation and worst-case g(V, E) time for each DECREASE-KEY operation. How
+much (worst-case) time does it take to run Dijkstra’s algorithm on an input graph
+G = (V, E)?
+
+12.
+Articulation Points [20 points] (3 parts)
+We define an articulation point as a vertex that when removed causes a connected graph to become
+disconnected. For this problem, we will try to find the articulation points in an undirected graph
+G.
+(a) How can we efficiently check whether or not a graph is disconnected? (Hint: think of
+a recent problem set question)
+
+(b) Describe an algorithm that uses a brute force approach to find all the articulation points
+in G in O(V (V + E)) time.
+
+(c) Suppose we run DFS on graph G. Consider the types of edges that can exist in a DFS
+tree produced from an undirected graph, recalling that cross edges can’t happen in the
+DFS of an undirected graph. Argue that a non-root, non-leaf vertex u is an articulation
+point if and only if there exists a subtree rooted at a child of u that has no back edges
+to a proper ancestor of u.
+
+13.
+Fast Flyer [20 points] (3 parts)
+You are given a list of all scheduled daily flights in the US, giving departure airports, departure
+times, destination airports, and arrival times. We want an algorithm to compute travel times be-
+tween airports, including waiting times between connections. Assume that if one flight arrives at
+time t and another departs at time t′ ≥ t, travelers can make the connection. Further assume that at
+a given airport, no two events (arrivals or departures) occur at the same time, and that there are at
+most 100 events at any airport during a given day. All times are given in GMT; don’t worry about
+time zones.
+Construct a weighted graph so that given a departure airport, a departure time T , and a destination
+airport, we can efficiently determine the earliest time T ′ that a traveler can be guaranteed (ac-
+cording to the schedules!) of arriving at her destination on that day (ignore overnight flights and
+overnight airport stays).
+(a) What do vertices represent? What do edges in your graph represent, and what is the
+weight of an edge?
+
+(b) Give an upper bound on the number of edges and vertices in your graph if there are n
+airports in the US and m daily flights. Justify your bound.
+
+(c) What algorithm would you use to compute the shortest travel times, and what is its
+running time in terms of the number of vertices, V , and the number of edges, E?
