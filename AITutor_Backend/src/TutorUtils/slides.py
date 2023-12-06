@@ -49,15 +49,10 @@ You are inserting examples into the content. You are now going to create the con
 Output: 
 """
 
-<<<<<<< HEAD
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the provided Slide Plan and the learning environment above, create a spoken Presentation/Lecture to present the information to the Student. This should take the format of a conversational demonstration to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation.
-=======
-SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the Slide Description above and the provided Slide Content, create a spoken Presentation to present the information to the Student. This should explain to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation.
->>>>>>> ce1cedf (slide prompt test)
+SLIDE_PRESENTATION_PROMPT = """You now have a new Task; With the provided Slide Plan and the learning environment above, create a spoken Presentation/Lecture to present the information to the Student. This should take the format of a conversational demonstration to the student the content of the slide in detail based on the Slide's Content listed below. This is spoken conversation between you and the student is meant to teach the student the learning content displayed below, remember this is conversational. Ensure your explanation is at the level of which the student currently understands the content being displayed. Additionally, try to connect the presentation language to the student's interests and goals if you are developoing an example or explanation. Ensure you discuss any examples provided in the Current Slide's Content Section.
 
 This is a short context of previous slides. Understand that if you are in the middle of a presentation, your conversation should reflect this.
 
-<<<<<<< HEAD
 **Slide's Context (short collection of previous slides that came before this one)**: $SLIDE_CONTEXT$
 
 Here is how the student will view the Slide which you are currently presenting.
@@ -70,22 +65,16 @@ $TITLE$
 $SLIDE_CONTENT$
 
 First, come up with the spoken presentation based on the context of this slide and the content of the current slide.
-=======
-First, come up with the spoken presentation based on the context.
->>>>>>> ce1cedf (slide prompt test)
 After this, you need to convert the spoken presentation into a JSON Object. Ceate a JSON object which we can parse for the Presentation content, e.g. 
 ```json
 {"presentation": "insert presentation conversation here..."}
 ```
-<<<<<<< HEAD
 
 Introduce the topic straight away and do not add any additional templating such as "AI Tutor:" or "Student:" to your response. Do not introduce yourself, just get straight to the content.
 
 Remember this is one of many slides. Refer to the Slide Number below to understand which slide you are currently on. This is not the only slide in the presentation.
 This is Slide $SLIDE_NUM$ of $TOTAL_SLIDES$ slides.
 
-=======
->>>>>>> ce1cedf (slide prompt test)
 Ensure your output contains a valid JSON Object containing the 'presentation' key.
 
 Output: """
