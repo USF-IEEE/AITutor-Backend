@@ -1,3 +1,4 @@
+import pickle as pkl
 from enum import IntEnum
 from collections import deque
 from AITutor_Backend.src.TutorUtils.notebank import *
@@ -8,7 +9,10 @@ from AITutor_Backend.src.TutorUtils.concepts import ConceptDatabase
 from AITutor_Backend.src.TutorUtils.slides import SlidePlanner, Slide
 from AITutor_Backend.src.TutorUtils.questions import QuestionSuite
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
-from concurrent.futures import ThreadPoolExecutor
+import threading
+import os
+
+DEBUG_GENERATION_DATA = bool(os.environ.get("DEBUG_FRONTEND", False))
 
 class TutorEnv(SQLSerializable,):
     class States(IntEnum):
@@ -18,11 +22,26 @@ class TutorEnv(SQLSerializable,):
             METRICS=3 #TODO: IMPLEMENT
             GENERATION=4
     class Executor(SQLSerializable,):
+        @staticmethod
+        def PopulateDataFromFile(tutor_env: 'TutorEnv', ):
+            with open(f"Research/temp_data/temp_concepts_ds.pkl", "rb") as f:  # 'rb' mode is for reading in binary format
+                concept = pkl.load(f)
+                tutor_env.concept_database.Concepts = concept
+            
+            with open(f"Research/temp_data/temp_questions_ds.pkl", "rb") as f:  # 'rb' mode is for reading in binary format
+                qs = pkl.load(f)
+                tutor_env.question_suite.Questions = qs
+                tutor_env.question_suite.num_questions = len(qs)
+                tutor_env.question_suite.current_obj_idx = 0
+
+            with open(f"Research/temp_data/temp_slides_ds.pkl", "rb") as f:  # 'rb' mode is for reading in binary format
+                slides = pkl.load(f)
+                tutor_env.slide_planner.Slides = slides
+                tutor_env.slide_planner.num_slides = len(slides)
+                tutor_env.slide_planner.current_obj_idx = 0
         def __init__(self, env:'TutorEnv', main_concept_file, concept_list_file, notebank_filter_file):
             super(TutorEnv.Executor, self).__init__()
             self.env = env
-            self.__ears = None # TODO: Add whisper-3 api
-            self.__mouth = None # TODO: Add 
             self.__brain = None # TODO: Add LLM API Reference
             with open(main_concept_file, "r") as f:
                 self.__main_concept_prompt = f.read()
@@ -190,30 +209,38 @@ class TutorEnv(SQLSerializable,):
                     self.env.notebank.clear()
                     [self.env.notebank.add_note(note) for note in notes] # iterate through notes and add to Notebank
                     # Generate Concept Database:
-                    self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(),)
+                    self.env.concept_database = ConceptDatabase(main_concept, self.env.notebank.env_string(), not DEBUG_GENERATION_DATA)
                     # # Generate Slide Planner:
                     self.env.slide_planner = SlidePlanner(self.env.notebank, self.env.concept_database)
                     # # Generate Question Suite:
                     num_questions = int(user_input["num_questions"])
                     self.env.question_suite = QuestionSuite(num_questions, self.env.notebank, self.env.concept_database)
                     self.env.current_state = TutorEnv.States.TEACHING
-                    with ThreadPoolExecutor(max_workers=2) as executor:
+                    if not DEBUG_GENERATION_DATA:
                         # Submit slide planner tasks
-                        slide_planner_future = executor.submit(self.slide_planner_task)
-                        # Submit question suite task
-                        question_suite_future = executor.submit(self.question_suite_task)
-                        # Wait for the slide planner task to complete
-                        slide_planner_result = slide_planner_future.result()
-                        # Wait for the question suite task to complete
-                        question_suite_result = question_suite_future.result()
-                        assert slide_planner_result and question_suite_result, "Failed at creating Question Suite or Slide Planner. Check for error in logs."
+                        slide_planner_thread = threading.Thread(self.slide_planner_task)
+                        # # Submit question suite task
+                        question_suite_thread = threading.Thread(self.question_suite_task)
+                        # # start and wait for the slide planner task to complete
+                        slide_planner_thread.start()
+                        # # start and wait for the question suite task to complete
+                        question_suite_thread.start()
+                        # # Wait for finish
+                        slide_planner_thread.join()
+                        question_suite_thread.join()
+                        # assert slide_planner_result and question_suite_result, "Failed at creating Question Suite or Slide Planner. Check for error in logs."
+                    
+                    # This is used for Debugging the Frontend Application: set Environment Variable DEBUG_FRONTEND=1
+                    else: self.PopulateDataFromFile(self.env)
 
-                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": "Alright, lets get started shall we! " + self.env.slide_planner.get_object(obj_idx).presentation})
+                    obj_idx = self.env.slide_planner.current_obj_idx
+                    learning_obj = self.env.slide_planner.format_json()
+                    learning_obj["conversational_response"] =  "Alright, lets get started shall we! " + self.env.slide_planner.get_object(obj_idx).presentation
                     self.env.chat_history.respond(learning_obj["conversational_response"])
                     return learning_obj
             ### END GENERATION PHASE
 
-            self.env.current_state = int(user_input["current_state"])
+            # self.env.current_state = int(user_input["current_state"])
 
             ### TEACHING PHASE
             if self.env.current_state == int(TutorEnv.States.TEACHING):
@@ -223,10 +250,14 @@ class TutorEnv(SQLSerializable,):
                     # TODO: listen to user user_input and create a response 
                     self.env.chat_history.hear(user_prompt)
                     # ...
-                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": "todo: implement"})
+                    learning_obj = self.env.slide_planner.format_json()
+                    learning_obj["conversational_response"] = "todo: implement"
                 else:
                     self.env.slide_planner.current_obj_idx = obj_idx
-                    learning_obj = self.env.slide_planner.format_json().update({"conversational_response": self.env.slide_planner.get_object(obj_idx).presentation})
+                    learning_obj = self.env.slide_planner.format_json()
+                    learning_obj["conversational_response"] = self.env.slide_planner.get_object(obj_idx).presentation
+                    self.env.chat_history.respond(learning_obj["conversational_response"])
+                    return learning_obj
             
                 self.env.chat_history.respond(learning_obj["conversational_response"])
                 return learning_obj

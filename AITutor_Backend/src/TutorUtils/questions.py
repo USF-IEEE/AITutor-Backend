@@ -106,13 +106,15 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             while True:
                 try: # Build Question Plan:
                     prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, current_questions, notebank_str, error )
-                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview", max_length = 3000)
+                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4", max_length = 2500)
                     break
                 except Exception as e:
                     error = f"Error while creating a Question Plan: {e}"
             error = "There is no current error."
             while True:
                 try:
+                    with open("translation.txt", "a") as f:
+                        f.write("TRANSLATION\n")
                     prompt = self.llm_api.plan_to_question( self.__ConceptDatabase.main_concept, concept_list_str, q_plan, error)
                     llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k", max_length=5000)
                     question = Question.create_question_from_JSON(llm_output, self.__ConceptDatabase)
@@ -123,6 +125,8 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     break
                 except Exception as e:
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"
+                    with open("translation_errors.txt", "a") as f:
+                        f.write("TRANSLATION_ERROR\n")
             if DEBUG: print(f"Question {question_idx}:", question.format_json())
             self.Questions.append(question)
         self.current_obj_idx = 0

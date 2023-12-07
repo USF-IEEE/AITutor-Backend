@@ -59,7 +59,7 @@ class ConceptDatabase(SQLSerializable):
                         },
                     ],
                     temperature=0.9,
-                    max_tokens=3000,
+                    max_tokens=2000,
                     top_p=0.9,
                     frequency_penalty=0,
                     presence_penalty=0,
@@ -102,6 +102,8 @@ class ConceptDatabase(SQLSerializable):
         while True:
             llm_output = self.concept_llm_api.request_concept_data_from_llm(self.main_concept, self.get_concept_list_str(), concept_name, error_msg)
             try:
+                with open("translation.txt", "a") as f:
+                    f.write("TRANSLATION\n")
                 regex_match = ConceptDatabase.__CONCEPT_REGEX.findall(llm_output)
                 assert regex_match, f"Error parsing LLM Output for Concept: {concept_name}. Ensure you properly used the Yaml Creation rules."
                 # Extract the Yaml Data from the LLM Ouput
@@ -123,6 +125,8 @@ class ConceptDatabase(SQLSerializable):
                 break
             except Exception as e:
                 error_msg = str(e)
+                with open("translation_errors.txt", "a") as f:
+                    f.write("TRANSLATION_ERROR\n")
                 
     @staticmethod                
     def from_sql(main_concept, tutor_plan, concepts):
