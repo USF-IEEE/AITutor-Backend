@@ -117,8 +117,8 @@ YAML Code:
 
 ```yaml
 Concept:
-  name: "Treaty of Versailles"
-  definition: "The <Concept>Treaty of Versailles</Concept>, a pivotal <Concept>peace treaty</Concept>, marked the formal end of <Concept>World War I</Concept> and reshaped post-war Europe's geopolitical landscape. Imposing harsh <Concept>reparations</Concept> and substantial <Concept>territorial losses</Concept> on <Concept>Germany</Concept>, it aimed to prevent future aggression but contributed to economic and political instability, leading to the rise of nationalism and setting the stage for World War II. The treaty also established the <Concept>League of Nations</Concept>, symbolizing a shift in international diplomacy and conflict resolution."
+  name: \"Treaty of Versailles\"
+  definition: \"The <Concept>Treaty of Versailles</Concept>, a pivotal <Concept>peace treaty</Concept>, marked the formal end of <Concept>World War I</Concept> and reshaped post-war Europe's geopolitical landscape. Imposing harsh <Concept>reparations</Concept> and substantial <Concept>territorial losses</Concept> on <Concept>Germany</Concept>, it aimed to prevent future aggression but contributed to economic and political instability, leading to the rise of nationalism and setting the stage for World War II. The treaty also established the <Concept>League of Nations</Concept>, symbolizing a shift in international diplomacy and conflict resolution.\"
   latex_code: ""
 ```
 [END EXAMPLE]
@@ -126,16 +126,16 @@ Concept:
 Output the correct Concept Generation Process for:
 Concept.Name = "Quadratic Equation":
 
-Definition: "The Quadratic Equation represents a fundamental concept in algebra, constituting a second-degree polynomial equation in one variable, usually denoted as x. Characterized by its standard form ax² + bx + c = 0, where a ≠ 0, the quadratic equation is a cornerstone in understanding polynomial relationships. It not only embodies the principles of algebra but also leads to the exploration of key concepts such as coefficients, discriminants, and roots. The solutions to this equation, known as roots, can be real or complex numbers and are found using methods like factoring, completing the square, or applying the quadratic formula. The graphical representation of a quadratic equation is a parabola, a symmetric curve that opens upwards or downwards depending on the sign of the coefficient a. The study of quadratic equations lays the groundwork for more advanced topics in mathematics and physics, demonstrating the intricate relationships between numerical coefficients and the geometric properties of curves."
+Definition: \"The Quadratic Equation represents a fundamental concept in algebra, constituting a second-degree polynomial equation in one variable, usually denoted as x. Characterized by its standard form ax² + bx + c = 0, where a ≠ 0, the quadratic equation is a cornerstone in understanding polynomial relationships. It not only embodies the principles of algebra but also leads to the exploration of key concepts such as coefficients, discriminants, and roots. The solutions to this equation, known as roots, can be real or complex numbers and are found using methods like factoring, completing the square, or applying the quadratic formula. The graphical representation of a quadratic equation is a parabola, a symmetric curve that opens upwards or downwards depending on the sign of the coefficient a. The study of quadratic equations lays the groundwork for more advanced topics in mathematics and physics, demonstrating the intricate relationships between numerical coefficients and the geometric properties of curves.\"
 
 Related Ideas: polynomial, second-degree, variable, coefficient, discriminant, roots, parabola, algebra, graphing, complex numbers, real numbers.
 
 YAML Code:
 ```yaml
 Concept:
-  name: "Quadratic Equation"
-  definition: "The <Concept>Quadratic Equation</Concept> represents a fundamental concept in algebra, constituting a <Concept>second-degree polynomial</Concept> equation in one <Concept>variable</Concept>, usually denoted as x, with the standard form ax² + bx + c = 0 where a ≠ 0. It leads to the exploration of <Concept>coefficients</Concept>, <Concept>discriminants</Concept>, <Concept>roots</Concept>, and the geometric representation of <Concept>parabolas</Concept>, underpinning advanced mathematical and physical concepts."
-  latex_code: "ax^2 + bx + c = 0"
+  name: \"Quadratic Equation\"
+  definition: \"The <Concept>Quadratic Equation</Concept> represents a fundamental concept in algebra, constituting a <Concept>second-degree polynomial</Concept> equation in one <Concept>variable</Concept>, usually denoted as x, with the standard form ax² + bx + c = 0 where a ≠ 0. It leads to the exploration of <Concept>coefficients</Concept>, <Concept>discriminants</Concept>, <Concept>roots</Concept>, and the geometric representation of <Concept>parabolas</Concept>, underpinning advanced mathematical and physical concepts.\"
+  latex_code: \"ax^2 + bx + c = 0\"
 ```
 [END EXAMPLE]
 
@@ -149,9 +149,9 @@ Related Ideas: playwright, poet, English literature, dramatist, Renaissance, the
 YAML Code:
 ```yaml
 Concept:
-  name: "William Shakespeare"
-  definition: "William Shakespeare, a seminal figure in <Concept>English literature</Concept> and a prominent <Concept>playwright</Concept>, <Concept>poet</Concept>, and <Concept>actor</Concept> of the <Concept>Renaissance era</Concept>, is celebrated for his profound influence on <Concept>theatre</Concept> and <Concept>poetry</Concept>. His works are noted for their linguistic excellence, deep exploration of <Concept>human nature</Concept>, and pioneering narrative structures, leaving a lasting impact on the evolution of the English language and the cultural landscape worldwide."
-  latex_code: ""
+  name: \"William Shakespeare\"
+  definition: \"William Shakespeare, a seminal figure in <Concept>English literature</Concept> and a prominent <Concept>playwright</Concept>, <Concept>poet</Concept>, and <Concept>actor</Concept> of the <Concept>Renaissance era</Concept>, is celebrated for his profound influence on <Concept>theatre</Concept> and <Concept>poetry</Concept>. His works are noted for their linguistic excellence, deep exploration of <Concept>human nature</Concept>, and pioneering narrative structures, leaving a lasting impact on the evolution of the English language and the cultural landscape worldwide.\"
+  latex_code: \"\"
 ```
 [END EXAMPLE]
 
@@ -165,9 +165,9 @@ Related Ideas: President of the United States, Progressive Movement, conservatio
 YAML Code:
 ```yaml
 Concept:
-  name: "Theodore Roosevelt"
+  name: \"Theodore Roosevelt\"
   definition: "<Concept>Theodore Roosevelt</Concept>, the 26th <Concept>President of the United States</Concept>, was pivotal in transforming American political and policy landscapes. As a leader of the <Concept>Progressive Movement</Concept>, he championed reforms in social and economic spheres, while his efforts in <Concept>conservationism</Concept> led to the establishment of national parks and environmental policies. Roosevelt's 'speak softly and carry a big stick' approach in <Concept>foreign policy</Concept> significantly impacted international relations. His presidency is marked by a redefinition of the presidential role and groundwork for future societal reforms."
-  latex_code: ""
+  latex_code: \"\"
 ```
 [END EXAMPLE]
 
@@ -181,9 +181,9 @@ Related Ideas: economic depression, 1930s, New Deal, stock market crash of 1929,
 YAML Code:
 ```yaml
 Concept:
-  name: "The Great Depression"
-  definition: "The <Concept>Great Depression</Concept> was not only a profound and severe <Concept>economic depression</Concept> that affected the globe during the 1930s but also a catalyst for a series of consequential historical events, including World War II. Originating from the United States with the <Concept>stock market crash of 1929</Concept>, it spread rapidly, causing widespread <Concept>unemployment</Concept>, <Concept>acute deflation</Concept>, and a substantial reduction in personal and national incomes. This economic turmoil led to significant policy changes, notably the <Concept>New Deal</Concept> in the U.S., and had a cascading effect on the global economy, exacerbating political tensions and contributing to the causes of World War II. The Great Depression's impacts were far-reaching, affecting both industrialized and non-industrialized nations, leading to phenomena like the American <Concept>Dust Bowl</Concept> and <Concept>mass migration</Concept>. It fundamentally altered global trade, social structures, and government roles, making it a critical subject for understanding the dynamics and potential repercussions of major <Concept>economic crises</Concept> and their <Concept>global impacts</Concept>."
-  latex_code: ""
+  name: \"The Great Depression\"
+  definition: \"The <Concept>Great Depression</Concept> was not only a profound and severe <Concept>economic depression</Concept> that affected the globe during the 1930s but also a catalyst for a series of consequential historical events, including World War II. Originating from the United States with the <Concept>stock market crash of 1929</Concept>, it spread rapidly, causing widespread <Concept>unemployment</Concept>, <Concept>acute deflation</Concept>, and a substantial reduction in personal and national incomes. This economic turmoil led to significant policy changes, notably the <Concept>New Deal</Concept> in the U.S., and had a cascading effect on the global economy, exacerbating political tensions and contributing to the causes of World War II. The Great Depression's impacts were far-reaching, affecting both industrialized and non-industrialized nations, leading to phenomena like the American <Concept>Dust Bowl</Concept> and <Concept>mass migration</Concept>. It fundamentally altered global trade, social structures, and government roles, making it a critical subject for understanding the dynamics and potential repercussions of major <Concept>economic crises</Concept> and their <Concept>global impacts</Concept>.\"
+  latex_code: \"\"
 ```
 [END EXAMPLE]
 
@@ -198,8 +198,8 @@ YAML Code:
 ```yaml
 Concept:
   name: "Bellman Equation"
-  definition: "The <Concept>Bellman Equation</Concept>, central to <Concept>dynamic programming</Concept> and <Concept>reinforcement learning</Concept>, articulates a <Concept>recursive relationship</Concept> essential for the determination of <Concept>optimal policies</Concept> in sequential decision-making under uncertainty. This equation guides the decomposition of complex problems into manageable subproblems, integrating elements like <Concept>state and decision variables</Concept>, <Concept>reward functions</Concept>, and <Concept>transition functions</Concept> to facilitate systematic optimization. Its application spans numerous fields including <Concept>Agent Artificial Intelligence</Concept>, economics, and resource management, where it enables effective policy development and predictive modeling for optimal decision outcomes over time."
-  latex_code: "V(x) = \max_{u}(R(x,u) + \beta V(f(x,u)))"
+  definition: \"The <Concept>Bellman Equation</Concept>, central to <Concept>dynamic programming</Concept> and <Concept>reinforcement learning</Concept>, articulates a <Concept>recursive relationship</Concept> essential for the determination of <Concept>optimal policies</Concept> in sequential decision-making under uncertainty. This equation guides the decomposition of complex problems into manageable subproblems, integrating elements like <Concept>state and decision variables</Concept>, <Concept>reward functions</Concept>, and <Concept>transition functions</Concept> to facilitate systematic optimization. Its application spans numerous fields including <Concept>Agent Artificial Intelligence</Concept>, economics, and resource management, where it enables effective policy development and predictive modeling for optimal decision outcomes over time.\"
+  latex_code: \"V(x) = \\max_{u}(R(x,u) + \\beta V(f(x,u)))\"
 ```
 [END EXAMPLE]
 
@@ -214,9 +214,9 @@ YAML Code:
 
 ```yaml
 Concept:
-  name: "Regular Expressions"
-  definition: "Regular expressions, or <Concept>regex</Concept>, are intricate sequences of characters that form search patterns, used primarily in string processing tasks like <Concept>pattern matching</Concept> and <Concept>text normalization</Concept>. Originating from theoretical computer science and automata theory, regex serves as a crucial tool for transforming raw data into structured information, essential in <Concept>data validation</Concept>, <Concept>parsing</Concept>, and <Concept>text mining</Concept>. Regex employs a series of <Concept>metacharacters</Concept> including <Concept>quantifiers</Concept>, <Concept>character classes</Concept>, <Concept>anchors</Concept>, and <Concept>lookaround assertions</Concept>, enabling the construction of versatile and complex patterns for efficient textual data manipulation in domains like software development, data analysis, and natural language processing."
-  latex_code: "\\texttt{^a...s$}"
+  name: \"Regular Expressions\"
+  definition: \"Regular expressions, or <Concept>regex</Concept>, are intricate sequences of characters that form search patterns, used primarily in string processing tasks like <Concept>pattern matching</Concept> and <Concept>text normalization</Concept>. Originating from theoretical computer science and automata theory, regex serves as a crucial tool for transforming raw data into structured information, essential in <Concept>data validation</Concept>, <Concept>parsing</Concept>, and <Concept>text mining</Concept>. Regex employs a series of <Concept>metacharacters</Concept> including <Concept>quantifiers</Concept>, <Concept>character classes</Concept>, <Concept>anchors</Concept>, and <Concept>lookaround assertions</Concept>, enabling the construction of versatile and complex patterns for efficient textual data manipulation in domains like software development, data analysis, and natural language processing.\"
+  latex_code: \"\"
 ```
 ### Assessing the Environment
 Based on the environment data provided pick which concepts should be included in the knowledge graph. These should be the concepts only required to know and understand the main concept deeply, fulfill the user's learning objectives, and should follow the Tutor's planner in terms of relavence. 

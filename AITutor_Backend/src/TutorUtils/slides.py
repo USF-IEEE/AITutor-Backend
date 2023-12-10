@@ -7,7 +7,7 @@ import openai
 from AITutor_Backend.src.BackendUtils.json_serialize import *
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 from AITutor_Backend.src.TutorUtils.concepts import *
-
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 from enum import IntEnum
 from typing import List, Tuple
 
@@ -402,7 +402,9 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
             # Prepare input for LLM
             slideplan_prompt = self.llm_api.prompt_plan_slideplan(self._generate_slideplans_str(), self._generate_concept_exploration_map_str(), notebank_state)
             # Request output from LLM
-            llm_output = self.llm_api.request_output_from_llm(slideplan_prompt, "gpt-4")    
+            llm_output = self.llm_api.request_output_from_llm(slideplan_prompt, "gpt-4-1106-preview")
+            output_dir = "training_data/slides/sp_plan/"
+            save_training_data(output_dir, slideplan_prompt, llm_output)
             # Convert:
             conversion_prompt = self.llm_api.prompt_sLideplan_to_obj(llm_output)
             error = "There currently is no error."
@@ -412,7 +414,8 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
                         f.write("TRANSLATION\n")
                     llm_output = self.llm_api.request_output_from_llm(conversion_prompt, model="gpt-3.5-turbo-16k")    
                     slide_plan = SlidePlan.create_slideplan_from_JSON(llm_output, self.ConceptDatabase)
-                    break
+                    output_dir = "training_data/slides/sp_obj/"
+                    save_training_data(output_dir, conversion_prompt, llm_output)
                 except Exception as err: # TODO: Fix error handling
                     error = str(err)
                     with open("translation_errors.txt", "a") as f:
@@ -431,7 +434,9 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         # Prepare Slide Description Prompt
         slide_prompt = self.llm_api.prompt_sideplan_description(slide_plan, notebank_state)
         # Request output from LLM
-        s_description = self.llm_api.request_output_from_llm(slide_prompt, "gpt-4")
+        s_description = self.llm_api.request_output_from_llm(slide_prompt, "gpt-4-1106-preview")
+        output_dir = "training_data/slides/s_desc/"
+        save_training_data(output_dir, slide_prompt, s_description)
         # Try to get content:
         # content_prompt = slide_prompt+"\n\nAI Tutor:\n"+s_description+"\n\nSystem:\n"+SLIDE_content_PROMPT
         system_prompt = DOC_SYSTEM_PROMPT.replace("$ENV.SLIDE_PLAN$", slide_plan.env_string()).replace("$ENV.NOTEBANK_STATE$", notebank_state)
@@ -440,7 +445,10 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
                 f.write("TRANSLATION\n")
             llm_output = self.llm_api.conversational_JSON_request(system_prompt, s_description, SLIDE_CONTENT_PROMPT, "gpt-4")
             success, s_content = Slide.parse_llm_for_content(llm_output)
-            if success: break
+            if success: 
+                output_dir = "training_data/slides/s_content/"
+                save_training_data(output_dir, system_prompt+"[SEP]"+s_description+"[SEP]"+SLIDE_CONTENT_PROMPT, llm_output)
+                break
             with open("translation_errors.txt", "a") as f:
                 f.write("TRANSLATION_ERROR\n")
         # Try to get Presentation:
@@ -448,9 +456,13 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         while True:
             with open("translation.txt", "a") as f:
                 f.write("TRANSLATION\n")
-            llm_output = self.llm_api.conversational_JSON_request(system_prompt, s_description, SLIDE_PRESENTATION_PROMPT.replace("$TITLE$", slide_plan.title).replace("$SLIDE_CONTENT$", s_content).replace("$SLIDE_NUM$ of $TOTAL_SLIDES$", f"{index+1} of {self.num_slides}"), "gpt-4-1106-preview")
+            presentation_prompt = SLIDE_PRESENTATION_PROMPT.replace("$TITLE$", slide_plan.title).replace("$SLIDE_CONTENT$", s_content).replace("$SLIDE_NUM$ of $TOTAL_SLIDES$", f"{index+1} of {self.num_slides}")
+            llm_output = self.llm_api.conversational_JSON_request(system_prompt, s_description, presentation_prompt, "gpt-4-1106-preview")
             success, s_presentation = Slide.parse_llm_for_presentation(llm_output)
-            if success: break
+            if success: 
+                output_dir = "training_data/slides/s_pres/"
+                save_training_data(output_dir, system_prompt+"[SEP]"+s_description+"[SEP]"+presentation_prompt, llm_output)
+                break
             with open("translation_errors.txt", "a") as f:
                 f.write("TRANSLATION_ERROR\n")
         n_slide = Slide(title=slide_plan.title, description=s_description, presentation=s_presentation, content=s_content, latex_codes="", purpose=slide_plan.purpose, purpose_statement=slide_plan.purpose_statement, concepts=slide_plan.concepts.copy())

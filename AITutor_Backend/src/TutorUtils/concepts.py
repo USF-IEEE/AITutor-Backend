@@ -4,11 +4,11 @@ import yaml
 import os
 import openai
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import concurrent
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 
 USE_OPENAI = True
 DEBUG = bool(os.environ.get("DEBUG", 0))
@@ -64,9 +64,9 @@ class ConceptDatabase(SQLSerializable):
                     frequency_penalty=0,
                     presence_penalty=0,
                 )
-                return response.choices[0].message.content
+                return prompt, response.choices[0].message.content
             else:
-                return self.client.get_output(prompt, " ")
+                return prompt, self.client.get_output(prompt, " ")
         
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
@@ -100,7 +100,7 @@ class ConceptDatabase(SQLSerializable):
             return 0# Some API call to LLM
         error_msg = "There is no current error detected in the parsing system."
         while True:
-            llm_output = self.concept_llm_api.request_concept_data_from_llm(self.main_concept, self.get_concept_list_str(), concept_name, error_msg)
+            prompt, llm_output = self.concept_llm_api.request_concept_data_from_llm(self.main_concept, self.get_concept_list_str(), concept_name, error_msg)
             try:
                 with open("translation.txt", "a") as f:
                     f.write("TRANSLATION\n")
@@ -122,6 +122,9 @@ class ConceptDatabase(SQLSerializable):
                 new_concept = Concept.create_from_concept_string_add_to_database(c_name, c_def, c_latex, self, max_depth-1, self.__thread_pool_exec)    
                 if max_depth == 0: break
                 assert new_concept, "Could not create concept from LLM Output, ensure you have properly entered the information and did not include any additional information outside of what's required."
+                # Save the llm_output as training tata to file "training_data/concept/generation/":
+                output_dir = "training_data/concept/generation/"
+                save_training_data(output_dir, prompt, llm_output)
                 break
             except Exception as e:
                 error_msg = str(e)

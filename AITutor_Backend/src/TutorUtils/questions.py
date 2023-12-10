@@ -1,15 +1,12 @@
 from enum import IntEnum
 from typing import Tuple, List
 import re
-import yaml
 import os
-
 import openai
 import json
-
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.BackendUtils.code_executor import CodeExecutor
-from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 
@@ -105,8 +102,10 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             error = "There is no current error."
             while True:
                 try: # Build Question Plan:
-                    prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, current_questions, notebank_str, error )
-                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4", max_length = 2500)
+                    prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, self.num_questions, notebank_str, error )
+                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview", max_length = 6000)
+                    output_dir = "training_data/questions/plan"
+                    save_training_data(output_dir, prompt, q_plan)
                     break
                 except Exception as e:
                     error = f"Error while creating a Question Plan: {e}"
@@ -122,6 +121,8 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     assert isinstance(question.type, Question.Type), f"Error, could not find type on question, check the input: {llm_output}"
                     assert isinstance(question.subject, Question.Subject), f"Error, could not find subject on question, check the input: {llm_output}"
                     assert question.concepts, f"Error, could not find Concept Database Mappings on Question JSON object. Check the output to ensure that these were included: {llm_output}"
+                    output_dir = "training_data/questions/obj/"
+                    save_training_data(output_dir, prompt, llm_output)
                     break
                 except Exception as e:
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"

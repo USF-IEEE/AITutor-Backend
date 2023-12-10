@@ -7,6 +7,7 @@ from enum import IntEnum
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 import json
 USE_OPENAI = True
 
@@ -83,6 +84,8 @@ class Prompter:
         """
         prompt = self.llm_api._load_prompt(self.__plan_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), },) 
         llm_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview") #"gpt-4"
+        output_dir = "training_data/prompter/planning/"
+        save_training_data(output_dir, prompt, llm_plan)
         return llm_plan
     
     def perform_notebank(self, plan):
@@ -98,7 +101,10 @@ class Prompter:
             success, error, terminate = self.notebank.process_llm_action(llm_output)
             with open("translation.txt", "a") as f:
                 f.write("TRANSLATION\n")
-            if success or terminate: break
+            if success or terminate: 
+                output_dir = "training_data/prompter/notebank/"
+                save_training_data(output_dir, prompt, llm_output)
+                break
             with open("translation_errors.txt", "a") as f:
                 f.write("TRANSLATION_ERROR\n")
         return terminate
@@ -117,6 +123,8 @@ class Prompter:
                 action = PromptAction.parse_llm_action(llm_output)
                 assert isinstance(action._type, PromptAction.Type), "Error while Creating the Prompt."
                 assert action._data, "Error while parsing the data for the Prompt."
+                output_dir = "training_data/prompter/prompt/"
+                save_training_data(output_dir, prompt, llm_output)
                 break
             except Exception as e:
                 error = "There was an error while trying to parse the Prompt: " + str(e)
