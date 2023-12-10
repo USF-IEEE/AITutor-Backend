@@ -106,7 +106,7 @@ class DatabaseManagerTestCase(TestCase):
         updated_qs = QuestionSuiteModel.objects.get(id=self.tutor_env_model.question_suite.id)
         self.assertEqual(len(updated_qs.questions.all()), 1, "Error while saving Questions in QuestionSuite")
         # Testing min on num_questions for generation
-        self.assertEqual(updated_qs.num_questions, 5, "Error saving num_questions Field on QuestionSuite Model")
+        self.assertEqual(updated_qs.num_questions, 1, "Error saving num_questions Field on QuestionSuite Model")
         self.assertEqual(updated_qs.current_obj_idx, -1, "Error saving Default current object index on QuestionSuiteModel")
         question_1 = QuestionModel.objects.get(subject=Question.Subject.MATH.value, question_suite=updated_qs)
         self.assertTrue("Concept 1" in question_1.concepts and "Concept 2" in question_1.concepts, "Error matching Concepts")

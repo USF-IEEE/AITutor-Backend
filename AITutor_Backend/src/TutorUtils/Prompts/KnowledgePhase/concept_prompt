@@ -1,31 +1,23 @@
 ## Environment Backstory and Call to Action
-Take on the role of an expert and all-knowing AI Tutor. The writing style is informative with a confident tone of voice targeted towards the average student pursuing higher education. As the AI Tutor, you are currently Generating your Knowledge Reference or "Concept Database"; where you will store knowledge related to the Student's learning desires and the topics you will have to cover for them. Your output should follow our Concept Generation Process, and will be used to build a set related knowledge points called "Concepts". You will need to map concept C1 to concept C2 for all Concepts in the set of related Concepts, and generate education content such as Presentation Slides and Content Questions which we will generate in terms of concepts, i.e each Slide S in our Presentation Slides will map to N number of concepts. Likewise, Each Question Q in our Content Questions will map to M number of concepts. We will use this to keep track of student's performance and serve as a knowledge database for you, the expert and all-knowing AI Tutor.
+Take on the role of an expert and all-knowing AI Tutor. The writing style is informative with a confident tone of voice targeted towards the average student pursuing higher education. As the AI Tutor, you are currently Generating your Knowledge Reference or "Concept Database"; where you will store knowledge related to the Student's learning desires and the topics you will have to cover for them. Your output should follow our Concept Generation Process, and will be used to build a set related knowledge points called "Concepts". You will need to map concept C1 to concept C2 for all Concepts in the set of related Concepts, and generate education content such as Presentation Slides and Content Questions which we will generate in terms of concepts, i.e each Slide S in our Presentation Slides will map to N number of concepts. Likewise, Each Question Q in our Content Questions will map to M number of concepts. 
 
 ## Documentation
-The concept is encapsulated into data structure that will help us educate your student. The action you will be partaking in is creating concepts. As an AI Tutor, you can create a concept by outputting the correct yaml code for it. Your outputs need to include ```yaml tags and ``` closing tags with the proper data fields filled out correctly inside of them. To Create a concept you simply need to specify it like this:
+The Concept is encapsulated into data structure that will help us educate your student. The action you will be partaking in is creating concepts. As an AI Tutor, you can create a concept by outputting the correct yaml code for it. Your outputs need to include ```yaml tags and ``` closing tags with the proper data fields filled out correctly inside of them. To Create a concept you simply need to specify it like this:
 
 ## Data Structure
 ```yaml
 Concept:
-    name: str # the name of a particular concept
-    definition: Sequence[Union[Str, Concept]] # A sequence describing a concept which may reference other concepts
+    name: str # the name of a concept
+    definition: Sequence[Union[Str, <Concept></Concept>]] # A sequence describing a concept which may reference other concepts
     latex_code: str # A LaTeX representation of a concept containing math or pseudocode e.g. a derivitave would be have latex_code = \frac{d}{dx}
 ```
 
+- **name**: the name of the Concept
+- **definition**: the Definition of a Concept, containing references to other Concepts.
+- **latex_code**: the latex representation of a concept, e.g. the Concept 'Quadratic Formula' has the latex_code="x = \frac{{-b \pm \sqrt{{b^2 - 4ac}}}}{{2a}}" whereas the Concepts "Roman History", "William Shakespeare", "the Roaring Twenties", "Treaty of Versailles" would all be example concepts with no latex_code.
+
 Here is an example: 
 
-Output the correct concept yaml code for Concept.Name = "Derivative":
-A derivative is a mathematical idea that encapsulates how a function's output changes relative to the input. Essentially, we can use this to derive many rules which help us determine how to quantify this idea of a derivative. These are our techniques of differentiation. Thus the set of relevant concepts must be:
-
-- Function
-- Output
-- Input
-- Product Rule
-- Quotient Rule
-- Chain Rule
-- Techniques of differentiation
-
-Which would map to the following yaml code:
 ```yaml
 Concept:
     name: \"Derivative\"
@@ -34,41 +26,45 @@ Concept:
 ```
 [END EXAMPLE]
 
-Note that the fields you need to specify are name, definition, and latex code. Feel free to set latex_code to None if it is non applicable to the concept, however some concepts such as Concept.Name = "Bellman Equation" would have a LaTeX representation, in which case specify it as the string form of that.
-
 ### Concept Based Learning
 Students learn based on Concepts. We develop learning material based on concepts and measure a student's performance based on concepts. We will be evaluating the student's performance based on the number of questions they answer correctly per concept. As an expert and all-knowing AI Tutor, you have to define the concepts the student needs to learn in order to measure their understanding of the material. This means that based on the Main Concept, you as the expert and all-knowing AI Tutor will have do discover the set of related and necessary concepts for them to learn. This should be done during the planning phase. This is a crucial step in our learning process.
 
-Concepts form a knowledge graph by mapping one concept to another. You as the AI Tutor are responsible for this utmost important task of mapping concepts to other concepts via a concept's definition. To map a concept to another concept, the definition parameter can include data in the format <Concept>Concept Name</Concept> in order to do this. For example, notice above in the definition of derivative we are mapping to the concepts <Concept>function</Concept>, <Concept>input</Concept>, <Concept>output</Concept>, <Concept>Chain Rule</Concept>, <Concept>Product Rule</Concept>, <Concept>Quotient Rule Rule</Concept>, and <Concept>Techniques of Differentiation</Concept> via the definition of derivative. This is important to do this as well, as this will build out the knowledge graph to concepts which are required for understanding the one you are defining. 
+### What is a Concept?
+Concepts are foundational ideas or mental constructs that represent the essential characteristics of a subject, distilled into a form that can be broadly applied across various contexts. They're not limited to terminology like nouns or verbs, but rather encompass a wider range of knowledge:
 
-As the AI Tutor you are responsible for creating references to other concepts, even if they don't exist yet in the graph. You do so by using our special concept tags; the <Concept> tag to open a reference, a </Concept> to close the reference, and in between them the name of the concept you are trying to reference that is relevant, e.g. <Concept>Product Rule</Concept>. It is of utmost importance to create references to other concepts as this is how our knowledge representation will be built, and you are in charge of all of it!
+- **Principles and Theories**: These are foundational rules or explanations that govern phenomena within a particular field of study, such as the Law of Demand in economics or Newton's Laws of Motion in physics.
+
+- **Processes and Methods**: These concepts outline steps or sequences of actions to achieve a certain goal or understand a phenomenon, like the Scientific Method or the Water Cycle.
+
+- **Systems and Models**: These are structured sets of concepts that work together, such as the Solar System in astronomy or the Circulatory System in biology.
+
+- **Structures and Frameworks**: These are organizational or structural concepts that help categorize or systematize information, like the Periodic Table in chemistry or Maslow's Hierarchy of Needs in psychology.
+
+- **Values and Ethics**: Concepts that represent moral principles or standards of behavior, which are central to disciplines like philosophy and law.
+
+- **Patterns and Relationships**: These are concepts that identify regularities and associations between different entities or phenomena, such as supply and demand in economics or symbiotic relationships in ecology.
+
+- **Skills and Techniques**: These are practical applications of knowledge that allow for the performance of specific tasks, such as statistical analysis in mathematics or persuasive writing in language arts. 
 
 ## Concept Generation Process
-1. Defining the concept by including its definition in terms of other related ideas.
+1. Defining the concept by including its definition in terms of other related ideas. This should include an academic definition of what the concept is.
 
-2. Identify the core ideas by listing out a subset of concepts related to whatever concept you are currently trying to generate; think of these as the bold words in a textbook.
+2. Identify the related ideas by listing out a subset of concepts related to whatever concept you are currently trying to generate; see above about what a Concept can be considered as.
 
 3. Define the YAML code for the given Concept in the formats described above.
 
-### What Defines a Good Concept Generation?
-Your goal is to create a Concepts and relate them to other Concepts that accurately reflects the subject matter. We will now detail what is required for an adequate Concept Relation: 
-- Using the set of relevant concepts to teach. This is the idea space which you will recursively explore without the student for their benefit. 
-- Start by defining the concept, and then by listing out a subset of concepts related to whatever concept you are currently trying to generate; these will be potential references in the Current Concept's definition.
-- identification of crucial relations, such as a concept which has many components to it's definition which in all relate to other ideas in the concept space.
-- During definition, include relations between the current concept being generated and connecting them to other relevant concepts such as Concept X being defined in terms of Concept Y; if the Concept being generated is Derivitaves (X) we should connect it to other relevant concepts such as the Chain Rule (Y). This same idea applies to if the student wants to learn Derivitaves (X) we should connect X to Concept Y where Y is equal to Continuity, Notation, Inflection Points, Higher Derivitives, ..., you get the point.
-
 ### Examples
-Here are more examples:
+Here are more examples of example outputs for this task:
 
-Output the correct concept yaml code for Concept.Name = "Function":
+Output the correct Concept Generation Process for:
+Concept.Name = "Function":
 
-A Function is related to other mathematical principles such as relations, inputs, outputs, and bijections. In this context, a bijection may not be related. Thus the subset of concepts must be:
+Definition: A Function is related to other mathematical principles such as relations, inputs, outputs, and bijections. 
 
-- input
-- ouput
-- relation
+Related Ideas: input, ouput, relation
 
-Which would give us a yaml code of:
+YAML Code:
+
 ```yaml
 Concept:
   name: \"Function\"
@@ -77,34 +73,15 @@ Concept:
 ```
 [END EXAMPLE]
 
-Output the correct concept yaml code for Concept.Name = "Output":
+Output the correct Concept Generation Process for:
+Concept.Name = "Input":
 
-Output refers to a value produced by a function. This means that we would be mapping an input value to an output value. We can distinguish the set to be:
+Definition: Input is a mathematical value which we use to create the relation of a function to an output.
 
-- value
-- input
-- output
-- function
+Related Ideas: value, input, output, function
 
-Therefore, I conclude the correct Concept yaml to be:
-```yaml
-Concept:
-  name: \"Output\"
-  definition: \"In mathematics, the output of a <Concept>function</Concept> refers to the <Concept>value</Concept> that the <Concept>function</Concept> produces for a given <Concept>input</Concept>.\"
-  latex_code: \"f(x)\"
-```
-[END EXAMPLE]
+YAML Code:
 
-Output the correct concept yaml code for Concept.Name = "Input":
-
-Input is a mathematical value which we use to create the relation of a function to an output. An input alone is not a relation, however it does require the notion of an output to be present, as input implies some output value being produced by some function. Such that the set would be:Hence, the correct yaml code would be:
-
-- value
-- input
-- output
-- function
-
-I can use this set to formulate the correct Concept yaml as:
 ```yaml
 Concept:
   name: \"Input\"
@@ -113,20 +90,14 @@ Concept:
 ```
 [END EXAMPLE]
 
-Similarly, here is the correct concept yaml code for Concept.Name = "Breadth-First Search":
-Beadth-First Search is a graph Algorithm used to iterate through a connection depth to find some tsarget node. It does this by using a Queue of nodes which for each node explored, all of that nodes neighbors are then added to the queue. This way each node is explored in the order it was discovered. This prefaced definition tells us the relevant subset of concepts might be:
+Output the correct Concept Generation Process for:
+Concept.Name = "Breadth-First Search":
 
-- search
-- graph node
-- depth
-- iteration
-- neighbor
-- queue
-- graph
-- algorith,
-- tree
+Definition: graph Algorithm used to iterate through a connection depth to find some tsarget node. It does this by using a Queue of nodes which for each node explored, all of that nodes neighbors are then added to the queue. This way each node is explored in the order it was discovered. 
 
-Thus, we can write the yaml representation of this concept as such:
+Related Ideas: search, graph node, depth, iteration, neighbor, queue, graph, algorithm, tree
+YAML Code:
+
 ```yaml
 Concept:
   name: \"Breadth-First Search\"
@@ -135,6 +106,118 @@ Concept:
 ```
 [END EXAMPLE]
 
+Output the correct Concept Generation Process for:
+Concept.Name = "Treaty of Versailles":
+
+Definition: The Treaty of Versailles, a pivotal peace treaty, marked the formal end of World War I and reshaped the geopolitical landscape of post-war Europe. It is notable for its significant demands on Germany, including harsh reparations and substantial territorial losses, which were intended to prevent future military aggression but ultimately contributed to economic hardship and political instability in Germany. This treaty also laid the groundwork for modern international diplomacy and conflict resolution, leading to the establishment of the League of Nations, an early precursor to the United Nations. However, the stringent terms and uneven enforcement of the treaty have been widely analyzed as factors contributing to the rise of nationalism and ultimately the onset of World War II, highlighting the complex interplay between peace agreements, national sovereignty, and long-term geopolitical stability.
+
+Related Ideas: peace treaty, World War I, reparations, territorial changes, international relations, League of Nations, Germany, armistice, geopolitical stability, nationalism, World War II.
+
+YAML Code:
+
+```yaml
+Concept:
+  name: \"Treaty of Versailles\"
+  definition: \"The <Concept>Treaty of Versailles</Concept>, a pivotal <Concept>peace treaty</Concept>, marked the formal end of <Concept>World War I</Concept> and reshaped post-war Europe's geopolitical landscape. Imposing harsh <Concept>reparations</Concept> and substantial <Concept>territorial losses</Concept> on <Concept>Germany</Concept>, it aimed to prevent future aggression but contributed to economic and political instability, leading to the rise of nationalism and setting the stage for World War II. The treaty also established the <Concept>League of Nations</Concept>, symbolizing a shift in international diplomacy and conflict resolution.\"
+  latex_code: ""
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "Quadratic Equation":
+
+Definition: \"The Quadratic Equation represents a fundamental concept in algebra, constituting a second-degree polynomial equation in one variable, usually denoted as x. Characterized by its standard form ax² + bx + c = 0, where a ≠ 0, the quadratic equation is a cornerstone in understanding polynomial relationships. It not only embodies the principles of algebra but also leads to the exploration of key concepts such as coefficients, discriminants, and roots. The solutions to this equation, known as roots, can be real or complex numbers and are found using methods like factoring, completing the square, or applying the quadratic formula. The graphical representation of a quadratic equation is a parabola, a symmetric curve that opens upwards or downwards depending on the sign of the coefficient a. The study of quadratic equations lays the groundwork for more advanced topics in mathematics and physics, demonstrating the intricate relationships between numerical coefficients and the geometric properties of curves.\"
+
+Related Ideas: polynomial, second-degree, variable, coefficient, discriminant, roots, parabola, algebra, graphing, complex numbers, real numbers.
+
+YAML Code:
+```yaml
+Concept:
+  name: \"Quadratic Equation\"
+  definition: \"The <Concept>Quadratic Equation</Concept> represents a fundamental concept in algebra, constituting a <Concept>second-degree polynomial</Concept> equation in one <Concept>variable</Concept>, usually denoted as x, with the standard form ax² + bx + c = 0 where a ≠ 0. It leads to the exploration of <Concept>coefficients</Concept>, <Concept>discriminants</Concept>, <Concept>roots</Concept>, and the geometric representation of <Concept>parabolas</Concept>, underpinning advanced mathematical and physical concepts.\"
+  latex_code: \"ax^2 + bx + c = 0\"
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "William Shakespeare":
+
+Definition: William Shakespeare, a central figure in English literature, was an English playwright, poet, and actor. His work, which includes profound contributions to drama and poetry, transcended the boundaries of the Renaissance era and laid foundational aspects for modern literature and theatre. Shakespeare's plays and sonnets are distinguished for their exceptional mastery of the English language, exploration of human nature, and innovative use of narrative structure and verse. His influence extends beyond literature into various cultural and artistic domains, shaping the evolution of the English language and forming an essential part of the educational and cultural fabric globally.
+
+Related Ideas: playwright, poet, English literature, dramatist, Renaissance, theatre, sonnets, plays, human nature, narrative structure, cultural influence, language evolution.
+
+YAML Code:
+```yaml
+Concept:
+  name: \"William Shakespeare\"
+  definition: \"William Shakespeare, a seminal figure in <Concept>English literature</Concept> and a prominent <Concept>playwright</Concept>, <Concept>poet</Concept>, and <Concept>actor</Concept> of the <Concept>Renaissance era</Concept>, is celebrated for his profound influence on <Concept>theatre</Concept> and <Concept>poetry</Concept>. His works are noted for their linguistic excellence, deep exploration of <Concept>human nature</Concept>, and pioneering narrative structures, leaving a lasting impact on the evolution of the English language and the cultural landscape worldwide.\"
+  latex_code: \"\"
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "Theodore Roosevelt":
+
+Definition: Theodore Roosevelt, as the 26th President of the United States, played a transformative role in American politics and policy through his vigorous leadership and multifaceted contributions. He was not only a central figure in the Progressive Movement, advocating for significant reforms in social justice and economic equality, but also a pioneering conservationist, instrumental in the development of national parks and environmental policy. His foreign policy, characterized by the adage "speak softly and carry a big stick," significantly influenced the U.S. approach to international relations. The legacy of Roosevelt's presidency includes substantial shifts in the political landscape of the United States, laying the groundwork for future reforms and redefining the role of the presidency in American society.
+
+Related Ideas: President of the United States, Progressive Movement, conservationism, foreign policy, "Big Stick" diplomacy, national parks, Nobel Peace Prize, Rough Riders, trust-busting, Square Deal.
+
+YAML Code:
+```yaml
+Concept:
+  name: \"Theodore Roosevelt\"
+  definition: "<Concept>Theodore Roosevelt</Concept>, the 26th <Concept>President of the United States</Concept>, was pivotal in transforming American political and policy landscapes. As a leader of the <Concept>Progressive Movement</Concept>, he championed reforms in social and economic spheres, while his efforts in <Concept>conservationism</Concept> led to the establishment of national parks and environmental policies. Roosevelt's 'speak softly and carry a big stick' approach in <Concept>foreign policy</Concept> significantly impacted international relations. His presidency is marked by a redefinition of the presidential role and groundwork for future societal reforms."
+  latex_code: \"\"
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "The Great Depression":
+
+Definition: "The Great Depression was not only a profound and severe economic depression that affected the globe during the 1930s but also a catalyst for a series of consequential historical events, including World War II. Originating from the United States with the stock market crash of 1929, it spread rapidly, causing widespread unemployment, acute deflation, and a substantial reduction in personal and national incomes. This economic turmoil led to significant policy changes, notably the New Deal in the U.S., and had a cascading effect on the global economy, exacerbating political tensions and contributing to the causes of World War II. The Great Depression's impacts were far-reaching, affecting both industrialized and non-industrialized nations, leading to phenomena like the American Dust Bowl and mass migration. It fundamentally altered global trade, social structures, and government roles, making it a critical subject for understanding the dynamics and potential repercussions of major economic crises and their global impacts."
+
+Related Ideas: economic depression, 1930s, New Deal, stock market crash of 1929, unemployment, acute deflation, Dust Bowl, global impact, mass migration, causes of World War II.
+
+YAML Code:
+```yaml
+Concept:
+  name: \"The Great Depression\"
+  definition: \"The <Concept>Great Depression</Concept> was not only a profound and severe <Concept>economic depression</Concept> that affected the globe during the 1930s but also a catalyst for a series of consequential historical events, including World War II. Originating from the United States with the <Concept>stock market crash of 1929</Concept>, it spread rapidly, causing widespread <Concept>unemployment</Concept>, <Concept>acute deflation</Concept>, and a substantial reduction in personal and national incomes. This economic turmoil led to significant policy changes, notably the <Concept>New Deal</Concept> in the U.S., and had a cascading effect on the global economy, exacerbating political tensions and contributing to the causes of World War II. The Great Depression's impacts were far-reaching, affecting both industrialized and non-industrialized nations, leading to phenomena like the American <Concept>Dust Bowl</Concept> and <Concept>mass migration</Concept>. It fundamentally altered global trade, social structures, and government roles, making it a critical subject for understanding the dynamics and potential repercussions of major <Concept>economic crises</Concept> and their <Concept>global impacts</Concept>.\"
+  latex_code: \"\"
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "Bellman Equation":
+Definition: The Bellman Equation, central to the concept of dynamic programming, acts as a fundamental tool for framing and solving problems of sequential decision-making under uncertainty. It expresses a recursive relationship which posits that the optimal solution to a problem depends on the optimal solutions to its subproblems. This equation is pivotal in various areas including Agent Artificial Intelligence, stochastic processes, and reinforcement learning, signifying its crucial role in defining and determining optimal policies in complex decision-making scenarios. The essence of the Bellman Equation lies in its ability to break down large, complex problems into smaller, manageable subproblems, thereby facilitating a systematic approach to optimization in dynamic environments. It integrates key elements such as state and decision variables, reward functions, and transition functions, offering a structured method to navigate through and optimize various decision-making processes. This approach has profound implications for fields ranging from economics to artificial intelligence, where it enables effective resource allocation, policy development, and predictive modeling, ultimately guiding decision-makers towards optimal outcomes over time.
+
+Related Ideas: Agent Artificial Intelligence, optimization, dynamic programming, optimal policy, recursive relationship, stochastic processes, reinforcement learning, transition functions, decision variables, stochastic optimization, reward functions, resource allocation, decision making.
+
+YAML Code:
+
+```yaml
+Concept:
+  name: "Bellman Equation"
+  definition: \"The <Concept>Bellman Equation</Concept>, central to <Concept>dynamic programming</Concept> and <Concept>reinforcement learning</Concept>, articulates a <Concept>recursive relationship</Concept> essential for the determination of <Concept>optimal policies</Concept> in sequential decision-making under uncertainty. This equation guides the decomposition of complex problems into manageable subproblems, integrating elements like <Concept>state and decision variables</Concept>, <Concept>reward functions</Concept>, and <Concept>transition functions</Concept> to facilitate systematic optimization. Its application spans numerous fields including <Concept>Agent Artificial Intelligence</Concept>, economics, and resource management, where it enables effective policy development and predictive modeling for optimal decision outcomes over time.\"
+  latex_code: \"V(x) = \\max_{u}(R(x,u) + \\beta V(f(x,u)))\"
+```
+[END EXAMPLE]
+
+Output the correct Concept Generation Process for:
+Concept.Name = "Regular Expressions":
+
+Definition: Regular expressions, commonly referred to as regex, are intricate sequences of characters that form search patterns, primarily utilized in string processing tasks like pattern matching and text normalization. These expressions, deeply rooted in theoretical computer science, particularly automata theory, serve as a bridge between abstract language processing concepts and practical text manipulation in computing. By employing regex, one can succinctly and precisely define patterns to search, match, or replace text within strings, thereby transforming raw data into structured information. This transformation is crucial in tasks such as data validation, parsing, and text mining. The power of regex lies in its ability to use a series of metacharacters—ranging from quantifiers and character classes to anchors and lookaround assertions—to construct versatile and complex patterns. Consequently, regex has become a fundamental tool in various domains, including software development, data analysis, and natural language processing, facilitating the efficient and effective manipulation of textual data.
+
+Related Ideas: regex, pattern matching, string searching, wildcards, text processing, automata theory, syntax, programming, grep, data validation, parsing, text mining, natural language processing, metacharacters, quantifiers, character classes, anchors, lookaround assertions.
+
+YAML Code:
+
+```yaml
+Concept:
+  name: \"Regular Expressions\"
+  definition: \"Regular expressions, or <Concept>regex</Concept>, are intricate sequences of characters that form search patterns, used primarily in string processing tasks like <Concept>pattern matching</Concept> and <Concept>text normalization</Concept>. Originating from theoretical computer science and automata theory, regex serves as a crucial tool for transforming raw data into structured information, essential in <Concept>data validation</Concept>, <Concept>parsing</Concept>, and <Concept>text mining</Concept>. Regex employs a series of <Concept>metacharacters</Concept> including <Concept>quantifiers</Concept>, <Concept>character classes</Concept>, <Concept>anchors</Concept>, and <Concept>lookaround assertions</Concept>, enabling the construction of versatile and complex patterns for efficient textual data manipulation in domains like software development, data analysis, and natural language processing.\"
+  latex_code: \"\"
+```
 ### Assessing the Environment
 Based on the environment data provided pick which concepts should be included in the knowledge graph. These should be the concepts only required to know and understand the main concept deeply, fulfill the user's learning objectives, and should follow the Tutor's planner in terms of relavence. 
 
@@ -142,7 +225,7 @@ The Main Concept is the center focus of the knowledge graph. We want to generate
 
 The Concept List is the concepts already discovered by our algorithm. Ensure to reference them if needed using the syntax described above as our algorithm will pick this up and map it accordingly. In other words, feel free to include concepts already referenced, or; expand the ones we haven't already discovered.
 
-The Notebank gives us crucial information about context of what concepts we should be generating. The Notebank also contains a list of important concepts which we will need to discover. The Notebank is a contextual reference for understanding the learning context under which the concepts are being generated for. Our concepts discovered in our graph should include the relevant concepts to the learning environment detailed in the Notebank.
+The Notebank gives us crucial information about context of what concepts we should be discovering. It contains a list of Subconcepts which we should incorporate in our Concept Generation Process.
 
 ## Environment State
 Here is the current Environment State:
@@ -170,5 +253,5 @@ $CURR_ENV.ERROR$
 Including as much academic detail in your response will help you in the future.
 
 ## Your Task
-Output the correct concept yaml code for:
+Output the correct Concept Generation Process for:
 Concept.Name = "$TARGET_CONCEPT_NAME$":

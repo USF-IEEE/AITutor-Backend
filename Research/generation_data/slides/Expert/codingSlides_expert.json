@@ -1,23 +1,8 @@
 {
     "slides": [
         {
-            "Title": "Natural Language Processing",
-            "Description": "Professor John Licato University of South Florida Chapter 2:RegEx, Edit Distance",
-            "Latex": []
-        },
-        {
             "Title": "Regular Expressions",
             "Description": "Knowing [regular expressions] can mean the difference between solving a problem in 3 steps and solving it in 3,000 steps. When you're a nerd, you forget that the problems you solve with a couple keystrokes can take other people days of tedious, error-prone work to slog through.",
-            "Latex": []
-        },
-        {
-            "Title": "Regular Expressions",
-            "Description": "The following function called `isPhoneNumber(text)` is designed to check if the provided string is a phone number in a specific format using regex. def isPhoneNumber(text):    if len(text) != 12:        return False    for i in range(0, 3):        if not text[i].isdecimal():            return False    if text[3] != '-':        return False    for i in range(4, 7):        if not text[i].isdecimal():            return False    if text[7] != '-':        return False    for i in range(8, 12):        if not text[i].isdecimal():            return False    return Trueprint('415-555-4242 is a phone number:')print(isPhoneNumber('415-555-4242'))print('Moshi moshi is a phone number:')print(isPhoneNumber('Moshi moshi'))",
-            "Latex": []
-        },
-        {
-            "Title": "Regular Expressions",
-            "Description": "The following Python code uses the previously defined `isPhoneNumber` function within a loop to search through a longer string for valid phone number formats. message = 'Call me at 415-555-1011 tomorrow. 415-555-9999 is my office.'for i in range(len(message)):    chunk = message[i:i+12]    if isPhoneNumber(chunk):        print('Phone number found: ' + chunk)print('Done')",
             "Latex": []
         },
         {
@@ -53,11 +38,6 @@
         {
             "Title": "Word normalization",
             "Description": "-Case folding - e.g., making everything lowercase-Lemmatization - folding lemmas together if they have the same root (dinner / dinners, am / are / is, etc.). -Stemming - performing lemmatization by removing all but the roots of words (running / runner -> run)",
-            "Latex": []
-        },
-        {
-            "Title": "Minimum Edit Distance",
-            "Description": "Definition of Minimum Edit Distance",
             "Latex": []
         },
         {
@@ -116,18 +96,8 @@
             "Latex": []
         },
         {
-            "Title": "The Edit Distance Table",
-            "Description": "The minimum edit distance between two strings is the minimum number of editing operations needed to transform one string into the other. The typical operations allowed are:1.Insertion (Ins): Add one character to the string.2.Deletion (Del): Remove one character from the string.3.Substitution (Sub): Replace one character with another.",
-            "Latex": []
-        },
-        {
             "Title": "Computing alignments",
             "Description": "-Edit distance isn't sufficient-We often need to align each character of the two strings to each other-We do this by keeping a 'backtrace'-Every time we enter a cell, remember where we came from-When we reach the end, -Trace back the path from the upper right corner to read off the alignment",
-            "Latex": []
-        },
-        {
-            "Title": "MinEdit with Backtrace",
-            "Description": "",
             "Latex": []
         },
         {

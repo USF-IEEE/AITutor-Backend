@@ -7,10 +7,11 @@ from enum import IntEnum
 from AITutor_Backend.src.TutorUtils.notebank import NoteBank 
 from AITutor_Backend.src.TutorUtils.chat_history import ChatHistory
 from AITutor_Backend.src.BackendUtils.json_serialize import *
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 import json
 USE_OPENAI = True
 
-DEBUG = os.environ.get("DEBUG", 0)
+DEBUG = bool(os.environ.get("DEBUG", 0))
 
 class Prompter:
     class PrompterLLMAPI:
@@ -83,6 +84,8 @@ class Prompter:
         """
         prompt = self.llm_api._load_prompt(self.__plan_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), },) 
         llm_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview") #"gpt-4"
+        output_dir = "training_data/prompter/planning/"
+        save_training_data(output_dir, prompt, llm_plan)
         return llm_plan
     
     def perform_notebank(self, plan):
@@ -91,10 +94,19 @@ class Prompter:
         """
         error = "There is no current error."
         while True:
+            with open("translation.txt", "a") as f:
+                f.write("TRANSLATION\n")
             prompt = self.llm_api._load_prompt(self.__notebank_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(), Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error, Prompter.PrompterLLMAPI.PLAN_DELIMITER: plan},) 
             llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k")
             success, error, terminate = self.notebank.process_llm_action(llm_output)
-            if success or terminate: break
+            with open("translation.txt", "a") as f:
+                f.write("TRANSLATION\n")
+            if success or terminate: 
+                output_dir = "training_data/prompter/notebank/"
+                save_training_data(output_dir, prompt, llm_output)
+                break
+            with open("translation_errors.txt", "a") as f:
+                f.write("TRANSLATION_ERROR\n")
         return terminate
 
     def get_prompting(self, plan):
@@ -104,14 +116,20 @@ class Prompter:
         error = "There is no current error."      
         while True:
             try:
+                with open("translation.txt", "a") as f:
+                    f.write("TRANSLATION\n")
                 prompt = self.llm_api._load_prompt(self.__question_prompt_template, {Prompter.PrompterLLMAPI.CURR_ENV_NOTEBANK_DELIMITER: self.notebank.env_string(),  Prompter.PrompterLLMAPI.CURR_ENV_CHAT_HISTORY_DELIMITER: self.chat_history.env_string(), Prompter.PrompterLLMAPI.QUESTION_COUNTER_DELIMITER: str(self.__questions_asked), Prompter.PrompterLLMAPI.CURR_ERROR_DELIMITER: error, Prompter.PrompterLLMAPI.PLAN_DELIMITER: plan})
                 llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k")
                 action = PromptAction.parse_llm_action(llm_output)
                 assert isinstance(action._type, PromptAction.Type), "Error while Creating the Prompt."
                 assert action._data, "Error while parsing the data for the Prompt."
+                output_dir = "training_data/prompter/prompt/"
+                save_training_data(output_dir, prompt, llm_output)
                 break
             except Exception as e:
                 error = "There was an error while trying to parse the Prompt: " + str(e)
+                with open("translation_errors.txt", "a") as f:
+                    f.write("TRANSLATION_ERROR\n")
         # Return the PromptAction parsed from the LLM:
         self.__questions_asked += 1
         return action

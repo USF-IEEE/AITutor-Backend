@@ -9,3 +9,5 @@ AITutor_Backend/.DS_Store
 .DS_Store
 .vscode/launch.json
 *.pkl
+env.py
+myenv.py

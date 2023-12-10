@@ -1,20 +1,17 @@
 from enum import IntEnum
 from typing import Tuple, List
 import re
-import yaml
 import os
-
 import openai
 import json
-
+from AITutor_Backend.src.DataUtils.file_utils import save_training_data
 from AITutor_Backend.src.BackendUtils.replicate_api import ReplicateAPI
 from AITutor_Backend.src.BackendUtils.code_executor import CodeExecutor
-from AITutor_Backend.src.DataUtils.nlp_utils import edit_distance
 from AITutor_Backend.src.BackendUtils.sql_serialize import SQLSerializable
 from AITutor_Backend.src.BackendUtils.json_serialize import JSONSerializable
 
 USE_OPENAI = True
-DEBUG = os.environ.get("DEBUG", 0)
+DEBUG = bool(os.environ.get("DEBUG", 0))
 
 class QuestionSuite(JSONSerializable, SQLSerializable):
     ALLOWED_LIBS = [
@@ -86,11 +83,12 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             return self._load_prompt(self.__plan_to_question_prompt, env_state)
         
     def __init__(self, num_questions, Notebank, ConceptDatabase):
+        super(QuestionSuite, self).__init__()
         self.current_obj_idx = -1
         self.__Notebank = Notebank
         self.__ConceptDatabase = ConceptDatabase
         assert isinstance(num_questions, int), "Cannot Create a QuestionSuite without specifying (int) number of questions. Check the Data Type provided for num_questions"
-        self.num_questions = max(min(25, num_questions), 5)
+        self.num_questions = max(min(25, num_questions), 1)
         self.Questions = []
         self.llm_api = QuestionSuite.QuestionLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_question_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/plan_to_question_prompt", )
         
@@ -104,14 +102,18 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
             error = "There is no current error."
             while True:
                 try: # Build Question Plan:
-                    prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, current_questions, notebank_str, error )
-                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview", max_length = 3000)
+                    prompt = self.llm_api.prompt_plan_question( self.__ConceptDatabase.main_concept, concept_list_str, self.num_questions, notebank_str, error )
+                    q_plan = self.llm_api.request_output_from_llm(prompt, "gpt-4-1106-preview", max_length = 6000)
+                    output_dir = "training_data/questions/plan"
+                    save_training_data(output_dir, prompt, q_plan)
                     break
                 except Exception as e:
                     error = f"Error while creating a Question Plan: {e}"
             error = "There is no current error."
             while True:
                 try:
+                    with open("translation.txt", "a") as f:
+                        f.write("TRANSLATION\n")
                     prompt = self.llm_api.plan_to_question( self.__ConceptDatabase.main_concept, concept_list_str, q_plan, error)
                     llm_output = self.llm_api.request_output_from_llm(prompt, "gpt-3.5-turbo-16k", max_length=5000)
                     question = Question.create_question_from_JSON(llm_output, self.__ConceptDatabase)
@@ -119,9 +121,13 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
                     assert isinstance(question.type, Question.Type), f"Error, could not find type on question, check the input: {llm_output}"
                     assert isinstance(question.subject, Question.Subject), f"Error, could not find subject on question, check the input: {llm_output}"
                     assert question.concepts, f"Error, could not find Concept Database Mappings on Question JSON object. Check the output to ensure that these were included: {llm_output}"
+                    output_dir = "training_data/questions/obj/"
+                    save_training_data(output_dir, prompt, llm_output)
                     break
                 except Exception as e:
                     error = f"Error while converting a Question Plan into a Question JSON Object: {e}"
+                    with open("translation_errors.txt", "a") as f:
+                        f.write("TRANSLATION_ERROR\n")
             if DEBUG: print(f"Question {question_idx}:", question.format_json())
             self.Questions.append(question)
         self.current_obj_idx = 0
@@ -149,6 +155,10 @@ class QuestionSuite(JSONSerializable, SQLSerializable):
         """
         assert 0 <= idx < self.num_questions, "Cannot access Question Object Array Out of Bounds"
         return self.Questions[idx]
+
+    def format_json(self):
+        return {"questions": [question.format_json() for question in self.Questions], "current_obj_idx": self.current_obj_idx, "num_questions": self.num_questions}
+
         
 class Question(JSONSerializable, SQLSerializable):
     __QUESTION_REGEX = re.compile(r'\`\`\`json([^\`]*)\`\`\`')
