@@ -303,7 +303,7 @@ class TutorEnv(SQLSerializable,):
         self.slide_planner = None
         self.question_suite = None
         self._content_generated = False
-        self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/main_concept_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_list_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/notebank_filter_prompt")
+        self.executor = TutorEnv.Executor(self, "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Concepts//main_concept_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Concepts//concept_list_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/notebank_filter_prompt")
     
     def step(self, input_data):
         return self.executor.process_action(input_data), self.current_state

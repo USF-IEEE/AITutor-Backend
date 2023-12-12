@@ -14,6 +14,43 @@ USE_OPENAI = True
 DEBUG = bool(os.environ.get("DEBUG", 0))
 
 class ConceptDatabase(SQLSerializable):
+    @staticmethod
+    def build_dict(lines, current_level=0, index=0):
+        """
+        Recursively build a dictionary structure from a list of lines.
+        """
+        def parse_line(l):
+            """
+            Parse a line to determine its concept and indentation level.
+            Indentation level is determined by the number of leading spaces.
+            """
+            indentation = len(l) - len(l.lstrip('\t'))
+            concept = l.strip()
+            return concept, indentation
+
+        if index >= len(lines):
+            return [], index
+
+        tree = []
+        while index < len(lines):
+            concept, level = parse_line(lines[index])
+            if level > current_level:
+                # If the next level is deeper, recursively build its structure
+                children, index = ConceptDatabase.build_dict(lines, level, index)
+                if tree and 'refs' in tree[-1]:
+                    tree[-1]['refs'].extend(children)
+                elif tree:
+                    tree[-1]['refs'] = children
+            elif level < current_level:
+                # If the next level is higher, return to the previous level
+                return tree, index
+            else:
+                # Same level, add a new node and continue
+                tree.append({'concept': concept, 'refs': []})
+                index += 1
+
+        return tree, index
+    
     class ConceptLLMAPI:
         CURR_ENV_MAIN_CONCEPT_DELIMITER = "$CURR_ENV.MAIN_CONCEPT$" # TODO: Add tutor plan string to the llm request
         CURR_ENV_CONCEPT_LIST_DELIMITER = "$CURR_ENV.CONCEPT_LIST$"
@@ -71,7 +108,7 @@ class ConceptDatabase(SQLSerializable):
             
     __CONCEPT_REGEX = re.compile(r'\`\`\`yaml([^\`]*)\`\`\`') # Matches any ```yaml ... ```
     def __init__(self, main_concept:str, tutor_plan:str = "", generation=True, max_threads=120): #TODO: Fix potential Resource lock issue 
-        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
+        self.concept_llm_api = self.ConceptLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Concepts/concept_prompt", tutor_plan=tutor_plan) # TODO: FIX
         self.main_concept = main_concept
         self.Concepts = []
         if generation:
@@ -255,4 +292,4 @@ class Concept(JSONSerializable):
             Tuple[str, str, str]: (concept_name, concept_def, concept_latex) 
         """
         return (self.name, self.to_tokenized_def(), self.latex,)
-    
+  

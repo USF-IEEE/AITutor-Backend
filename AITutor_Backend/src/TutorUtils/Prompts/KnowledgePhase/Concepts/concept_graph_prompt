@@ -1,0 +1,18 @@
+Create a Concept Graph, i.e. Concepts and their sub Concepts, which fully covers Artificial Intelligence from a Computer Science context. Output the generic list format and then convert the output into the following plaintext format separated by new lines and tabs:
+
+1. Concept A
+   - Concept B
+       - concept c
+
+2. Concept D
+...
+
+```plaintext
+concept a
+\tconcept b
+\t\tconcept c
+concept d
+...
+```
+
+Note: It is important to include as much academic detail as possible since the graph you create will be used to teach a student the topic.

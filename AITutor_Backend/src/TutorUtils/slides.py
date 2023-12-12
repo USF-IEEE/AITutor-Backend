@@ -373,7 +373,7 @@ class SlidePlanner(JSONSerializable, SQLSerializable):
         self.ConceptDatabase = ConceptDatabase
         self.num_slides = 0
         self.current_obj_idx = 0
-        self.llm_api = SlidePlanner.SlideLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_plan_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slideplan_to_obj_prompt","AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_plan_termination_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/slide_description_prompt") # LLM API for generating slide plans
+        self.llm_api = SlidePlanner.SlideLLMAPI("AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Slides/slideplan_plan_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Slides/slideplan_to_obj_prompt","AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Slides/slide_plan_termination_prompt", "AITutor_Backend/src/TutorUtils/Prompts/KnowledgePhase/Slides/slide_description_prompt") # LLM API for generating slide plans
     def to_sql(self):
         return (self.current_obj_idx, self.num_slides, [slide.to_sql() for slide in self.Slides])
     
