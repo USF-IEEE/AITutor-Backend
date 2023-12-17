@@ -1,4 +1,4 @@
-# AITutor-Backend
+# AITutor-Backend (Note: this README has been AI Generated)
 
 AITutor-Backend is a part of the LMaAiT-BE (Large Language Models as Actors in Text-Based Environments) project, focusing on leveraging Large Language Models for creating interactive, text-based educational environments. This is an ongoing research project for USF IEEE AI Group. Our group is commited to developing research projects relevant to modern approaches and technologies.
 
